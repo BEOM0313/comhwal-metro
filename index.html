@@ -25,7 +25,7 @@ html{padding-top:env(safe-area-inset-top,0px)}
   --l1:#0052a4; --l2:#00a84d; --l3:#ef7c1c; --l4:#00a5de; --l5:#996cac; --l8:#e6186c;
   --ok:#0a6b3b; --okbg:#e3f4ea; --bad:#b3261e; --badbg:#fbe9e7; --warn:#8a5a00; --warnbg:#fff4d6;
   /* 노선색(--l*)은 선·역 그래픽 전용, 글자·버튼은 명암 4.5:1 이상인 --a* 사용 */
-  --a1:#0052a4; --a2:#007a3d; --a3:#b85000; --onacc:#ffffff;
+  --a1:#0052a4; --a2:#007a3d; --a3:#b85000; --a5:#6b4a8f; --onacc:#ffffff;
   --cur:var(--l2); --acc:var(--a2);
   --f-disp:"Do Hyeon","IBM Plex Sans KR","Noto Sans KR",sans-serif;
   --f-body:"IBM Plex Sans KR","Noto Sans KR","Apple SD Gothic Neo",sans-serif;
@@ -36,12 +36,12 @@ html{padding-top:env(safe-area-inset-top,0px)}
   --bg:#14171d; --panel:#1d2129; --panel2:#262b35; --ink:#e9ebef; --sub:#9aa2b1; --line:#333a46;
   --sign:#0d1016; --signink:#f2f3f5;
   --l1:#4b8fe0; --l2:#2fc673; --l3:#f39a4b; --l4:#3cc3f0; --l5:#b993cb; --l8:#f0508f;
-  --ok:#3ccf83; --okbg:#173326; --bad:#ff6b5f; --badbg:#3a1d1b; --warn:#f1bd4a; --warnbg:#3a2f14; --a1:#6ea8f0; --a2:#2fc673; --a3:#f39a4b; --onacc:#10151c; color-scheme:dark }}
+  --ok:#3ccf83; --okbg:#173326; --bad:#ff6b5f; --badbg:#3a1d1b; --warn:#f1bd4a; --warnbg:#3a2f14; --a1:#6ea8f0; --a2:#2fc673; --a3:#f39a4b; --a5:#c7a6dc; --onacc:#10151c; color-scheme:dark }}
 :root[data-theme="dark"]{
   --bg:#14171d; --panel:#1d2129; --panel2:#262b35; --ink:#e9ebef; --sub:#9aa2b1; --line:#333a46;
   --sign:#0d1016; --signink:#f2f3f5;
   --l1:#4b8fe0; --l2:#2fc673; --l3:#f39a4b; --l4:#3cc3f0; --l5:#b993cb; --l8:#f0508f;
-  --ok:#3ccf83; --okbg:#173326; --bad:#ff6b5f; --badbg:#3a1d1b; --warn:#f1bd4a; --warnbg:#3a2f14; --a1:#6ea8f0; --a2:#2fc673; --a3:#f39a4b; --onacc:#10151c; color-scheme:dark }
+  --ok:#3ccf83; --okbg:#173326; --bad:#ff6b5f; --badbg:#3a1d1b; --warn:#f1bd4a; --warnbg:#3a2f14; --a1:#6ea8f0; --a2:#2fc673; --a3:#f39a4b; --a5:#c7a6dc; --onacc:#10151c; color-scheme:dark }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.62;margin:0;word-break:keep-all}
@@ -350,7 +350,7 @@ details.more[open] summary::before{transform:rotate(90deg)}
       </div>
     </div>
     <div class="panel" style="padding:10px 10px 4px">
-      <div class="legend" style="padding:0 8px"><span><span class="dot" style="background:var(--l1)"></span> 1과목 컴퓨터 일반</span><span><span class="dot" style="background:var(--l2)"></span> 2과목 스프레드시트</span><span>역을 눌러 이동 · 속이 찬 역 = 다 외운 역</span></div>
+      <div class="legend" style="padding:0 8px"><span><span class="dot" style="background:var(--l5)"></span> 강의 노트 (강의 순서)</span><span><span class="dot" style="background:var(--l1)"></span> 1과목 컴퓨터 일반</span><span><span class="dot" style="background:var(--l2)"></span> 2과목 스프레드시트</span><span>역을 눌러 이동 · 속이 찬 역 = 다 외운 역</span></div>
       <div class="route" id="routeStudy"></div>
     </div>
     <div class="signboard" id="signStudy"></div>
@@ -475,6 +475,7 @@ details.more[open] summary::before{transform:rotate(90deg)}
       <div><div class="eyebrow">LINE 1 · 시험선</div><h1>합격역까지 40문항</h1><p>실제 CBT처럼 과목당 20문항, 40분. 과목당 8개 이상 + 전체 24개 이상 맞히면 합격이에요.</p></div>
     </div>
     <div id="exStart" class="modecards">
+      <button class="mc" data-mode="lec"><span class="lc"><span class="dot" style="background:var(--l5)"></span>강의 복습 · 바로 정답 확인</span><b>강의 복습 문제</b><span class="muted" style="font-size:13px" id="lecCount">들은 강의 내용으로 만든 문제예요.</span></button>
       <button class="mc" data-mode="full"><span class="lc"><span class="dot" style="background:var(--l1)"></span>급행 · 40문항 · 40분</span><b>실전 모의고사</b><span class="muted" style="font-size:13px">1과목 20 + 2과목 20을 문제은행에서 무작위로. 과락 규칙까지 그대로 채점.</span></button>
       <button class="mc" data-mode="s1"><span class="lc"><span class="dot" style="background:var(--l4)"></span>완행 · 20문항 · 20분</span><b>1과목만</b><span class="muted" style="font-size:13px">컴퓨터 일반 20문항.</span></button>
       <button class="mc" data-mode="s2"><span class="lc"><span class="dot" style="background:var(--l2)"></span>완행 · 20문항 · 20분</span><b>2과목만</b><span class="muted" style="font-size:13px">스프레드시트 일반 20문항.</span></button>
@@ -515,7 +516,99 @@ const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(M
 const norm=s=>String(s).toLowerCase().replace(/\s+/g,'').replace(/^\./,'');
 
 /* ================= 학습 카드 ================= */
+/* ================= 강의 노트 (균쌤 '합격다드림' 강의 캡처 기반 · 강의 순서) =================
+   새 강의를 추가할 때는 이 배열에 {n, title, cards, quiz}만 붙이면 학습선·시험선에 자동 반영 */
+const LECTURES=[
+ {n:1,title:'기본개념',cards:[
+  ['하드웨어','만질 수 있는 기계 장치 (입력·출력·기억·연산·제어장치)',['하드웨어','Hardware']],
+  ['소프트웨어','만질 수 없는 프로그램이나 앱 (예: 파워포인트)',['소프트웨어','Software']],
+  ['ALU','CPU 안에서 연산을 맡는 장치의 영문 약자 (연산장치)',['ALU']],
+  ['CU','CPU 안에서 제어를 맡는 장치의 영문 약자 (제어장치)',['CU']],
+  ['논리 회로','디지털 컴퓨터가 쓰는 회로',['논리 회로','논리회로']],
+  ['증폭 회로','아날로그 컴퓨터가 쓰는 회로',['증폭 회로','증폭회로']],
+  ['디지털 컴퓨터','숫자·문자 같은 이산 데이터, 산술·논리 연산, 프로그래밍 가능, 정확도 높음, 범용',['디지털','디지털 컴퓨터']],
+  ['아날로그 컴퓨터','온도·전류 같은 연속 데이터, 미분·적분 연산, 속도 빠름, 정확도 낮음, 전용',['아날로그','아날로그 컴퓨터']],
+  ['하이브리드 컴퓨터','디지털과 아날로그의 장점을 합친 컴퓨터',['하이브리드','하이브리드 컴퓨터']],
+  ['슈퍼 컴퓨터','처리 능력이 가장 큰 초대형 컴퓨터, 빠른 계산 분야에 사용',['슈퍼 컴퓨터','슈퍼컴퓨터','슈퍼']],
+  ['메인프레임','서버용으로 주로 쓰는 대형 컴퓨터 (EBCDIC 코드 사용)',['메인프레임']],
+  ['미니 컴퓨터','개인용과 대형 컴퓨터의 중간인 중소형 컴퓨터',['미니','미니 컴퓨터']],
+  ['팜톱','스마트폰·PDA처럼 손바닥 크기의 마이크로 컴퓨터',['팜톱']],
+  ['웨어러블 컴퓨터','몸에 착용하는 컴퓨터 (소형·경량, 음성·동작 인식)',['웨어러블','웨어러블 컴퓨터']],
+  ['전용 컴퓨터','한 가지 목적만을 위한 컴퓨터 (↔ 범용)',['전용','전용 컴퓨터']]],
+  quiz:[
+  ['다음 중 하드웨어가 아닌 것은?',['마우스','스캐너','프린터','엑셀'],3,'엑셀·파워포인트 같은 프로그램은 소프트웨어예요.'],
+  ['연산장치(ALU)와 제어장치(CU)가 들어 있는 곳은?',['CPU 내부','보조기억장치','출력장치','메인보드 바깥의 확장 카드'],0,'ALU와 CU는 둘 다 CPU 안에 있어요.'],
+  ['디지털 컴퓨터의 특징으로 옳지 않은 것은?',['숫자·문자 같은 이산 데이터를 쓴다','산술·논리 연산을 주로 한다','증폭 회로를 사용한다','아날로그 컴퓨터보다 정확도가 높다'],2,'증폭 회로는 아날로그, 디지털은 논리 회로예요.'],
+  ['아날로그 컴퓨터의 특징으로 옳은 것은?',['프로그래밍이 꼭 필요하다','범용으로 많이 쓰인다','미분·적분 연산을 주로 한다','숫자 데이터만 처리한다'],2,'아날로그는 미분·적분, 디지털은 산술·논리 연산이에요. 아날로그는 전용(특수 목적)이에요.'],
+  ['몸에 착용해 음성·동작 인식 등으로 장소에 상관없이 쓰는 컴퓨터는?',['팜톱 컴퓨터','웨어러블 컴퓨터','메인프레임','미니 컴퓨터'],1,'웨어러블 = 입을 수 있는 컴퓨터.'],
+  ['처리하는 데이터 형태에 따른 분류가 아닌 것은?',['디지털 컴퓨터','아날로그 컴퓨터','하이브리드 컴퓨터','슈퍼 컴퓨터'],3,'슈퍼 컴퓨터는 처리 능력에 따른 분류예요.'],
+  ['서버용으로 주로 쓰이며 EBCDIC 코드를 사용하는 대형 컴퓨터는?',['슈퍼 컴퓨터','메인프레임','미니 컴퓨터','마이크로 컴퓨터'],1,'메인프레임 = 대형, 서버용, EBCDIC.']]},
+ {n:2,title:'CPU',cards:[
+  ['레지스터','CPU 안의 임시 기억장치, 속도가 가장 빠름',['레지스터']],
+  ['가산기','연산장치에서 덧셈을 하는 요소',['가산기']],
+  ['보수기','보수를 만들어 뺄셈을 돕는 연산장치 요소',['보수기']],
+  ['누산기','연산 결과를 일시적으로 기억하는 연산장치 레지스터',['누산기','AC']],
+  ['상태 레지스터','연산 결과의 상태 정보(PSW)를 기록하는 연산장치 레지스터',['상태 레지스터']],
+  ['프로그램 카운터','다음에 수행할 명령어의 번지(주소)를 기억 (제어장치)',['프로그램 카운터','PC']],
+  ['명령 레지스터','현재 실행 중인 명령어의 내용을 기억 (제어장치)',['명령 레지스터','IR']],
+  ['명령 해독기','명령어를 해독하는 제어장치 요소',['해독기','명령 해독기','디코더']],
+  ['부호기','해독된 명령에 따라 각 장치로 보낼 제어 신호를 생성',['부호기','인코더']],
+  ['MAR','기억장치에 입출력되는 데이터의 번지(주소)를 기억하는 레지스터',['MAR','메모리 주소 레지스터']],
+  ['MBR','기억장치에 입출력되는 데이터 자체를 잠시 기억하는 레지스터',['MBR','메모리 버퍼 레지스터']]],
+  quiz:[
+  ['다음 중 중앙처리장치(CPU)의 구성요소가 아닌 것은?',['ALU(산술논리장치)','CU(제어장치)','레지스터','HDD(하드디스크)'],3,'HDD는 보조기억장치예요.'],
+  ['CPU에서 덧셈·뺄셈·곱셈·나눗셈을 수행하는 장치는?',['레지스터','산술 논리 장치(ALU)','제어장치(CU)','바이오스(BIOS)'],1,'사칙연산 = 연산장치(ALU).'],
+  ['제어장치(CU)의 구성 요소가 아닌 것은?',['부호기','프로그램 카운터','누산기','명령 해독기'],2,'가산기·보수기·누산기·상태 레지스터는 연산장치 쪽이에요.'],
+  ['레지스터에 대한 설명으로 옳은 것은?',['CPU 내부에서 특정 목적에 쓰이는 일시적인 기억 장소','메모리 중 가장 느리다','시스템 유지 보수 정보를 저장한다','부팅 때 운영체제가 올라가는 메모리이다'],0,'레지스터는 CPU 안에 있고 가장 빨라요.'],
+  ['프로그램 카운터(PC)에 대한 설명으로 옳은 것은?',['실행된 명령어의 개수를 센다','다음에 수행할 명령어의 주소를 기억한다','연산 결과를 기억한다','제어 신호를 만든다'],1,'개수를 센다는 함정 보기가 자주 나와요. PC = 다음 명령어 주소.'],
+  ['연산 결과를 일시적으로 기억하는 연산장치의 레지스터는?',['상태 레지스터','누산기','명령 레지스터','MAR'],1,'누산기(Accumulator)예요.'],
+  ['상태 레지스터의 역할로 옳은 것은?',['연산에 쓸 데이터를 기억한다','연산 결과의 상태 정보(PSW)를 기록한다','다음 명령어의 주소를 기억한다','명령어를 해독한다'],1,'"연산에 사용될 데이터를 기억한다"는 오답 보기로 나와요.']]},
+ {n:3,title:'주기억장치',cards:[
+  ['RAM','실행 중인 프로그램을 보관하는 작업대, 전원이 꺼지면 지워짐',['RAM','램']],
+  ['휘발성','전원이 없으면 내용이 사라지는 성질 (RAM이 보조기억장치가 될 수 없는 이유)',['휘발성']],
+  ['SRAM','캐시 메모리로 쓰는 RAM: 빠름, 집적도 낮음, 재충전 불필요',['SRAM']],
+  ['DRAM','주기억장치로 쓰는 RAM: 느림, 집적도 높음, 주기적 재충전 필요, 저렴',['DRAM']],
+  ['펌웨어','하드웨어와 소프트웨어의 중간. ROM에 저장되어 업데이트만으로 성능 향상',['펌웨어','Firmware']],
+  ['Mask ROM','제조 과정에서 한 번 기록, 수정 불가',['Mask ROM','마스크롬','MASK-ROM','마스크 롬']],
+  ['PROM','특수 프로그램으로 한 번만 기록할 수 있는 ROM',['PROM']],
+  ['EPROM','자외선으로 지우고 여러 번 기록할 수 있는 ROM',['EPROM']],
+  ['EEPROM','전기로 지우고 여러 번 기록할 수 있는 ROM (플래시 메모리)',['EEPROM']],
+  ['POST','부팅 때 BIOS가 가장 먼저 하는 하드웨어 자체 진단',['POST']],
+  ['CMOS SETUP','BIOS 값(날짜·부팅 순서·시스템 암호 등)을 바꾸는 설정 화면',['CMOS','CMOS SETUP','CMOS 셋업']]],
+  quiz:[
+  ['주기적으로 재충전해야 내용이 유지되고, 집적도가 높아 대용량 주기억장치로 쓰이는 것은?',['SRAM','DRAM','PROM','EPROM'],1,'DRAM = 재충전 필요, 집적도 높음, 저렴. SRAM은 캐시용.'],
+  ['RAM을 보조기억장치로 쓸 수 없는 가장 근본적인 이유는?',['접근 속도가 너무 빨라서','값이 너무 비싸서','전원이 끊기면 내용이 지워져서','수명이 짧아서'],2,'RAM은 휘발성이에요.'],
+  ['전기적인 방법으로 기록된 내용을 여러 번 수정할 수 있는 ROM은?',['Mask ROM','PROM','EPROM','EEPROM'],3,'Mask ROM 수정 불가, PROM 한 번, EPROM 자외선, EEPROM 전기.'],
+  ['자외선을 이용해 기록된 내용을 지우고 다시 쓸 수 있는 ROM은?',['Mask ROM','PROM','EPROM','EEPROM'],2,'EPROM = 자외선(Erasable).'],
+  ['CMOS 셋업에서 설정할 수 있는 항목이 아닌 것은?',['시스템 날짜와 시간','부팅 순서','칩셋 설정','Windows 로그인 암호'],3,'Windows 로그인 암호는 Windows에서 설정해요. CMOS의 시스템 암호와 헷갈리지 마세요.'],
+  ['BIOS에 대한 설명으로 옳지 않은 것은?',['메인보드의 EPROM이나 플래시 메모리에 저장된다','전원을 켜면 가장 먼저 동작해 POST를 한다','CMOS 셋업으로 날짜·부팅 순서 등을 설정한다','가상 메모리의 페이징 파일 크기를 설정한다'],3,'페이징 파일(가상 메모리) 크기는 Windows 설정이에요.'],
+  ['내부 기억장치에 대한 설명으로 옳은 것은?',['RAM은 전원이 없어도 내용을 기억한다','SRAM은 DRAM보다 느리다','가상 메모리는 주기억장치의 속도를 높인다','ROM에는 BIOS, 기본 글꼴, POST 프로그램이 저장되어 있다'],3,'가상 메모리는 속도가 아니라 용량 문제를 해결해요.']]},
+ {n:4,title:'보조기억장치',cards:[
+  ['SSD','반도체(셀)로 저장. HDD보다 빠르고 비쌈, 충격에 강하고 소음 없음, 전력 적음',['SSD']],
+  ['HDD','트랙과 섹터로 저장하는 하드디스크, 충격에 약함',['HDD','하드디스크']],
+  ['CD-RW','약 1000회 다시 쓸 수 있는 650~700MB 광디스크',['CD-RW']],
+  ['DVD','4.7~17GB를 저장하는 광디스크',['DVD']],
+  ['Blu-ray','HD 고화질 영상용, 25~50GB를 저장하는 차세대 광디스크',['Blu-ray','블루레이','Bluray']],
+  ['파티션','디스크 하나를 여러 영역으로 나눈 것. 포맷해야 쓸 수 있고 각각 하나의 드라이브로 인식',['파티션','Partition']],
+  ['포맷','디스크를 모두 지우고 초기화 (파일 시스템·볼륨 레이블·빠른 포맷 설정)',['포맷','Format']],
+  ['RAID','여러 하드디스크를 하나처럼 묶어 쓰는 기술',['RAID','레이드']],
+  ['스트라이핑','데이터를 여러 디스크에 나눠 기록 (속도 향상)',['스트라이핑']],
+  ['미러링','데이터를 2개 디스크에 똑같이 기록 (안정성)',['미러링']],
+  ['SATA','핫 플러그·핫 스왑을 지원하는 직렬 하드디스크 연결 방식, 병렬보다 빠름',['SATA','S-ATA']],
+  ['EIDE','병렬(P-ATA) 방식의 하드디스크 연결 규격',['EIDE','IDE','PATA','P-ATA']]],
+  quiz:[
+  ['반도체를 이용해 크기가 작고 충격에 강하며 소음이 없는 대용량 보조기억장치는?',['HDD','DVD','SSD','CD-RW'],2,'SSD(Solid State Drive)예요.'],
+  ['SSD의 특징으로 옳지 않은 것은?',['HDD보다 빠르게 읽고 쓴다','외부 충격에 약해 불량 섹터가 생기기 쉽다','작동 소음이 없고 전력 소모가 적다','자기 디스크가 아닌 반도체에 저장한다'],1,'충격에 약한 건 HDD예요. SSD는 충격에 강해요.'],
+  ['HD급 고화질 영상을 저장하는 차세대 광 장치로, 한 장에 25GB 이상 저장하는 것은?',['CD-RW','DVD','Blu-ray 디스크','ZIP 디스크'],2,'CD-RW 650~700MB, DVD 4.7~17GB, Blu-ray 25~50GB.'],
+  ['디스크를 여러 영역으로 나눈 것으로, 포맷해야 쓸 수 있고 운영체제가 각각 하나의 드라이브로 인식하는 것은?',['Registry','File System','Partition','Zip Drive'],2,'파티션(Partition)이에요.'],
+  ['Windows의 [포맷] 창에서 설정할 수 없는 것은?',['볼륨 레이블 입력','파티션 제거','파일 시스템 선택','빠른 포맷 선택'],1,'포맷 창에서는 파일 시스템·볼륨 레이블·빠른 포맷 등을 고르고, 파티션 제거는 못 해요.'],
+  ['RAID에 대한 설명으로 옳지 않은 것은?',['여러 하드디스크를 하나처럼 쓰는 기술이다','미러링과 스트라이핑으로 안정성과 속도를 높인다','데이터를 2개 디스크에 똑같이 기록하는 것은 미러링이다','하드디스크·CD-ROM·스캐너를 통합해 연결하는 기술이다'],3,'RAID는 하드디스크끼리 묶는 기술이에요.'],
+  ['SATA(Serial ATA)에 대한 설명으로 옳지 않은 것은?',['직렬 인터페이스이다','핫 플러그를 지원한다','병렬 인터페이스 방식이다','PATA보다 전송 속도가 빠르다'],2,'SATA = 직렬. EIDE·IDE·P-ATA가 병렬이에요.'],
+  ['CD-RW 한 장의 저장 용량으로 알맞은 것은?',['650~700MB','4.7GB','25GB','1.44MB'],0,'약 1000회 다시 쓸 수 있고 650~700MB예요.']]}
+];
+
 const STATIONS=[
+ ...LECTURES.map(L=>({id:'L'+L.n,s:0,name:L.n+'강 '+L.title,cards:L.cards})),
  {id:'w',s:1,name:'Windows 10',cards:[
   ['선점형 멀티태스킹','OS가 CPU 시간을 제어하고, 문제가 생긴 앱을 강제로 끝내는 Windows 10의 작업 방식',['선점형 멀티태스킹','선점형']],
   ['PnP (플러그 앤 플레이)','하드웨어를 연결하면 OS가 필요한 환경을 자동으로 구성하는 기능',['PnP','플러그앤플레이','플러그 앤 플레이']],
@@ -724,18 +817,19 @@ let known=new Set(store.get('known',[]));
 let meta=store.get('meta',null);
 if(!meta){meta={known:{},wrong:{}};store.get('known',[]).forEach(id=>meta.known[id]=[1,0]);store.get('wrong',[]).forEach(id=>meta.wrong[id]=[1,0]);store.set('meta',meta)}
 function setKnown(id,v){if(v)known.add(id);else known.delete(id);meta.known[id]=[v?1:0,Date.now()];store.set('known',[...known]);store.set('meta',meta);Sync.soon()}
-let curSt=store.get('curSt','w');
+let curSt=store.get('curSt','L'+LECTURES[LECTURES.length-1].n);
 if(!STATIONS.find(s=>s.id===curSt)) curSt='w';
 let cIdx=0, cDeck=[];
 
-function lineColor(s){return s===1?'var(--l1)':'var(--l2)'}
+function lineColor(s){return s===0?'var(--l5)':s===1?'var(--l1)':'var(--l2)'}
+const subName=s=>s===0?'강의 노트':s+'과목';
 function renderRoute(){
   const box=$('#routeStudy');
-  const parts=[1,2].map(sub=>{
+  const parts=[0,1,2].map(sub=>{
     const sts=STATIONS.filter(s=>s.s===sub);
     return `<ol style="--lc:${lineColor(sub)}">`+sts.map((s,i)=>{
       const k=s.cards.filter(c=>known.has(c.id)).length, p=Math.round(k/s.cards.length*100);
-      return `<li>${i===0?`<span class="xfer">${sub}과목</span>`:''}<button class="st ${p===100?'done':''} ${s.id===curSt?'cur':''}" data-st="${s.id}" aria-label="${esc(s.name)} 역, ${p}% 외움"></button><span class="nm">${esc(s.name)}</span><span class="pct">${p}%</span></li>`}).join('')+'</ol>';
+      return `<li>${i===0?`<span class="xfer">${subName(sub)}</span>`:''}<button class="st ${p===100?'done':''} ${s.id===curSt?'cur':''}" data-st="${s.id}" aria-label="${esc(s.name)} 역, ${p}% 외움"></button><span class="nm">${esc(s.name)}</span><span class="pct">${p}%</span></li>`}).join('')+'</ol>';
   });
   box.innerHTML=parts.join('');
   box.querySelectorAll('.st').forEach(b=>b.onclick=()=>{curSt=b.dataset.st;store.set('curSt',curSt);cIdx=0;buildDeck();renderRoute();renderSign();renderCard();fillScope()});
@@ -745,8 +839,8 @@ function renderSign(){
   const prev=STATIONS[i-1], next=STATIONS[i+1];
   const k=st.cards.filter(c=>known.has(c.id)).length;
   document.documentElement.style.setProperty('--cur', currentView==='study'?lineColor(st.s):getLineVar());
-  if(currentView==='study') document.documentElement.style.setProperty('--acc', st.s===1?'var(--a1)':'var(--a2)');
-  $('#signStudy').innerHTML=`<div class="side">${prev?'← '+esc(prev.name):'출발역'}</div><div class="mid"><b>${esc(st.name)}</b><span>${st.s}과목 · ${k}/${st.cards.length} 외움</span></div><div class="side r">${next?esc(next.name)+' →':'종착역'}</div>`;
+  if(currentView==='study') document.documentElement.style.setProperty('--acc', st.s===0?'var(--a5)':st.s===1?'var(--a1)':'var(--a2)');
+  $('#signStudy').innerHTML=`<div class="side">${prev?'← '+esc(prev.name):'출발역'}</div><div class="mid"><b>${esc(st.name)}</b><span>${subName(st.s)} · ${k}/${st.cards.length} 외움</span></div><div class="side r">${next?esc(next.name)+' →':'종착역'}</div>`;
 }
 function buildDeck(){
   const st=STATIONS.find(s=>s.id===curSt);
@@ -795,13 +889,14 @@ $('#sm-ta').onclick=()=>setStudyMode('ta');
 let ta={on:false};
 function fillScope(){
   const sel=$('#taScope'); const keep=sel.value;
-  sel.innerHTML=`<option value="cur">현재 역: ${esc(STATIONS.find(s=>s.id===curSt).name)}</option><option value="s1">1과목 전체</option><option value="s2">2과목 전체</option><option value="all">전 노선</option>`;
+  sel.innerHTML=`<option value="cur">현재 역: ${esc(STATIONS.find(s=>s.id===curSt).name)}</option><option value="s0">강의 노트 전체</option><option value="s1">1과목 전체</option><option value="s2">2과목 전체</option><option value="all">전 노선</option>`;
   if(keep&&keep!=='cur') sel.value=keep;
 }
 $('#taBest').textContent=store.get('taBest',0);
 function taPool(){
   const v=$('#taScope').value;
   if(v==='cur') return STATIONS.find(s=>s.id===curSt).cards;
+  if(v==='s0') return ALLCARDS.filter(c=>STATIONS.find(s=>s.id===c.st).s===0);
   if(v==='s1') return ALLCARDS.filter(c=>STATIONS.find(s=>s.id===c.st).s===1);
   if(v==='s2') return ALLCARDS.filter(c=>STATIONS.find(s=>s.id===c.st).s===2);
   return ALLCARDS;
@@ -1446,13 +1541,15 @@ const BANK=[
 [2,'VBA 편집기(Visual Basic Editor)를 여는 키는?',['Alt+F8','Alt+F11','Ctrl+F11','F8'],1,'Alt+F8은 매크로 대화상자.'],
 [2,'[Excel 옵션]에서 소수점 자동 삽입 위치를 2로 설정하고 1234를 입력하면?',['1234','12.34','123400','1.234'],1,'위치 2면 입력값을 100으로 나눠 입력해요.']
 ].map((q,i)=>({id:i,s:q[0],q:q[1],o:q[2],a:q[3],e:q[4]}));
+/* 강의 복습 문제: id 1000번대(강의 번호×50 + 순번)로 고정해 오답 기록이 섞이지 않게 */
+LECTURES.forEach(L=>L.quiz.forEach((q,j)=>BANK.push({id:1000+L.n*50+j,s:1,lec:L.n,q:q[0],o:q[1],a:q[2],e:q[3]})));
 
 /* ================= 시험 진행 ================= */
 let ex=null;
 let wrongIds=new Set(store.get('wrong',[]));
 function setWrong(id,v){if(v)wrongIds.add(id);else wrongIds.delete(id);meta.wrong[id]=[v?1:0,Date.now()]}
 function saveWrong(){store.set('wrong',[...wrongIds]);store.set('meta',meta);Sync.soon()}
-function updWrong(){ $('#wrongCount').textContent=wrongIds.size?`틀린 문제 ${wrongIds.size}개가 기다리고 있어요.`:'틀린 문제가 쌓이면 여기서 다시 풀어요.'; renderHistory() }
+function updWrong(){ const lc=document.getElementById('lecCount'); if(lc) lc.textContent=`${LECTURES.length}강까지 ${BANK.filter(q=>q.lec).length}문항. 들은 강의만 모아서 풀어요.`; $('#wrongCount').textContent=wrongIds.size?`틀린 문제 ${wrongIds.size}개가 기다리고 있어요.`:'틀린 문제가 쌓이면 여기서 다시 풀어요.'; renderHistory() }
 function renderHistory(){const h=store.get('hist',[]);$('#history').innerHTML=h.length?h.slice(-5).reverse().map(x=>`<div class="row" style="justify-content:space-between"><span>${esc(x.d)} · ${esc(x.m)}</span><b class="${x.pass?'pass':'fail'}">${x.score}점 ${x.pass?'합격':'불합격'}</b></div>`).join(''):'아직 기록이 없어요.'}
 function startExam(mode){
   let qs=[],sec=0;
@@ -1462,9 +1559,10 @@ function startExam(mode){
   else if(mode==='s2'){qs=pick(2,20);sec=20*60}
   else if(mode==='wrong'){qs=shuffle(BANK.filter(q=>wrongIds.has(q.id)));if(!qs.length){$('#wrongCount').textContent='아직 틀린 문제가 없어요. 먼저 모의고사를 풀어 보세요.';return}}
   else if(mode==='quick'){qs=shuffle(BANK).slice(0,10)}
+  else if(mode==='lec'){qs=shuffle(BANK.filter(q=>q.lec))}
   // 보기 섞기
   qs=qs.map(q=>{const idx=shuffle([0,1,2,3]);return Object.assign({},q,{o:idx.map(i=>q.o[i]),a:idx.indexOf(q.a)})});
-  ex={mode,qs,ans:Array(qs.length).fill(null),i:0,sec,left:sec,done:false,instant:mode==='quick'||mode==='wrong'};
+  ex={mode,qs,ans:Array(qs.length).fill(null),i:0,sec,left:sec,done:false,instant:mode==='quick'||mode==='wrong'||mode==='lec'};
   $('#exStart').hidden=true;$('#exResult').hidden=true;$('#exRun').hidden=false;$('#exConfirm').hidden=true;
   clearInterval(ex.timer);
   if(sec){ex.timer=setInterval(()=>{ex.left--;tick();if(ex.left<=0){finishExam(true)}},1000)}
@@ -1474,7 +1572,7 @@ function tick(){if(!ex)return;const t=$('#exTimer');if(!ex.sec){t.textContent='�
 function renderQ(){
   const q=ex.qs[ex.i];
   $('#qNum').textContent=String(ex.i+1).padStart(2,'0');
-  $('#qSub').textContent=q.s===1?'1과목 컴퓨터 일반':'2과목 스프레드시트';$('#qSub').style.background=q.s===1?'var(--a1)':'var(--a2)';
+  $('#qSub').textContent=q.lec?q.lec+'강 복습':q.s===1?'1과목 컴퓨터 일반':'2과목 스프레드시트';$('#qSub').style.background=q.lec?'var(--a5)':q.s===1?'var(--a1)':'var(--a2)';
   $('#qText').innerHTML=fmtQ(q.q);
   const a=ex.ans[ex.i], reveal=ex.done||(ex.instant&&a!=null);
   $('#qChoices').innerHTML=q.o.map((o,i)=>{let c='choice';if(reveal){if(i===q.a)c+=' right';else if(i===a)c+=' wrong'}else if(i===a)c+=' sel';return `<button class="${c}" data-i="${i}"><span class="n">${'①②③④'[i]}</span><span>${fmtQ(o)}</span></button>`}).join('');
