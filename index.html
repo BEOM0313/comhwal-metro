@@ -324,7 +324,15 @@ details.more[open] summary::before{transform:rotate(90deg)}
       <p class="muted" style="font-size:13px;margin:0">토큰은 이 기기 브라우저에만 저장되고, gist 권한만 있어서 저장소나 계정 설정은 건드릴 수 없어요.</p>
     </div>
     <div id="syncOn" hidden style="display:grid;gap:10px">
-      <p class="muted" style="margin:0;font-size:14px">카드를 외우거나 시험을 끝내면 몇 초 뒤 자동 저장돼요. 앱을 다시 열 때도 최신 기록을 불러와요.</p>
+      <p class="muted" style="margin:0;font-size:14px">카드를 외우거나 시험을 끝내면 몇 초 뒤 자동 저장돼요. 이 기기는 껐다 켜도 연결이 유지돼요.</p>
+      <div style="display:grid;gap:8px;padding:12px 14px;border-radius:12px;background:var(--panel2)">
+        <b>다른 기기는 링크 한 번으로 연결</b>
+        <span class="muted" style="font-size:14px">아래 링크를 내 카톡이나 메모에 저장해 두고, 다른 폰·PC에서 누르기만 하면 바로 연결돼요.</span>
+        <button class="btn" id="syncCopy">자동 연결 링크 복사</button>
+        <input id="syncLinkBox" hidden readonly style="font-family:var(--f-mono);font-size:12px;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);min-width:0" aria-label="자동 연결 링크">
+        <span id="syncLinkMsg" class="muted" style="font-size:13px"></span>
+        <span class="muted" style="font-size:12.5px">이 링크에는 기록 저장용 열쇠가 들어 있어요. 남에게 보내지 마세요.</span>
+      </div>
       <div class="row"><button class="btn" id="syncNow">지금 동기화</button><button class="btn ghost" id="syncOff">이 기기 연결 끊기</button></div>
       <p class="muted" style="font-size:13px;margin:0">연결을 끊어도 Gist의 기록은 지워지지 않아요.</p>
     </div>
@@ -1655,7 +1663,24 @@ const Sync=(()=>{
     store.set('ghToken',t);store.set('gistId','');$('#syncToken').value='';await run();
   }
   function disconnect(){store.set('ghToken','');store.set('gistId','');status('','off')}
+  /* 자동 연결 링크(#sync=토큰)로 열면 토큰을 저장하고 주소창에서 지움 */
+  function fromLink(){
+    const m=/(?:^#|&)sync=((?:ghp_|github_pat_)[A-Za-z0-9_]+)/.exec(location.hash||'');
+    if(!m)return false;
+    if(m[1]!==tok()){store.set('ghToken',m[1]);store.set('gistId','')}
+    try{history.replaceState(null,'',location.pathname+location.search)}catch(e){location.hash=''}
+    return true;
+  }
+  function linkUrl(){return location.origin+location.pathname+'#sync='+tok()}
+  async function copyLink(){
+    const url=linkUrl(), box=$('#syncLinkBox');
+    box.hidden=false;box.value=url;
+    try{await navigator.clipboard.writeText(url);$('#syncLinkMsg').textContent='복사했어요. 카카오톡 "나에게 보내기"나 메모에 붙여 넣어 두세요.'}
+    catch(e){box.focus();box.select();$('#syncLinkMsg').textContent='아래 주소를 길게 눌러 복사하세요.'}
+  }
   function init(){
+    const linked=fromLink();
+    $('#syncCopy').onclick=copyLink;
     $('#syncBtn').onclick=()=>{$('#syncPanel').hidden=false;$('#syncClose').focus()};
     $('#syncClose').onclick=()=>{$('#syncPanel').hidden=true};
     $('#syncPanel').addEventListener('click',e=>{if(e.target.id==='syncPanel')$('#syncPanel').hidden=true});
