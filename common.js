@@ -154,7 +154,7 @@ function mountPill(el){
 }
 function openPanel(){
   injectCSS(); const ov=document.createElement('div'); ov.className='cs-ov';
-  const close=()=>{ov.remove();document.removeEventListener('keydown',kd)}; const kd=e=>{if(e.key==='Escape')close()};
+  const close=()=>{document.removeEventListener('keydown',kd);window.UIX?UIX.close(ov,()=>ov.remove()):ov.remove()}; const kd=e=>{if(e.key==='Escape')close()};
   const draw=()=>{
     const on=!!tok(), st=stats(), key=get('key','');
     const line=MODE!=='online'?'<b>이 기기에만 저장</b> · 인터넷 없는 묶음이라 동기화하지 않아요.'

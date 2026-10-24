@@ -38,7 +38,9 @@ addEventListener('storage',function(e){if(e.key===K)apply(saved())});
 function reduce(){try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return false}}
 function set(t,x,y){
   var run=function(){try{localStorage.setItem(K,JSON.stringify(t))}catch(e){} apply(t)};
-  if(!document.startViewTransition||reduce()){run();return}
+  if(!document.startViewTransition||reduce()){
+    if(!reduce()){root.classList.add('theme-fade');setTimeout(function(){root.classList.remove('theme-fade')},360)}
+    run();return}
   root.classList.add('theme-vt');
   var vt=document.startViewTransition(run);
   vt.ready.then(function(){
@@ -67,6 +69,14 @@ function mount(el,opt){
     set(eff()==='dark'?'light':'dark',x,y)});
   el.appendChild(b); return b;
 }
+/* 창 닫기: 바로 숨기지 않고 짧게 사라진 뒤 숨김 */
+function close(el,done){
+  if(!el){done&&done();return}
+  if(el.classList.contains('is-closing')) return;
+  el.classList.add('is-closing');
+  setTimeout(function(){el.classList.remove('is-closing');done&&done()},190);
+}
+window.UIX={close:close};
 window.Theme={mount:mount,get:eff,set:function(t){set(t,innerWidth-40,40)}};
 })();
 </script><!--/THEME-->
@@ -429,6 +439,45 @@ html.theme-vt::view-transition-new(root){z-index:2}
   .intro .tile:nth-child(4){animation-delay:165ms}.intro .tile:nth-child(5){animation-delay:200ms}.intro .tile:nth-child(6){animation-delay:235ms}
   .intro .meter i{transform-origin:left center;animation:fillx 700ms cubic-bezier(.23,1,.32,1) 250ms backwards}
 }
+
+/* ===== 더 부드럽게 ===== */
+/* 닫힐 때도 스르륵 (열 때보다 빠르게 150~200ms) */
+.is-closing{opacity:0!important;pointer-events:none;transition:opacity 160ms ease!important}
+.is-closing .sheet,.is-closing .cs-dlg,.is-closing .dlg{transform:scale(.97);transition:transform 180ms var(--ease-out),opacity 160ms ease!important}
+.ov.is-closing .sheet{transform:translateY(100%);transition:transform 200ms var(--ease-out)!important}
+.pop.is-closing,.calc.is-closing{transform:scale(.96);transition:transform 160ms var(--ease-out),opacity 160ms ease!important}
+@media (min-width:900px){.ov.is-closing .sheet{transform:scale(.97)}}
+@media (max-width:720px){.sheetwrap.is-closing .sheet{transform:translateY(100%);transition:transform 200ms var(--ease-out)!important}}
+@media (max-width:700px){.pop.is-closing{opacity:1!important;transform:translateY(100%);transition:transform 200ms var(--ease-out)!important}}
+
+@media (prefers-reduced-motion:no-preference){
+  /* 문제를 넘기면 누른 방향에서 살짝 밀려 들어옴 (위키 문제 창 · CBT) */
+  .qcard.in-r,.qcard.in-l{transition:transform 240ms var(--ease-out),opacity 200ms ease}
+  /* 결과 화면: 판정 → 점수 → 문항 순서로 차례대로 */
+  #result .panel,#result .acts2{animation:rise 360ms var(--ease-out) backwards}
+  #result .panel:nth-of-type(2){animation-delay:60ms}#result .panel:nth-of-type(3){animation-delay:120ms}#result .panel:nth-of-type(4){animation-delay:170ms}#result .acts2{animation-delay:200ms}
+  #result .big{animation:pop 420ms var(--ease-out) 80ms backwards}
+  #result .grid40 .cell{animation:rise 260ms var(--ease-out) backwards}
+  /* 약점 막대·진도 막대가 채워짐 */
+  .wbar i{transform-origin:left center;animation:fillx 700ms var(--ease-out) 120ms backwards}
+  /* 접었다 펴는 상자(details)가 높이를 따라 부드럽게 열림 */
+  :root{interpolate-size:allow-keywords}
+  details::details-content{height:0;overflow:clip;transition:height 260ms var(--ease-out),content-visibility 260ms allow-discrete}
+  details[open]::details-content{height:auto}
+}
+@starting-style{
+  .qcard.in-r{opacity:0;transform:translateX(16px)}
+  .qcard.in-l{opacity:0;transform:translateX(-16px)}
+  /* 답을 고르면 정답·오답 색이 바로 칠해지지 않고 스르륵 번짐 */
+  .qz .op.ok,.qz .op.no,.opt.right,.opt.wrong{background-color:var(--paper);border-color:var(--line)}
+}
+.qz .op,.opt{transition:transform 140ms var(--ease-out),background-color 260ms ease,border-color 260ms ease,color 260ms ease}
+@keyframes pop{from{opacity:0;transform:scale(.92)}}
+/* 목차·선택 표시도 색이 부드럽게 옮겨감 */
+.side li a,.toc a,nav.lines button,.seg button,.qf button,.tab{transition:background-color 180ms ease,color 180ms ease,border-color 180ms ease,transform 140ms var(--ease-out)}
+/* 다크 모드 전환을 지원하지 않는 브라우저: 원 대신 색이 0.3초 동안 바뀜 */
+.theme-fade,.theme-fade *,.theme-fade *::before,.theme-fade *::after{transition:background-color 300ms ease,color 300ms ease,border-color 300ms ease,fill 300ms ease,stroke 300ms ease!important}
+@media (prefers-reduced-motion:reduce){.is-closing *{transform:none!important}}
 /*/POLISH*/
 </style>
 
@@ -2167,7 +2216,7 @@ function show(v){
   store.set('view',v);
   try{history.replaceState(null,'','#'+v)}catch(e){}
 }
-$$('nav.lines button').forEach(b=>b.onclick=()=>show(b.dataset.view));
+$$('nav.lines button').forEach(b=>b.onclick=e=>{const v=b.dataset.view;if(v===currentView)return;const rm=matchMedia('(prefers-reduced-motion: reduce)').matches;if(e.detail>0&&document.startViewTransition&&!rm)document.startViewTransition(()=>{show(v);scrollTo(0,0)});else show(v)});
 function setPractice(m){
   [['key','#pKey'],['xl','#pXl'],['fmt','#pFmt']].forEach(([k,id])=>{$(id).hidden=k!==m;$('#pm-'+k).setAttribute('aria-pressed',k===m)});
   if(m==='key')setTimeout(()=>$('#kCap').focus(),50);
@@ -2302,8 +2351,9 @@ const Sync=(()=>{
     const linked=fromLink();
     $('#syncCopy').onclick=copyLink;
     $('#syncBtn').onclick=()=>{$('#syncPanel').hidden=false;$('#syncClose').focus()};
-    $('#syncClose').onclick=()=>{$('#syncPanel').hidden=true};
-    $('#syncPanel').addEventListener('click',e=>{if(e.target.id==='syncPanel')$('#syncPanel').hidden=true});
+    const closeSync=()=>{const p=$('#syncPanel');if(p.hidden)return;window.UIX?UIX.close(p,()=>{p.hidden=true}):(p.hidden=true)};
+    $('#syncClose').onclick=closeSync;
+    $('#syncPanel').addEventListener('click',e=>{if(e.target.id==='syncPanel')closeSync()});
     document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#syncPanel').hidden)$('#syncPanel').hidden=true});
     $('#syncConnect').onclick=connect;$('#syncNow').onclick=run;$('#syncOff').onclick=disconnect;
     $('#syncToken').addEventListener('keydown',e=>{if(e.key==='Enter')connect()});

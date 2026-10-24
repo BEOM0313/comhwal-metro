@@ -38,7 +38,9 @@ addEventListener('storage',function(e){if(e.key===K)apply(saved())});
 function reduce(){try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return false}}
 function set(t,x,y){
   var run=function(){try{localStorage.setItem(K,JSON.stringify(t))}catch(e){} apply(t)};
-  if(!document.startViewTransition||reduce()){run();return}
+  if(!document.startViewTransition||reduce()){
+    if(!reduce()){root.classList.add('theme-fade');setTimeout(function(){root.classList.remove('theme-fade')},360)}
+    run();return}
   root.classList.add('theme-vt');
   var vt=document.startViewTransition(run);
   vt.ready.then(function(){
@@ -67,6 +69,14 @@ function mount(el,opt){
     set(eff()==='dark'?'light':'dark',x,y)});
   el.appendChild(b); return b;
 }
+/* 창 닫기: 바로 숨기지 않고 짧게 사라진 뒤 숨김 */
+function close(el,done){
+  if(!el){done&&done();return}
+  if(el.classList.contains('is-closing')) return;
+  el.classList.add('is-closing');
+  setTimeout(function(){el.classList.remove('is-closing');done&&done()},190);
+}
+window.UIX={close:close};
 window.Theme={mount:mount,get:eff,set:function(t){set(t,innerWidth-40,40)}};
 })();
 </script>
@@ -338,6 +348,45 @@ html.theme-vt::view-transition-new(root){z-index:2}
   .intro .tile:nth-child(4){animation-delay:165ms}.intro .tile:nth-child(5){animation-delay:200ms}.intro .tile:nth-child(6){animation-delay:235ms}
   .intro .meter i{transform-origin:left center;animation:fillx 700ms cubic-bezier(.23,1,.32,1) 250ms backwards}
 }
+
+/* ===== 더 부드럽게 ===== */
+/* 닫힐 때도 스르륵 (열 때보다 빠르게 150~200ms) */
+.is-closing{opacity:0!important;pointer-events:none;transition:opacity 160ms ease!important}
+.is-closing .sheet,.is-closing .cs-dlg,.is-closing .dlg{transform:scale(.97);transition:transform 180ms var(--ease-out),opacity 160ms ease!important}
+.ov.is-closing .sheet{transform:translateY(100%);transition:transform 200ms var(--ease-out)!important}
+.pop.is-closing,.calc.is-closing{transform:scale(.96);transition:transform 160ms var(--ease-out),opacity 160ms ease!important}
+@media (min-width:900px){.ov.is-closing .sheet{transform:scale(.97)}}
+@media (max-width:720px){.sheetwrap.is-closing .sheet{transform:translateY(100%);transition:transform 200ms var(--ease-out)!important}}
+@media (max-width:700px){.pop.is-closing{opacity:1!important;transform:translateY(100%);transition:transform 200ms var(--ease-out)!important}}
+
+@media (prefers-reduced-motion:no-preference){
+  /* 문제를 넘기면 누른 방향에서 살짝 밀려 들어옴 (위키 문제 창 · CBT) */
+  .qcard.in-r,.qcard.in-l{transition:transform 240ms var(--ease-out),opacity 200ms ease}
+  /* 결과 화면: 판정 → 점수 → 문항 순서로 차례대로 */
+  #result .panel,#result .acts2{animation:rise 360ms var(--ease-out) backwards}
+  #result .panel:nth-of-type(2){animation-delay:60ms}#result .panel:nth-of-type(3){animation-delay:120ms}#result .panel:nth-of-type(4){animation-delay:170ms}#result .acts2{animation-delay:200ms}
+  #result .big{animation:pop 420ms var(--ease-out) 80ms backwards}
+  #result .grid40 .cell{animation:rise 260ms var(--ease-out) backwards}
+  /* 약점 막대·진도 막대가 채워짐 */
+  .wbar i{transform-origin:left center;animation:fillx 700ms var(--ease-out) 120ms backwards}
+  /* 접었다 펴는 상자(details)가 높이를 따라 부드럽게 열림 */
+  :root{interpolate-size:allow-keywords}
+  details::details-content{height:0;overflow:clip;transition:height 260ms var(--ease-out),content-visibility 260ms allow-discrete}
+  details[open]::details-content{height:auto}
+}
+@starting-style{
+  .qcard.in-r{opacity:0;transform:translateX(16px)}
+  .qcard.in-l{opacity:0;transform:translateX(-16px)}
+  /* 답을 고르면 정답·오답 색이 바로 칠해지지 않고 스르륵 번짐 */
+  .qz .op.ok,.qz .op.no,.opt.right,.opt.wrong{background-color:var(--paper);border-color:var(--line)}
+}
+.qz .op,.opt{transition:transform 140ms var(--ease-out),background-color 260ms ease,border-color 260ms ease,color 260ms ease}
+@keyframes pop{from{opacity:0;transform:scale(.92)}}
+/* 목차·선택 표시도 색이 부드럽게 옮겨감 */
+.side li a,.toc a,nav.lines button,.seg button,.qf button,.tab{transition:background-color 180ms ease,color 180ms ease,border-color 180ms ease,transform 140ms var(--ease-out)}
+/* 다크 모드 전환을 지원하지 않는 브라우저: 원 대신 색이 0.3초 동안 바뀜 */
+.theme-fade,.theme-fade *,.theme-fade *::before,.theme-fade *::after{transition:background-color 300ms ease,color 300ms ease,border-color 300ms ease,fill 300ms ease,stroke 300ms ease!important}
+@media (prefers-reduced-motion:reduce){.is-closing *{transform:none!important}}
 </style>
 </head><body>
 
@@ -503,7 +552,7 @@ function renderExam(){
 function qhtml(k){
   const q=X.qs[k], a=X.ans[k], show=X.done||((S.reveal||X.rev)&&a>=0);
   const subj=q.s?`${q.s}과목 ${q.s===1?'컴퓨터 일반':'스프레드시트 일반'}`:'';
-  return `<section class="qcard" aria-label="${k+1}번 문제">
+  return `<section class="qcard${X.inDir?' in-'+X.inDir:''}" aria-label="${k+1}번 문제">
     <div class="qsubj">${subj?`<span>${subj}</span>`:''}<span>${esc(q.src)} ${q.n}번</span>${show&&q.w&&TT(q.w)?`<span class="ty">유형 · ${esc(TT(q.w))}</span>`:''}${show&&a>=0?`<span class="verdict ${a===q.a?'ok':'bad'}">${a===q.a?'정답':'오답'}</span>`:''}${X.done&&a<0?'<span class="verdict bad">안 푼 문제</span>':''}</div>
     <p class="qstem"><span class="no">${k+1}.</span>${esc(q.q)}</p>
     ${q.f.map(i=>`<img class="qfig" src="${FIGS[i][0]}" width="${FIGS[i][1]}" height="${FIGS[i][2]}" alt="${k+1}번 문제 그림" loading="lazy">`).join('')}
@@ -531,16 +580,16 @@ function renderOMR(){
   const un=X.ans.filter(a=>a<0).length; if($('#un')) $('#un').textContent=un;
   const p=per(); document.querySelectorAll('.orow').forEach(r=>r.classList.toggle('cur',+r.dataset.k>=X.i&&+r.dataset.k<X.i+p));
 }
-function go(k){X.i=Math.max(0,Math.min(X.qs.length-1,k)); renderQ(); renderOMR()}
+function go(k,dir){const n=Math.max(0,Math.min(X.qs.length-1,k)); X.inDir=dir&&n!==X.i?(n>X.i?'r':'l'):''; X.i=n; renderQ(); X.inDir=''; renderOMR()}
 function onExamClick(e){
   const b=e.target.closest('button'); if(!b) return;
   if(b.dataset.o!=null&&!X.done){const k=+b.dataset.q,j=+b.dataset.o; X.ans[k]=X.ans[k]===j&&!S.reveal?-1:j; if(S.reveal&&X.ans[k]<0)X.ans[k]=j; const keep=$('#qa').scrollTop; renderQ(); $('#qa').scrollTop=keep; renderOMR(); if(b.closest('.omr')&&innerWidth<=860){} return}
-  if(b.dataset.jump!=null){go(+b.dataset.jump); if(innerWidth<=860) $('#omr').classList.remove('open'); return}
+  if(b.dataset.jump!=null){go(+b.dataset.jump,e.detail>0); if(innerWidth<=860) $('#omr').classList.remove('open'); return}
   if(b.dataset.fs!=null){S.fs=+b.dataset.fs;store.set('fs',S.fs);document.documentElement.style.setProperty('--fs',FS[S.fs]+'px');document.querySelectorAll('[data-fs]').forEach(x=>x.setAttribute('aria-pressed',+x.dataset.fs===S.fs));return}
   if(b.dataset.lay!=null){S.lay=+b.dataset.lay;store.set('lay',S.lay);document.querySelectorAll('[data-lay]').forEach(x=>x.setAttribute('aria-pressed',+x.dataset.lay===S.lay));renderQ();renderOMR();return}
   switch(b.id){
-    case 'prev': go(X.i-per()); break;
-    case 'next': go(X.i+per()); break;
+    case 'prev': go(X.i-per(),e.detail>0); break;
+    case 'next': go(X.i+per(),e.detail>0); break;
     case 'unb': {const k=X.ans.findIndex((a,i)=>a<0&&i>X.i); const k2=k>=0?k:X.ans.findIndex(a=>a<0); if(k2>=0) go(k2); else toast('안 푼 문제가 없습니다.'); break}
     case 'omrb': $('#omr').classList.add('open'); break;
     case 'omrx': $('#omr').classList.remove('open'); break;
@@ -558,7 +607,7 @@ addEventListener('resize',()=>{if(X&&!$('#exam').hidden){renderQ();renderOMR()}}
 function modal(title,msg,acts){
   $('#layer').innerHTML=`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt"><div class="dlg"><h4 id="mt">${title}</h4><p>${msg}</p><div class="acts">${acts.map((a,i)=>`<button class="btn ${a.pri?'pri':''}" type="button" data-a="${i}">${a.t}</button>`).join('')}</div></div></div>`;
   const first=$('#layer [data-a]'); first&&first.focus();
-  $('#layer').onclick=e=>{const b=e.target.closest('[data-a]'); if(!b) return; const a=acts[+b.dataset.a]; $('#layer').innerHTML=''; a.f&&a.f()};
+  $('#layer').onclick=e=>{const b=e.target.closest('[data-a]'); if(!b) return; const a=acts[+b.dataset.a]; const m=$('#layer .modal'); if(a.f){$('#layer').innerHTML=''; a.f()} else if(window.UIX&&m){UIX.close(m,()=>{$('#layer').innerHTML=''})} else $('#layer').innerHTML=''};
 }
 function confirmSubmit(){
   const un=X.ans.filter(a=>a<0).length;
@@ -603,6 +652,10 @@ function showResult(){
       return ks.length?`<div class="panel"><h2>이번에 틀린 유형 <small>누르면 그 유형만 모아 연습한다 (정답 바로 확인)</small></h2><div class="tychips">${ks.map(w=>`<button type="button" data-ty="${w}">${esc(TT(w))} <b>${c[w]}</b></button>`).join('')}</div></div>`:''})()}
     <div class="acts2"><button class="btn pri" type="button" id="rev">정답·해설 보기</button><button class="btn" type="button" id="again">같은 시험 다시 풀기</button><button class="btn" type="button" id="wr">틀린 문제만 다시 풀기</button><button class="btn" type="button" id="hm">처음 화면</button></div>
   </div>`;
+  /* 점수가 0에서 올라가며 세어짐 (시험 끝났을 때 한 번) */
+  try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.querySelectorAll('#result .sbox b').forEach(el=>{const to=+el.textContent;if(!(to>0))return;const t0=performance.now();el.textContent='0';
+    const step=t=>{const p=Math.min(1,(t-t0-120)/750);const v=p<0?0:Math.round(to*(1-Math.pow(1-p,3)));el.textContent=v;if(p<1)requestAnimationFrame(step)};requestAnimationFrame(step)})}}catch(err){}
+  document.querySelectorAll('#result .grid40 .cell').forEach((c,i)=>c.style.animationDelay=(180+i*12)+'ms');
   $('#result').onclick=e=>{const b=e.target.closest('button'); if(!b) return;
     if(b.dataset.rev!=null){X.i=+b.dataset.rev; show('exam'); renderExam(); return}
     if(b.id==='rev'){X.i=0; show('exam'); renderExam()}
@@ -621,7 +674,7 @@ function calc(){
   let ex='';
   const upd=v=>{$('#cd').textContent=v||'0'};
   d.onclick=e=>{const b=e.target.closest('button'); if(!b) return; const k=b.textContent;
-    if(b.classList.contains('x')){d.remove();return}
+    if(b.classList.contains('x')){window.UIX?UIX.close(d,()=>d.remove()):d.remove();return}
     if(k==='C'){ex='';$('#cx').textContent='';upd('');return}
     if(k==='⌫'){ex=ex.slice(0,-1);upd(ex);return}
     if(k==='='){try{const js=ex.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-'); if(!/^[\d+\-*/().\s]+$/.test(js)) throw 0; const v=Function('"use strict";return ('+js+')')(); $('#cx').textContent=ex+' ='; ex=String(Math.round(v*1e10)/1e10); upd(ex)}catch(err){$('#cx').textContent='식을 확인하세요';}return}

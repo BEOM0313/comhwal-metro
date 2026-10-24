@@ -38,7 +38,9 @@ addEventListener('storage',function(e){if(e.key===K)apply(saved())});
 function reduce(){try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return false}}
 function set(t,x,y){
   var run=function(){try{localStorage.setItem(K,JSON.stringify(t))}catch(e){} apply(t)};
-  if(!document.startViewTransition||reduce()){run();return}
+  if(!document.startViewTransition||reduce()){
+    if(!reduce()){root.classList.add('theme-fade');setTimeout(function(){root.classList.remove('theme-fade')},360)}
+    run();return}
   root.classList.add('theme-vt');
   var vt=document.startViewTransition(run);
   vt.ready.then(function(){
@@ -67,6 +69,14 @@ function mount(el,opt){
     set(eff()==='dark'?'light':'dark',x,y)});
   el.appendChild(b); return b;
 }
+/* 창 닫기: 바로 숨기지 않고 짧게 사라진 뒤 숨김 */
+function close(el,done){
+  if(!el){done&&done();return}
+  if(el.classList.contains('is-closing')) return;
+  el.classList.add('is-closing');
+  setTimeout(function(){el.classList.remove('is-closing');done&&done()},190);
+}
+window.UIX={close:close};
 window.Theme={mount:mount,get:eff,set:function(t){set(t,innerWidth-40,40)}};
 })();
 </script>
@@ -402,6 +412,45 @@ html.theme-vt::view-transition-new(root){z-index:2}
   .intro .tile:nth-child(4){animation-delay:165ms}.intro .tile:nth-child(5){animation-delay:200ms}.intro .tile:nth-child(6){animation-delay:235ms}
   .intro .meter i{transform-origin:left center;animation:fillx 700ms cubic-bezier(.23,1,.32,1) 250ms backwards}
 }
+
+/* ===== 더 부드럽게 ===== */
+/* 닫힐 때도 스르륵 (열 때보다 빠르게 150~200ms) */
+.is-closing{opacity:0!important;pointer-events:none;transition:opacity 160ms ease!important}
+.is-closing .sheet,.is-closing .cs-dlg,.is-closing .dlg{transform:scale(.97);transition:transform 180ms var(--ease-out),opacity 160ms ease!important}
+.ov.is-closing .sheet{transform:translateY(100%);transition:transform 200ms var(--ease-out)!important}
+.pop.is-closing,.calc.is-closing{transform:scale(.96);transition:transform 160ms var(--ease-out),opacity 160ms ease!important}
+@media (min-width:900px){.ov.is-closing .sheet{transform:scale(.97)}}
+@media (max-width:720px){.sheetwrap.is-closing .sheet{transform:translateY(100%);transition:transform 200ms var(--ease-out)!important}}
+@media (max-width:700px){.pop.is-closing{opacity:1!important;transform:translateY(100%);transition:transform 200ms var(--ease-out)!important}}
+
+@media (prefers-reduced-motion:no-preference){
+  /* 문제를 넘기면 누른 방향에서 살짝 밀려 들어옴 (위키 문제 창 · CBT) */
+  .qcard.in-r,.qcard.in-l{transition:transform 240ms var(--ease-out),opacity 200ms ease}
+  /* 결과 화면: 판정 → 점수 → 문항 순서로 차례대로 */
+  #result .panel,#result .acts2{animation:rise 360ms var(--ease-out) backwards}
+  #result .panel:nth-of-type(2){animation-delay:60ms}#result .panel:nth-of-type(3){animation-delay:120ms}#result .panel:nth-of-type(4){animation-delay:170ms}#result .acts2{animation-delay:200ms}
+  #result .big{animation:pop 420ms var(--ease-out) 80ms backwards}
+  #result .grid40 .cell{animation:rise 260ms var(--ease-out) backwards}
+  /* 약점 막대·진도 막대가 채워짐 */
+  .wbar i{transform-origin:left center;animation:fillx 700ms var(--ease-out) 120ms backwards}
+  /* 접었다 펴는 상자(details)가 높이를 따라 부드럽게 열림 */
+  :root{interpolate-size:allow-keywords}
+  details::details-content{height:0;overflow:clip;transition:height 260ms var(--ease-out),content-visibility 260ms allow-discrete}
+  details[open]::details-content{height:auto}
+}
+@starting-style{
+  .qcard.in-r{opacity:0;transform:translateX(16px)}
+  .qcard.in-l{opacity:0;transform:translateX(-16px)}
+  /* 답을 고르면 정답·오답 색이 바로 칠해지지 않고 스르륵 번짐 */
+  .qz .op.ok,.qz .op.no,.opt.right,.opt.wrong{background-color:var(--paper);border-color:var(--line)}
+}
+.qz .op,.opt{transition:transform 140ms var(--ease-out),background-color 260ms ease,border-color 260ms ease,color 260ms ease}
+@keyframes pop{from{opacity:0;transform:scale(.92)}}
+/* 목차·선택 표시도 색이 부드럽게 옮겨감 */
+.side li a,.toc a,nav.lines button,.seg button,.qf button,.tab{transition:background-color 180ms ease,color 180ms ease,border-color 180ms ease,transform 140ms var(--ease-out)}
+/* 다크 모드 전환을 지원하지 않는 브라우저: 원 대신 색이 0.3초 동안 바뀜 */
+.theme-fade,.theme-fade *,.theme-fade *::before,.theme-fade *::after{transition:background-color 300ms ease,color 300ms ease,border-color 300ms ease,fill 300ms ease,stroke 300ms ease!important}
+@media (prefers-reduced-motion:reduce){.is-closing *{transform:none!important}}
 </style>
 </head><body>
 
@@ -1339,7 +1388,7 @@ const SMOOTH=()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matc
 const Quiz=(()=>{
   const box=document.getElementById('qz'), M='①②③④', CS=window.CS||null;
   const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-  let CB=null, doc=null, list=[], i=0, flt='all', picked=null;
+  let CB=null, doc=null, list=[], i=0, flt='all', picked=null, IN='';
   const norm=q=>q.q.replace(/[\s\W]/g,'').slice(0,50)+'|'+q.o.join('').replace(/[\s\W]/g,'').slice(0,60);
   function cbtFor(id){
     if(!CB) return [];
@@ -1368,7 +1417,7 @@ const Quiz=(()=>{
       const n=list.length;
       h+=`<div class="bar" aria-hidden="true"><i class="o" style="width:${ok/n*100}%"></i><i class="x" style="width:${bad/n*100}%"></i></div>
       <div class="pg"><span>${i+1} / ${n}</span><span>맞힘 ${ok} · 틀림 ${bad} · 남음 ${n-done.length}</span></div>
-      <div class="qcard" id="qcard">
+      <div class="qcard${IN?' in-'+IN:''}" id="qcard">
         <span class="src ${q.kind}">${esc(q.src)}</span>
         <p class="stem">${esc(q.q)}</p>
         ${(q.f||[]).map(k=>CB&&CB.FIGS[k]?`<img class="qfig" src="${CB.FIGS[k][0]}" width="${CB.FIGS[k][1]}" height="${CB.FIGS[k][2]}" alt="문제 그림" loading="lazy">`:'').join('')}
@@ -1379,15 +1428,15 @@ const Quiz=(()=>{
       <details><summary>문제 번호로 가기</summary><div class="chips">${list.map((x,k)=>`<button type="button" data-j="${k}" class="${res[x.id]?(res[x.id][0]?'o':'x'):''}${k===i?' cur':''}" aria-label="${k+1}번${res[x.id]?(res[x.id][0]?' 맞힘':' 틀림'):''}">${k+1}</button>`).join('')}</div></details>`;
     } else h+=`<p class="empty">${flt==='wrong'?'이 문서에서 틀린 문제가 없다.':flt==='cbt'&&!CB?'기출문제는 잠겨 있다.':'이 문서에 연결된 문제가 아직 없다.'}</p>`;
     if(lockN) h+=`<div class="lock">CBT 기출문제는 비밀번호로 잠겨 있다. 풀면 이 문서 범위의 기출이 함께 나온다.<br><button class="lockb" type="button" data-lock>잠금 풀기</button></div>`;
-    box.innerHTML=h;
+    box.innerHTML=h; IN='';
   }
   document.addEventListener('click',e=>{if(e.target.closest('[data-qjump]'))box.scrollIntoView({behavior:SMOOTH(),block:'start'})});
   box.addEventListener('click',e=>{
     const b=e.target.closest('button'); if(!b) return;
     if(b.dataset.f){flt=b.dataset.f;i=0;picked=null;draw();return}
     if(b.dataset.lock!=null){CS&&CS.openPanel();return}
-    if(b.dataset.j!=null){i=+b.dataset.j;picked=null;draw();return}
-    if(b.dataset.n){const n=list.length;i=+b.dataset.n>0?(i<n-1?i+1:0):Math.max(0,i-1);picked=null;draw();box.querySelector('.qcard')&&innerWidth>=1360&&(box.scrollTop=0);return}
+    if(b.dataset.j!=null){const j=+b.dataset.j;IN=e.detail>0&&j!==i?(j>i?'r':'l'):'';i=j;picked=null;draw();return}
+    if(b.dataset.n){IN=e.detail>0?(+b.dataset.n>0?'r':'l'):'';const n=list.length;i=+b.dataset.n>0?(i<n-1?i+1:0):Math.max(0,i-1);picked=null;draw();box.querySelector('.qcard')&&innerWidth>=1360&&(box.scrollTop=0);return}
     if(b.dataset.o!=null&&picked==null){const q=list[i];picked=+b.dataset.o;
       const keep=flt==='wrong'; if(CS) CS.record(q.id,picked===q.a);
       if(keep){const id=q.id;draw();i=Math.max(0,list.findIndex(x=>x.id===id));if(i<0)i=0}
@@ -1464,7 +1513,7 @@ function go(id,opts={}){
   if(opts.anim&&document.startViewTransition&&SMOOTH()==='smooth') document.startViewTransition(run); else run();
   try{localStorage.setItem('kw-last',d?id:'main')}catch(e){}
 }
-function hidePop(){pop.hidden=true}
+function hidePop(){if(pop.hidden)return;window.UIX?UIX.close(pop,()=>{pop.hidden=true}):(pop.hidden=true)}
 function showPop(a){
   const k=+a.dataset.fn, t=FN[k-1]; if(!t) return;
   pop.innerHTML=`<div class="h"><span>각주 [${k}]</span><button class="x" type="button" aria-label="닫기">×</button></div>${inline(t,CUR&&CUR.id)}`; pop.hidden=false;
