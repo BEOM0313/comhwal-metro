@@ -5,9 +5,9 @@
 <title>컴활위키</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@500&family=Black+Han+Sans&display=swap">
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <style>
-/* 레이아웃: 상단 고정 바 + 위키 문서. PC(넓은 화면)는 본문 오른쪽에 고정 목차, 모바일은 한 열과 아래에서 올라오는 각주 창 */
+/* 레이아웃: 상단 고정 바 + 위키 문서. PC는 왼쪽 목차 · 가운데 문서 · 오른쪽 문제 창, 중간 폭은 문제를 문서 아래에, 모바일은 한 열 */
 :root{
   --bg:#f3f5fa; --paper:#ffffff; --ink:#1d2333; --sub:#5b6478; --line:#dfe3ec;
   --acc:#3a4fd8; --acc2:#0f7a55; --acc-ink:#ffffff; --link:#2f45c7; --mark:#ffe58a; --trap:#fff4f2; --trap-line:#d9472f; --tip:#eef3ff;
@@ -32,7 +32,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 a{color:var(--link)}
 a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bar);color:var(--bar-ink)}
-.top .in{max-width:1280px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding-block:9px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top .in{max-width:1640px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding-block:9px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .homeback{color:var(--bar-ink);text-decoration:none;font-size:28px;line-height:1;display:grid;place-items:center;width:32px;height:40px;margin-right:-6px;border-radius:8px}
 .homeback:hover{background:rgba(255,255,255,.12)}
 .logo{font-family:var(--f-disp);font-size:22px;color:var(--bar-ink);text-decoration:none;white-space:nowrap;line-height:1}
@@ -46,9 +46,51 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
 .res small{color:var(--sub)}
 .tb{display:flex;gap:6px}
 .tbtn{border:1px solid rgba(255,255,255,.25);background:none;color:var(--bar-ink);border-radius:8px;padding:0 12px;font:inherit;font-size:13.5px;cursor:pointer;white-space:nowrap;min-height:40px}
-.wrap{max-width:1280px;margin:0 auto;padding-block:20px calc(48px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1640px;margin:0 auto;padding-block:20px calc(48px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .layout{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start}
-@media (min-width:1100px){.layout.has-side{grid-template-columns:minmax(0,1fr) 270px}}
+@media (min-width:1100px){.layout.has-side{grid-template-columns:250px minmax(0,1fr)}.layout.has-side .side{grid-column:1;grid-row:1/span 2}.layout.has-side .doc{grid-column:2;grid-row:1}.layout.has-side .qz{grid-column:2;grid-row:2}}
+@media (min-width:1360px){.layout.has-side{grid-template-columns:240px minmax(0,1fr) 380px}.layout.has-side .side{grid-row:1}.layout.has-side .qz{grid-column:3;grid-row:1;position:sticky;top:calc(env(safe-area-inset-top,0px) + 76px);max-height:calc(100vh - 96px);overflow:auto;overscroll-behavior:contain}}
+@media (min-width:1700px){.layout.has-side{grid-template-columns:260px minmax(0,1fr) 420px}}
+/* 문제 창 */
+@media (max-width:640px){#csp .cs-pill{width:40px;padding:0;justify-content:center;font-size:0;gap:0;min-height:40px}#csp .cs-pill i{width:10px;height:10px}}
+.qjump{margin-left:auto;border:1px solid var(--acc);background:none;color:var(--link);border-radius:999px;font:inherit;font-size:12.5px;padding:2px 10px;cursor:pointer;min-height:28px}
+@media (min-width:1360px){.qjump{display:none}}
+.qz{display:none;scroll-margin-top:80px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:16px 16px 18px;min-width:0;font-size:15px}
+.layout.has-side .qz{display:block}
+.qz .qh{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.qz .qh h2{margin:0;font-size:17px}
+.qz .qh small{color:var(--sub);font-size:12.5px}
+.qz .qf{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 8px}
+.qz .qf button{min-height:34px;border:1px solid var(--line);background:var(--fold);color:var(--ink);border-radius:999px;padding:0 11px;font:inherit;font-size:13px;cursor:pointer}
+.qz .qf button[aria-pressed=true]{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
+.qz .bar{height:6px;border-radius:3px;background:var(--fold);overflow:hidden;display:flex;margin:4px 0 4px}
+.qz .bar i{display:block;height:100%}.qz .bar .o{background:var(--acc2)}.qz .bar .x{background:var(--trap-line)}
+.qz .pg{display:flex;justify-content:space-between;color:var(--sub);font-size:12.5px;font-variant-numeric:tabular-nums}
+.qz .qcard{border-top:1px solid var(--line);margin-top:10px;padding-top:12px}
+.qz .src{display:inline-block;font-size:12px;color:var(--sub);border:1px solid var(--line);border-radius:999px;padding:1px 9px;margin-bottom:8px}
+.qz .src.cbt{color:var(--k3i);background:var(--k3);border-color:transparent}.qz .src.own{color:var(--k2i);background:var(--k2);border-color:transparent}
+.qz .stem{font-weight:700;line-height:1.6;white-space:pre-line;margin:0 0 10px}
+.qz .qfig{display:block;max-width:100%;height:auto;border:1px solid var(--line);border-radius:4px;background:#fff;margin:0 0 10px}
+.qz .op{display:grid;grid-template-columns:26px minmax(0,1fr);gap:6px;width:100%;text-align:left;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:8px;padding:9px 10px;margin:0 0 7px;font:inherit;font-size:14.5px;line-height:1.5;cursor:pointer;min-height:44px}
+.qz .op:hover:not(:disabled){border-color:var(--acc)}
+.qz .op:disabled{cursor:default}
+.qz .op .m{font-family:var(--f-mono);color:var(--acc)}
+.qz .op.ok{border-color:var(--acc2);background:var(--k2);color:var(--k2i)}.qz .op.ok .m{color:var(--k2i)}
+.qz .op.no{border-color:var(--trap-line);background:var(--trap)}
+.qz .ex{border-radius:8px;padding:10px 12px;margin-top:4px;font-size:14px;white-space:pre-line;background:var(--tip);line-height:1.65}
+.qz .ex b{display:block;margin-bottom:2px}.qz .ex.ok b{color:var(--acc2)}.qz .ex.no b{color:var(--trap-line)}
+.qz .ex a{font-size:13px}
+.qz .nv{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.qz .nv button,.qz .lockb{min-height:42px;border:1px solid var(--line);background:var(--fold);color:var(--ink);border-radius:8px;font:inherit;font-size:14px;cursor:pointer}
+.qz .nv .pri{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
+.qz .lock{margin-top:12px;border:1px dashed var(--line);border-radius:8px;padding:10px 12px;font-size:13.5px;color:var(--sub)}
+.qz .lockb{min-height:36px;padding:0 12px;margin-top:6px;font-size:13px}
+.qz details{margin-top:12px;font-size:13px}.qz summary{cursor:pointer;color:var(--sub);min-height:32px}
+.qz .chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.qz .chips button{width:32px;height:32px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font:12px var(--f-mono);cursor:pointer;padding:0}
+.qz .chips button.o{background:var(--k2);border-color:var(--acc2);color:var(--k2i)}.qz .chips button.x{background:var(--trap);border-color:var(--trap-line)}
+.qz .chips button.cur{outline:2px solid var(--acc);outline-offset:1px}
+.qz .empty{color:var(--sub);font-size:14px;margin:12px 0 0}
 .doc{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:24px clamp(16px,3.4vw,44px) 30px;min-width:0}
 .side{display:none}
 @media (min-width:1100px){.layout.has-side .side{display:block;position:sticky;top:calc(env(safe-area-inset-top,0px) + 76px);max-height:calc(100vh - 100px);overflow:auto;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:14px 16px;font-size:14px}}
@@ -228,11 +270,14 @@ sup.fn a{font-family:var(--f-mono);font-size:11.5px;text-decoration:none;color:v
 <header class="top"><div class="in">
   <a class="homeback" href="index.html" aria-label="첫 화면으로" title="첫 화면으로">‹</a><a class="logo" href="#main" data-go="main">컴활<span>위키</span></a>
   <div class="srch"><input id="q" type="search" placeholder="문서 검색 (예: 캐시, VLOOKUP, 피벗)" autocomplete="off" aria-label="문서 검색"><div class="res" id="res" hidden></div></div>
-  <div class="tb"><button class="tbtn" id="rnd" type="button">랜덤 문서</button><button class="tbtn" id="home" type="button">대문</button></div>
+  <div class="tb"><span id="csp"></span><button class="tbtn" id="rnd" type="button">랜덤 문서</button><button class="tbtn" id="home" type="button">대문</button></div>
 </div></header>
-<main class="wrap"><div class="layout" id="layout"><article class="doc" id="doc"></article><aside class="side" id="side" aria-label="이 문서의 목차"></aside></div></main>
+<main class="wrap"><div class="layout" id="layout"><aside class="side" id="side" aria-label="이 문서의 목차"></aside><article class="doc" id="doc"></article><aside class="qz" id="qz" aria-label="이 문서 범위의 문제"></aside></div></main>
 <div class="pop" id="pop" hidden role="dialog" aria-label="각주"></div>
 
+<script>window.CS_MODE="online"</script>
+<script src="common.js"></script>
+<script src="quiz-own.js"></script>
 <script>
 const SUBJ={1:{name:'1과목 컴퓨터 일반',short:'1과목',unit:'강',groups:[['하드웨어·소프트웨어',1,8],['Windows',9,14],['멀티미디어',15,16],['정보통신·보안',17,21],['프로그래밍',22,22]]},
             2:{name:'2과목 스프레드시트 일반',short:'2과목',unit:'',groups:[['입력·편집',1,3],['서식·수식',4,5],['함수',6,7],['차트',8,8],['데이터 관리',9,10],['인쇄·매크로',11,12]]}};
@@ -421,9 +466,7 @@ const FIG={
 </div></div>
 <figcaption>문제 속 상황 문장을 왼쪽 질문에 대어 보면 어느 기능인지 바로 갈린다.</figcaption></figure>`}
 };
-
 const D=[
-
 {id:'d1',sj:1,n:1,t:'컴퓨터의 기본 개념',s:'디지털·아날로그, 컴퓨터 분류',cat:['컴퓨터 일반','하드웨어'],
 intro:'**컴퓨터**(Computer)는 입력된 데이터를 프로그램에 따라 처리해 결과를 내놓는 전자 장치다. 이름부터가 "계산하는 것"이라는 뜻인데[*영어 computer는 원래 계산을 직업으로 하는 사람을 부르던 말이었다. 기계가 그 일을 대신하면서 이름까지 가져갔다.], 지금은 계산보다 유튜브 보는 데 더 많이 쓰인다. ',
 sec:[
@@ -1147,12 +1190,77 @@ sec:[
 <li>도형·그림 같은 개체에는 매크로를 지정할 수 있지만 셀에는 안 된다</li></ul>`],
 ['매크로 보안',`<p>기본값은 "알림이 포함된 모든 매크로 제외"다. 파일을 열면 경고가 뜨고 [콘텐츠 사용]을 눌러야 실행된다. 매크로는 문서 안에 숨어 퍼지는 악성 코드의 통로가 되기도 했다.[*1999년 멜리사 바이러스는 워드 문서의 매크로로 퍼지며 메일 주소록의 50명에게 자기 자신을 보냈다. 이 일을 계기로 오피스의 매크로 보안이 크게 강화됐다.]</p>
 <p>2과목은 이 문서로 끝난다. 다음은 실기 시험이다.</p>`]]}
-
 ];
 const $=s=>document.querySelector(s), doc=$('#doc'), pop=$('#pop'), side=$('#side'), layout=$('#layout');
 const byId=id=>D.find(d=>d.id===id);
 const label=d=>d.sj===1?`${d.n}강 ${d.t}`:`2-${d.n} ${d.t}`;
 let FN=[], CUR=null;
+/* ---------- 문서별 문제 창: 강의 확인 문제 + METRO 문제 + CBT 기출 (맞히든 틀리든 바로 해설) */
+const Quiz=(()=>{
+  const box=document.getElementById('qz'), M='①②③④', CS=window.CS||null;
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  let CB=null, doc=null, list=[], i=0, flt='all', picked=null;
+  const norm=q=>q.q.replace(/[\s\W]/g,'').slice(0,50)+'|'+q.o.join('').replace(/[\s\W]/g,'').slice(0,60);
+  function cbtFor(id){
+    if(!CB) return [];
+    const seen=new Set(), out=[];
+    CB.SETS.forEach(s=>s.qs.forEach(q=>{if(q.w!==id||q.a<0)return; const k=norm(q); if(seen.has(k))return; seen.add(k);
+      out.push({id:s.k+'-'+q.n,src:s.t.replace('유형별: ','유형 ')+' '+q.n+'번',kind:'cbt',q:q.q,o:q.o,a:q.a,e:q.e,f:q.f})}));
+    return out;
+  }
+  function build(){
+    const own=(window.QOWN||[]).filter(q=>q.w===doc.id).map(q=>Object.assign({kind:'own'},q));
+    const all=[...own.filter(q=>q.id[0]==='L'),...own.filter(q=>q.id[0]==='M'),...cbtFor(doc.id)];
+    const res=CS?CS.res():{};
+    return all.filter(q=>flt==='all'||(flt==='own'&&q.kind==='own')||(flt==='cbt'&&q.kind==='cbt')||(flt==='wrong'&&res[q.id]&&!res[q.id][0]));
+  }
+  function counts(){const own=(window.QOWN||[]).filter(q=>q.w===doc.id).length;return {own,cbt:cbtFor(doc.id).length}}
+  function draw(){
+    if(!doc) return;
+    const res=CS?CS.res():{}, c=counts();
+    list=build(); if(i>=list.length) i=Math.max(0,list.length-1);
+    const done=list.filter(q=>res[q.id]), ok=done.filter(q=>res[q.id][0]).length, bad=done.length-ok;
+    const q=list[i];
+    const lockN=CS&&!CB&&CS.locked()?1:0;
+    let h=`<div class="qh"><h2>이 문서 문제</h2><small>강의·METRO ${c.own} · 기출 ${CB?c.cbt:'잠김'}</small></div>
+    <div class="qf" role="group" aria-label="문제 고르기">${[['all','전체'],['own','강의·METRO'],['cbt','기출'],['wrong','틀린 문제']].map(([k,t])=>`<button type="button" data-f="${k}" aria-pressed="${flt===k}">${t}</button>`).join('')}</div>`;
+    if(list.length){
+      const n=list.length;
+      h+=`<div class="bar" aria-hidden="true"><i class="o" style="width:${ok/n*100}%"></i><i class="x" style="width:${bad/n*100}%"></i></div>
+      <div class="pg"><span>${i+1} / ${n}</span><span>맞힘 ${ok} · 틀림 ${bad} · 남음 ${n-done.length}</span></div>
+      <div class="qcard" id="qcard">
+        <span class="src ${q.kind}">${esc(q.src)}</span>
+        <p class="stem">${esc(q.q)}</p>
+        ${(q.f||[]).map(k=>CB&&CB.FIGS[k]?`<img class="qfig" src="${CB.FIGS[k][0]}" width="${CB.FIGS[k][1]}" height="${CB.FIGS[k][2]}" alt="문제 그림" loading="lazy">`:'').join('')}
+        ${q.o.map((o,j)=>{const cls=picked==null?'':(j===q.a?' ok':(j===picked?' no':''));return `<button class="op${cls}" type="button" data-o="${j}" ${picked!=null?'disabled':''}><span class="m">${M[j]}</span><span>${esc(o)}</span></button>`}).join('')}
+        ${picked!=null?`<div class="ex ${picked===q.a?'ok':'no'}" role="status"><b>${picked===q.a?'정답입니다':'오답입니다 · 정답 '+M[q.a]}</b>${esc(q.e||'')}</div>`:(res[q.id]?`<p class="empty" style="margin:2px 0 0">지난번 결과: ${res[q.id][0]?'맞힘':'틀림'}</p>`:'')}
+      </div>
+      <div class="nv"><button type="button" data-n="-1" ${i?'':'disabled'}>이전 문제</button><button class="pri" type="button" data-n="1">${i<n-1?'다음 문제':'처음으로'}</button></div>
+      <details><summary>문제 번호로 가기</summary><div class="chips">${list.map((x,k)=>`<button type="button" data-j="${k}" class="${res[x.id]?(res[x.id][0]?'o':'x'):''}${k===i?' cur':''}" aria-label="${k+1}번${res[x.id]?(res[x.id][0]?' 맞힘':' 틀림'):''}">${k+1}</button>`).join('')}</div></details>`;
+    } else h+=`<p class="empty">${flt==='wrong'?'이 문서에서 틀린 문제가 없다.':flt==='cbt'&&!CB?'기출문제는 잠겨 있다.':'이 문서에 연결된 문제가 아직 없다.'}</p>`;
+    if(lockN) h+=`<div class="lock">CBT 기출문제는 비밀번호로 잠겨 있다. 풀면 이 문서 범위의 기출이 함께 나온다.<br><button class="lockb" type="button" data-lock>잠금 풀기</button></div>`;
+    box.innerHTML=h;
+  }
+  document.addEventListener('click',e=>{if(e.target.closest('[data-qjump]'))box.scrollIntoView({behavior:'smooth',block:'start'})});
+  box.addEventListener('click',e=>{
+    const b=e.target.closest('button'); if(!b) return;
+    if(b.dataset.f){flt=b.dataset.f;i=0;picked=null;draw();return}
+    if(b.dataset.lock!=null){CS&&CS.openPanel();return}
+    if(b.dataset.j!=null){i=+b.dataset.j;picked=null;draw();return}
+    if(b.dataset.n){const n=list.length;i=+b.dataset.n>0?(i<n-1?i+1:0):Math.max(0,i-1);picked=null;draw();box.querySelector('.qcard')&&innerWidth>=1360&&(box.scrollTop=0);return}
+    if(b.dataset.o!=null&&picked==null){const q=list[i];picked=+b.dataset.o;
+      const keep=flt==='wrong'; if(CS) CS.record(q.id,picked===q.a);
+      if(keep){const id=q.id;draw();i=Math.max(0,list.findIndex(x=>x.id===id));if(i<0)i=0}
+      draw(); const ex=box.querySelector('.ex'); ex&&ex.scrollIntoView({block:'nearest',behavior:'smooth'})}
+  });
+  if(CS){
+    CS.on(w=>{if(w==='unlock'){CS.loadCBT().then(d=>{CB=d;picked=null;draw()})} if(w==='data'&&picked==null)draw()});
+    CS.loadCBT().then(d=>{CB=d;if(doc&&picked==null)draw()});
+    const p=document.getElementById('csp'); p&&CS.mountPill(p);
+  }
+  return {show(d){if(doc!==d){doc=d;i=0;picked=null;flt=flt==='wrong'?'all':flt}draw()},hide(){doc=null;box.innerHTML=''}};
+})();
+
 function inline(s,self){
   s=s.replace(/\[\[([de]\d+)\|([^\]]+)\]\]/g,(m,id,t)=>id===self?t:`<a class="wl" data-go="${id}" href="#${id}">${t}</a>`);
   s=s.replace(/\[\*([^\]]+)\]/g,(m,t)=>{FN.push(t);const k=FN.length;return `<sup class="fn"><a href="#f${k}" data-fn="${k}" id="r${k}" aria-label="각주 ${k}">[${k}]</a></sup>`});
@@ -1174,7 +1282,7 @@ function renderDoc(d){
   const tocItems=secs.map(([h],i)=>`<li><a data-sec="s${i+1}" href="#s${i+1}"><span class="sn">${i+1}.</span>${h}</a></li>`).join('');
   doc.innerHTML=`<div class="cats"><b>분류:</b>${['컴퓨터활용능력 2급',S.short,...d.cat].filter((c,i,a)=>a.indexOf(c)===i).map(c=>`<a data-cat="${c}" href="#main">${c}</a>`).join('')}</div>
   <h1>${label(d)}</h1>
-  <div class="meta"><span>${S.name} · ${g[0]}</span><span>문단 ${secs.length}개 · 각주 ${FN.length}개</span><span>최근 수정 시각: 2026-10-23</span></div>
+  <div class="meta"><span>${S.name} · ${g[0]}</span><span>문단 ${secs.length}개 · 각주 ${FN.length}개</span><span>최근 수정 시각: 2026-10-24</span><button class="qjump" type="button" data-qjump>이 문서 문제 풀기 ↓</button></div>
   <div class="notice${d.sj===2?' s2':''}">이 문서는 ${d.sj===1?`<b>${d.n}강 강의 노트</b>`:'<b>2과목 핵심 정리</b>'}와 시나공 핵심 요약을 바탕으로 정리했다. 빨간 테두리 상자는 기출문제에 자주 나오는 오답 문장이다.</div>
   <div class="toc"><b>목차</b><ol>${tocItems}</ol></div>
   ${body}
@@ -1183,12 +1291,13 @@ function renderDoc(d){
   <div class="pn">${prev||prevSubj?`<a data-go="${(prev||prevSubj).id}" href="#${(prev||prevSubj).id}"><small>이전 문서</small>${label(prev||prevSubj)}</a>`:'<span></span>'}${next||nextSubj?`<a class="r" data-go="${(next||nextSubj).id}" href="#${(next||nextSubj).id}"><small>${nextSubj?'2과목으로':'다음 문서'}</small>${label(next||nextSubj)}</a>`:`<a class="r" data-go="main" href="#main"><small>끝</small>대문으로</a>`}</div>`;
   side.innerHTML=`<b>목차</b><ol>${tocItems}</ol><div class="other"><b>${S.short} 문서</b><ol>${list.map(x=>`<li><a data-go="${x.id}" href="#${x.id}" class="${x.id===d.id?'on':''}"><span class="sn">${x.n}</span>${x.t}</a></li>`).join('')}</ol></div>`;
   layout.classList.add('has-side');
+  Quiz.show(d);
   document.title=`${d.t} - 컴활위키`;
   spy();
 }
 let TAB=0;
 function renderMain(cat){
-  CUR=null; layout.classList.remove('has-side'); side.innerHTML='';
+  CUR=null; layout.classList.remove('has-side'); side.innerHTML=''; Quiz.hide();
   const fnCount=sj=>D.filter(d=>!sj||d.sj===sj).reduce((a,d)=>a+((d.intro+d.sec.map(s=>s[1]).join('')).match(/\[\*/g)||[]).length,0);
   const card=d=>`<button class="card${d.sj===2?' s2':''}" type="button" data-go="${d.id}"><span class="n">${d.sj===1?d.n:'2-'+d.n}</span><span class="t">${d.t}<span class="s">${d.s}</span></span></button>`;
   let body;

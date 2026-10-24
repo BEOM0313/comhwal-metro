@@ -1919,7 +1919,9 @@ LECTURES.forEach(L=>L.quiz.forEach((q,j)=>BANK.push({id:1000+L.n*50+j,s:1,lec:L.
 /* ================= 시험 진행 ================= */
 let ex=null;
 let wrongIds=new Set(store.get('wrong',[]));
-function setWrong(id,v){if(v)wrongIds.add(id);else wrongIds.delete(id);meta.wrong[id]=[v?1:0,Date.now()]}
+function setWrong(id,v){if(v)wrongIds.add(id);else wrongIds.delete(id);meta.wrong[id]=[v?1:0,Date.now()];csRec(id,!v)}
+/* 공통 기록(cs_res)에도 남겨 위키·CBT·첫 화면과 같은 기록을 쓴다 (강의 문제 L강-순번, METRO 문제 M번호) */
+function csRec(id,ok){try{const k=id<1000?'M'+id:'L'+Math.floor((id-1000)/50)+'-'+((id-1000)%50);const r=JSON.parse(localStorage.getItem('cs_res')||'{}');const a=r[k];r[k]=[ok?1:0,Date.now(),(a?a[2]||1:0)+1];localStorage.setItem('cs_res',JSON.stringify(r))}catch(e){}}
 function saveWrong(){store.set('wrong',[...wrongIds]);store.set('meta',meta);Sync.soon()}
 const lastDay=()=>LECTURES.map(L=>L.day).filter(Boolean).sort().pop();
 function updWrong(){ const tc=document.getElementById('todayCount'); if(tc){const d=lastDay();const ls=LECTURES.filter(L=>L.day===d);tc.textContent=`${d?d.slice(5).replace('-','/'):''} 공부한 ${ls[0]?ls[0].n:''}~${ls.length?ls[ls.length-1].n:''}강 · ${BANK.filter(q=>ls.some(L=>L.n===q.lec)).length}문항`} const lc=document.getElementById('lecCount'); if(lc) lc.textContent=`${LECTURES.length}강까지 ${BANK.filter(q=>q.lec).length}문항. 들은 강의만 모아서 풀어요.`; $('#wrongCount').textContent=wrongIds.size?`틀린 문제 ${wrongIds.size}개가 기다리고 있어요.`:'틀린 문제가 쌓이면 여기서 다시 풀어요.'; renderHistory() }
@@ -2138,12 +2140,13 @@ const Sync=(()=>{
   /* 자동 연결 링크(#sync=토큰)로 열면 토큰을 저장하고 주소창에서 지움 */
   function fromLink(){
     const m=/(?:^#|&)sync=((?:ghp_|github_pat_)[A-Za-z0-9_]+)/.exec(location.hash||'');
+    const k=/(?:^#|&)key=([^&]+)/.exec(location.hash||'');if(k){try{localStorage.setItem('cs_key',JSON.stringify(decodeURIComponent(k[1])))}catch(e){}}
     if(!m)return false;
     if(m[1]!==tok()){store.set('ghToken',m[1]);store.set('gistId','')}
     try{history.replaceState(null,'',location.pathname+location.search)}catch(e){location.hash=''}
     return true;
   }
-  function linkUrl(){return location.origin+location.pathname+'#sync='+tok()}
+  function linkUrl(){let k='';try{k=JSON.parse(localStorage.getItem('cs_key')||'""')}catch(e){}return location.origin+location.pathname+'#sync='+tok()+(k?'&key='+encodeURIComponent(k):'')}
   async function copyLink(){
     const url=linkUrl(), box=$('#syncLinkBox');
     box.hidden=false;box.value=url;

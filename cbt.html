@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1f3a5f">
+<title>컴활 2급 필기 CBT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<style>
+/* 레이아웃: 시험 화면(상단 정보줄 + 문제 영역 + 오른쪽 답안 표기란 + 하단 버튼줄). 모바일은 답안 표기란이 아래에서 올라오는 창 */
+:root{
+  --bg:#e9edf3; --paper:#ffffff; --ink:#1b2333; --sub:#5d6678; --line:#cfd6e2; --soft:#f3f5f9;
+  --head:#1f3c74; --head2:#2c4f92; --head-ink:#ffffff; --acc:#1f5fd1; --acc-ink:#ffffff; --sel:#dde8ff;
+  --ok:#137a4b; --ok-bg:#e5f5ec; --bad:#c33a2c; --bad-bg:#fdecea; --warn:#b26a00; --warn-bg:#fff3d9;
+  --f-body:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --fs:16px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f131b; --paper:#171c27; --ink:#e6e9f1; --sub:#9aa3b6; --line:#2d3546; --soft:#1e2431;
+  --head:#13254a; --head2:#1c3366; --head-ink:#eef2ff; --acc:#6f9bff; --acc-ink:#0c1530; --sel:#1d2d55;
+  --ok:#4cc58c; --ok-bg:#143326; --bad:#ff7e6c; --bad-bg:#3a1a17; --warn:#f0b04a; --warn-bg:#3a2b10; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f131b; --paper:#171c27; --ink:#e6e9f1; --sub:#9aa3b6; --line:#2d3546; --soft:#1e2431;
+  --head:#13254a; --head2:#1c3366; --head-ink:#eef2ff; --acc:#6f9bff; --acc-ink:#0c1530; --sel:#1d2d55;
+  --ok:#4cc58c; --ok-bg:#143326; --bad:#ff7e6c; --bad-bg:#3a1a17; --warn:#f0b04a; --warn-bg:#3a2b10; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--head)}
+button{font:inherit;color:inherit}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.gut{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.btn{border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:0 16px;min-height:44px;cursor:pointer;font-weight:500}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:var(--acc-ink);font-weight:700}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.45;cursor:default}
+
+/* ===== 시작 화면 */
+#home{min-height:100%;padding-block:0 calc(32px + env(safe-area-inset-bottom,0px))}
+.hbar{background:var(--head);color:var(--head-ink)}
+.hbar .in{max-width:1180px;margin:0 auto;padding-block:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.hbar h1{font-size:20px;margin:0;font-weight:900;letter-spacing:-.3px}
+.hbar .home-a{color:inherit;text-decoration:none;font-size:28px;line-height:1;padding:0 4px 0 0}
+#csp{margin-left:auto}
+.hbar .tag{font-size:12.5px;opacity:.85;border:1px solid rgba(255,255,255,.35);border-radius:20px;padding:2px 10px}
+.home{max-width:1180px;margin:0 auto;padding-block:20px;display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
+@media (min-width:980px){.home{grid-template-columns:minmax(0,1fr) 340px;align-items:start}}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px clamp(14px,2.4vw,24px);min-width:0}
+.panel h2{font-size:17px;margin:0 0 10px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.panel h2 small{color:var(--sub);font-weight:400;font-size:13px}
+.sets{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:18px}
+.set{text-align:left;border:1px solid var(--line);background:var(--soft);border-radius:10px;padding:12px 14px;cursor:pointer;min-height:76px;display:flex;flex-direction:column;gap:3px}
+.set:hover{border-color:var(--acc)}
+.set[aria-pressed="true"]{border-color:var(--acc);background:var(--sel);box-shadow:inset 0 0 0 1px var(--acc)}
+.set b{font-size:15px}
+.set span{font-size:12.5px;color:var(--sub)}
+.set .best{font-family:var(--f-mono);font-size:12px;color:var(--ok)}
+.form{display:grid;gap:12px}
+.form label{display:grid;gap:4px;font-size:13.5px;color:var(--sub)}
+.form input,.form select{border:1px solid var(--line);background:var(--paper);border-radius:8px;min-height:44px;padding:0 12px;font:inherit;font-size:16px;color:var(--ink)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chk{display:flex!important;grid-template-columns:none;align-items:center;gap:8px;color:var(--ink)!important;font-size:14px!important;min-height:36px}
+.chk input{min-height:auto;width:20px;height:20px}
+.rules{font-size:13.5px;color:var(--sub);margin:0;padding-left:18px}
+.rules li{margin:3px 0}
+.hist{font-size:13.5px;width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.hist td,.hist th{border-bottom:1px solid var(--line);padding:6px 4px;text-align:left}
+.hist th{color:var(--sub);font-weight:500}
+.pill{display:inline-block;border-radius:20px;padding:0 8px;font-size:12px;font-weight:700}
+.pill.ok{background:var(--ok-bg);color:var(--ok)} .pill.bad{background:var(--bad-bg);color:var(--bad)}
+.note{font-size:12.5px;color:var(--sub)}
+
+/* ===== 시험 화면 */
+#exam{height:100%;display:flex;flex-direction:column}
+.ehead{background:var(--head);color:var(--head-ink);flex:none;padding-top:env(safe-area-inset-top,0px)}
+.ehead .in{display:flex;align-items:center;gap:10px 18px;flex-wrap:wrap;padding-block:8px}
+.ehead .title{font-weight:900;font-size:16px;white-space:nowrap}
+.ehead .who{display:flex;gap:14px;font-size:13px;opacity:.92;flex-wrap:wrap}
+.ehead .who b{font-weight:700}
+.timer{margin-left:auto;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border-radius:8px;padding:4px 12px}
+.timer span{font-size:12px;opacity:.85}
+.timer b{font-family:var(--f-mono);font-size:22px;font-weight:600;letter-spacing:1px;font-variant-numeric:tabular-nums}
+.timer.low{background:#c33a2c}
+.etool{background:var(--head2);color:var(--head-ink);flex:none}
+.etool .in{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;padding-block:6px;font-size:13px}
+.grp{display:flex;align-items:center;gap:4px}
+.grp>span{opacity:.85;margin-right:2px}
+.tbtn{border:1px solid rgba(255,255,255,.35);background:transparent;color:var(--head-ink);border-radius:6px;min-height:34px;min-width:44px;padding:0 8px;cursor:pointer;font-size:13px}
+.tbtn[aria-pressed="true"]{background:#fff;color:var(--head);font-weight:700}
+.cnt{margin-left:auto;display:flex;gap:12px;font-variant-numeric:tabular-nums}
+.cnt b{font-family:var(--f-mono);font-size:15px}
+.ebody{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 300px}
+.qarea{overflow:auto;padding-block:18px 24px;min-width:0}
+.qgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;max-width:1100px;margin:0 auto}
+.qgrid.two{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.qcard{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:18px clamp(14px,2vw,22px);font-size:var(--fs);min-width:0}
+.qsubj{font-size:12.5px;color:var(--sub);margin-bottom:6px;display:flex;gap:8px;align-items:center}
+.qstem{font-weight:700;line-height:1.65;white-space:pre-line;margin:0 0 12px}
+.qstem .no{color:var(--acc);margin-right:6px}
+.qfig{display:block;max-width:100%;height:auto;margin:6px 0 12px;border-radius:4px;background:#fff}
+.opts{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:10px 12px;cursor:pointer;min-height:48px;line-height:1.55}
+.opt:hover{border-color:var(--acc)}
+.opt .m{flex:none;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--sub);display:grid;place-items:center;font-size:14px;font-weight:700;margin-top:-1px}
+.opt[aria-checked="true"]{background:var(--sel);border-color:var(--acc)}
+.opt[aria-checked="true"] .m{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
+.opt.right{border-color:var(--ok);background:var(--ok-bg)} .opt.right .m{border-color:var(--ok);color:var(--ok)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-bg)}
+.exp{margin-top:12px;border-left:4px solid var(--acc);background:var(--soft);padding:10px 12px;border-radius:0 8px 8px 0;font-size:14px;white-space:pre-line}
+.exp b{color:var(--acc)}
+.verdict{font-weight:900;font-size:13px;border-radius:20px;padding:1px 10px}
+.verdict.ok{background:var(--ok-bg);color:var(--ok)} .verdict.bad{background:var(--bad-bg);color:var(--bad)}
+.omr{border-left:1px solid var(--line);background:var(--paper);display:flex;flex-direction:column;min-height:0}
+.omr h3{margin:0;padding:10px 14px;font-size:14px;background:var(--soft);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.omr .list{overflow:auto;padding:6px 8px 12px}
+.osub{font-size:12px;color:var(--sub);padding:8px 6px 4px;font-weight:700}
+.orow{display:grid;grid-template-columns:38px repeat(4,1fr);align-items:center;gap:2px;padding:2px 4px;border-radius:6px}
+.orow.cur{background:var(--sel)}
+.orow .n{font-family:var(--f-mono);font-size:13px;text-align:center;cursor:pointer;border:0;background:none;min-height:36px;color:var(--ink)}
+.orow .n.empty{color:var(--bad);font-weight:700}
+.ob{width:30px;height:30px;justify-self:center;border-radius:50%;border:1.3px solid var(--line);background:var(--paper);cursor:pointer;font-size:12.5px;color:var(--sub);display:grid;place-items:center;padding:0}
+.ob[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink);font-weight:700}
+.ob.ans{box-shadow:0 0 0 2px var(--ok)}
+.efoot{flex:none;background:var(--paper);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.efoot .in{display:flex;gap:8px;align-items:center;padding-block:8px;flex-wrap:wrap}
+.efoot .sp{flex:1}
+.efoot .btn{min-width:84px;white-space:nowrap}
+.omrbtn{display:none}
+.toast{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 70px);z-index:40;background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn);border-radius:10px;padding:10px 18px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.2);max-width:calc(100vw - 32px)}
+@media (max-width:860px){
+  .ebody{grid-template-columns:minmax(0,1fr)}
+  .qgrid.two{grid-template-columns:minmax(0,1fr)}
+  .omr{position:fixed;left:0;right:0;bottom:0;z-index:25;max-height:72vh;border-left:0;border-top:1px solid var(--line);border-radius:16px 16px 0 0;box-shadow:0 -10px 30px rgba(0,0,0,.25);padding-bottom:env(safe-area-inset-bottom,0px);transform:translateY(105%);transition:transform .22s}
+  .omr.open{transform:none}
+  .omrbtn{display:inline-flex;align-items:center}
+  .ehead .who{display:none}
+  .lay{display:none}
+  .timer b{font-size:19px}
+  .efoot .in{flex-wrap:nowrap;gap:6px}
+  .efoot .sp{display:none}
+  .efoot .btn{min-width:0;flex:1;padding:0 4px;font-size:14px}
+  .hidem{display:none}
+}
+@media (prefers-reduced-motion:reduce){.omr{transition:none}}
+
+/* ===== 계산기, 확인 창 */
+.modal{position:fixed;inset:0;z-index:50;background:rgba(10,15,25,.5);display:grid;place-items:center;padding:16px}
+.dlg{background:var(--paper);color:var(--ink);border-radius:14px;max-width:420px;width:100%;padding:22px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.dlg h4{margin:0 0 8px;font-size:18px}
+.dlg p{margin:0 0 16px;color:var(--sub)}
+.dlg .acts{display:flex;gap:8px;justify-content:flex-end}
+.calc{position:fixed;z-index:45;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(76px + env(safe-area-inset-bottom,0px));width:260px;background:var(--paper);border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 40px rgba(0,0,0,.3);padding:10px}
+.calc .top{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;margin-bottom:6px}
+.calc .x{border:0;background:none;font-size:22px;cursor:pointer;min-width:36px;min-height:36px;color:var(--sub)}
+.calc .disp{font-family:var(--f-mono);font-size:24px;text-align:right;background:var(--soft);border-radius:8px;padding:6px 10px;margin-bottom:8px;overflow:hidden;white-space:nowrap}
+.calc .ex{font-family:var(--f-mono);font-size:12px;color:var(--sub);text-align:right;min-height:16px}
+.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.keys button{min-height:44px;border:1px solid var(--line);background:var(--soft);border-radius:8px;cursor:pointer;font-family:var(--f-mono);font-size:16px}
+.keys .op{background:var(--sel)} .keys .eq{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+
+/* ===== 결과 */
+#result{min-height:100%;padding-bottom:calc(32px + env(safe-area-inset-bottom,0px))}
+.res{max-width:1000px;margin:0 auto;padding-block:20px;display:grid;gap:16px}
+.score{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.sbox{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--soft)}
+.sbox span{font-size:12.5px;color:var(--sub)}
+.sbox b{display:block;font-size:28px;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.sbox small{color:var(--sub)}
+.big{font-size:clamp(26px,5vw,38px);font-weight:900;margin:0}
+.big.ok{color:var(--ok)} .big.bad{color:var(--bad)}
+.grid40{display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:6px}
+.cell{border-radius:8px;border:1px solid var(--line);min-height:44px;cursor:pointer;font-family:var(--f-mono);font-size:13px;display:grid;place-items:center;background:var(--paper)}
+.cell.ok{background:var(--ok-bg);color:var(--ok);border-color:var(--ok)}
+.cell.bad{background:var(--bad-bg);color:var(--bad);border-color:var(--bad);font-weight:700}
+.legend{display:flex;gap:12px;font-size:12.5px;color:var(--sub);flex-wrap:wrap}
+.acts2{display:flex;gap:8px;flex-wrap:wrap}
+</style>
+</head><body>
+
+
+<div id="home" hidden></div>
+<div id="exam" hidden></div>
+<div id="result" hidden></div>
+<div id="layer"></div>
+
+<script>window.CS_MODE="online"</script>
+<script src="common.js"></script>
+
+<script>
+window.BOOT=(SETS,FIGS)=>{
+const $=s=>document.querySelector(s);
+const M='①②③④';
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const store={get(k,d){try{const v=localStorage.getItem('cbt2-'+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('cbt2-'+k,JSON.stringify(v))}catch(e){}}};
+SETS.forEach(s=>s.qs.forEach(q=>{q.id=s.k+'-'+q.n; q.src=s.t;}));
+const EXAMS=SETS.filter(s=>s.kind==='exam'), TOPICS=SETS.filter(s=>s.kind==='topic');
+const ALL=SETS.flatMap(s=>s.qs).filter(q=>q.a>=0);
+const byId=Object.fromEntries(ALL.map(q=>[q.id,q]));
+const WRONG=()=>{const r=CS.res();return Object.keys(r).filter(id=>byId[id]&&!r[id][0]).sort((a,b)=>r[b][1]-r[a][1])};
+const PILL=document.createElement('span');PILL.className='cspw';CS.mountPill(PILL);
+const S={name:store.get('name',''),sel:store.get('sel','y2026_3'),reveal:false,fs:store.get('fs',0),lay:store.get('lay',1)};
+const FS=[16,19,22];
+
+/* ---------- 시작 화면 */
+function home(){
+  show('home');
+  const hist=CS.hist(); const best={};
+  hist.forEach(h=>{best[h.k]=Math.max(best[h.k]||0,h.avg)});
+  const wrong=WRONG();
+  const card=(k,t,sub)=>`<button class="set" type="button" data-sel="${k}" aria-pressed="${S.sel===k}"><b>${esc(t)}</b><span>${sub}</span>${best[k]!=null?`<span class="best">최고 ${best[k]}점</span>`:''}</button>`;
+  $('#home').innerHTML=`<div class="hbar"><div class="in gut"><a class="home-a" href="index.html" aria-label="첫 화면으로" title="첫 화면으로">‹</a><h1>컴퓨터활용능력 2급 필기 CBT</h1><span class="tag">대한상공회의소 형식 · 40문항 40분</span><span id="csp"></span></div></div>
+  <div class="home gut">
+    <div class="panel">
+      <h2>실제 기출 <small>2025~2026 상시 · 회차당 40문항</small></h2>
+      <div class="sets">${EXAMS.map(s=>card(s.k,s.t,`1과목 20 · 2과목 20 · 40분`)).join('')}</div>
+      <h2>모의고사 <small>기출 ${ALL.filter(q=>q.s).length}문항에서 과목별 20문항을 섞어 냄</small></h2>
+      <div class="sets">${card('mix','무작위 모의고사','매번 다른 40문항 · 40분')}${card('wrong','틀린 문제 다시 풀기',wrong.length?`쌓인 오답 ${wrong.length}문항`:'아직 틀린 문제가 없어요')}</div>
+      <h2>유형별 연습 <small>문항당 1분</small></h2>
+      <div class="sets">${TOPICS.map(s=>card(s.k,s.t.replace('유형별: ',''),`${s.qs.length}문항 · ${s.qs.length}분`)).join('')}</div>
+    </div>
+    <div class="panel">
+      <h2>수험자 정보</h2>
+      <form class="form" id="f" autocomplete="off">
+        <label>수험자명<input id="nm" value="${esc(S.name)}" placeholder="이름 (선택)" maxlength="12"></label>
+        <label class="chk"><input type="checkbox" id="rv" ${S.reveal?'checked':''}>문제마다 정답 바로 확인 (연습 모드)</label>
+        <button class="btn pri" type="submit" id="go" ${S.sel==='wrong'&&!wrong.length?'disabled':''}>시험 시작</button>
+      </form>
+      <h2 style="margin-top:18px">시험 안내</h2>
+      <ul class="rules">
+        <li>과목별 20문항, 총 40문항을 40분 동안 푼다.</li>
+        <li>합격: 과목마다 40점 이상, 평균 60점 이상 (한 문항 5점).</li>
+        <li>답은 문제의 보기나 오른쪽 답안 표기란에서 고른다. 제출 전까지 바꿀 수 있다.</li>
+        <li>종료 10분, 5분 전에 알림이 뜨고 시간이 끝나면 자동 제출된다.</li>
+        <li>실제 시험장처럼 화면 계산기를 쓸 수 있다.</li>
+      </ul>
+      ${hist.length?`<h2 style="margin-top:18px">최근 기록</h2><table class="hist"><tr><th>시험</th><th>평균</th><th>결과</th></tr>${hist.slice(-6).reverse().map(h=>`<tr><td>${esc(h.t)}</td><td>${h.avg}</td><td><span class="pill ${h.pass?'ok':'bad'}">${h.pass?'합격':'불합격'}</span></td></tr>`).join('')}</table>`:''}
+      <p class="note" style="margin-top:14px">문제 출처: 시나공 컴활 2급 기출·유형 자료 (개인 학습용). 기록은 위키·METRO 기록과 함께 저장된다.</p>
+    </div>
+  </div>`;
+  $('#csp').appendChild(PILL);
+  $('#home').onclick=e=>{const b=e.target.closest('[data-sel]'); if(!b) return; S.sel=b.dataset.sel; store.set('sel',S.sel); home();};
+  $('#f').onsubmit=e=>{e.preventDefault(); S.name=$('#nm').value.trim(); S.reveal=$('#rv').checked; store.set('name',S.name); start();};
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function pickMix(){
+  const seen=new Set(), uniq=q=>{const k=q.q.replace(/\s/g,'').slice(0,60)+q.o.join('').replace(/\s/g,'').slice(0,40); if(seen.has(k)) return false; seen.add(k); return true};
+  const pool=s=>shuffle(EXAMS.flatMap(x=>x.qs).filter(q=>q.s===s&&q.a>=0)).filter(uniq).slice(0,20);
+  return [...pool(1),...pool(2)];
+}
+/* ---------- 시험 */
+let X=null, tick=null;
+function start(){
+  let qs,title,min;
+  if(S.sel==='mix'){qs=pickMix();title='무작위 모의고사';min=40}
+  else if(S.sel==='wrong'){qs=WRONG().map(id=>byId[id]).filter(Boolean).slice(0,40);qs.sort((a,b)=>(a.s||1)-(b.s||1));title='틀린 문제 다시 풀기';min=Math.max(5,qs.length)}
+  else {const s=SETS.find(x=>x.k===S.sel);qs=s.qs.filter(q=>q.a>=0);title=s.t;min=s.kind==='exam'?40:qs.length}
+  X={k:S.sel,title,qs,ans:Array(qs.length).fill(-1),i:0,end:Date.now()+min*60000,total:min*60,warned:{},done:false,no:String(Math.floor(10000000+Math.random()*89999999))};
+  show('exam'); renderExam(); clearInterval(tick); tick=setInterval(timerTick,500); timerTick();
+}
+function fmt(sec){sec=Math.max(0,Math.ceil(sec));return String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0')}
+function timerTick(){
+  if(!X||X.done) return;
+  const left=(X.end-Date.now())/1000, t=$('#tm');
+  if(t){t.textContent=fmt(left); t.parentElement.classList.toggle('low',left<=300);}
+  for(const m of [10,5]) if(left<=m*60&&!X.warned[m]&&X.total>m*60){X.warned[m]=1;toast(`시험 종료 ${m}분 전입니다.`)}
+  if(left<=0){X.timeout=true;submit(true)}
+}
+function toast(msg){const d=document.createElement('div');d.className='toast';d.setAttribute('role','alert');d.textContent=msg;document.body.appendChild(d);setTimeout(()=>d.remove(),3500)}
+function per(){return S.lay===2&&innerWidth>860?2:1}
+function renderExam(){
+  const n=X.qs.length, un=X.ans.filter(a=>a<0).length;
+  $('#exam').innerHTML=`<header class="ehead"><div class="in gut"><span class="title">${esc(X.title)}</span>
+    <span class="who"><span>수험번호 <b>${X.no}</b></span><span>수험자명 <b>${esc(S.name||'수험자')}</b></span></span>
+    <div class="timer" aria-live="off"><span>남은 시간</span><b id="tm">${fmt((X.end-Date.now())/1000)}</b></div></div></header>
+  <div class="etool"><div class="in gut">
+    <div class="grp"><span>글자 크기</span>${['100%','150%','200%'].map((t,i)=>`<button class="tbtn" type="button" data-fs="${i}" aria-pressed="${S.fs===i}">${t}</button>`).join('')}</div>
+    <div class="grp lay"><span>화면 배치</span><button class="tbtn" type="button" data-lay="1" aria-pressed="${S.lay===1}">1단</button><button class="tbtn" type="button" data-lay="2" aria-pressed="${S.lay===2}">2단</button></div>
+    <div class="cnt"><span>전체 <b>${n}</b></span><span>안 푼 문제 <b id="un">${un}</b></span></div>
+  </div></div>
+  <div class="ebody"><main class="qarea gut" id="qa"></main>
+    <aside class="omr" id="omr" aria-label="답안 표기란"><h3>답안 표기란<button class="tbtn omrbtn" type="button" id="omrx" style="color:var(--ink);border-color:var(--line)">닫기</button></h3><div class="list" id="ol"></div></aside></div>
+  <footer class="efoot"><div class="in gut">
+    <button class="btn" type="button" id="calcb">계산기</button>
+    <button class="btn omrbtn" type="button" id="omrb">표기란</button>
+    <span class="sp"></span>
+    <button class="btn" type="button" id="prev">이전</button>
+    <button class="btn" type="button" id="next">다음</button>
+    <button class="btn hidem" type="button" id="unb">안 푼 문제</button>
+    <button class="btn pri" type="button" id="sub">${X.done?'결과':'<span class="hidem">답안 </span>제출'}</button>
+  </div></footer>`;
+  document.documentElement.style.setProperty('--fs',FS[S.fs]+'px');
+  renderQ(); renderOMR();
+  $('#exam').onclick=onExamClick;
+}
+function qhtml(k){
+  const q=X.qs[k], a=X.ans[k], show=X.done||(S.reveal&&a>=0);
+  const subj=q.s?`${q.s}과목 ${q.s===1?'컴퓨터 일반':'스프레드시트 일반'}`:'';
+  return `<section class="qcard" aria-label="${k+1}번 문제">
+    <div class="qsubj">${subj?`<span>${subj}</span>`:''}<span>${esc(q.src)} ${q.n}번</span>${show&&a>=0?`<span class="verdict ${a===q.a?'ok':'bad'}">${a===q.a?'정답':'오답'}</span>`:''}${X.done&&a<0?'<span class="verdict bad">안 푼 문제</span>':''}</div>
+    <p class="qstem"><span class="no">${k+1}.</span>${esc(q.q)}</p>
+    ${q.f.map(i=>`<img class="qfig" src="${FIGS[i][0]}" width="${FIGS[i][1]}" height="${FIGS[i][2]}" alt="${k+1}번 문제 그림" loading="lazy">`).join('')}
+    <div class="opts" role="radiogroup" aria-label="${k+1}번 보기">${q.o.map((o,j)=>{
+      const cls=show?(j===q.a?' right':(j===a?' wrong':'')):'';
+      return `<button class="opt${cls}" type="button" role="radio" aria-checked="${a===j}" data-q="${k}" data-o="${j}" ${X.done?'disabled':''}><span class="m">${j+1}</span><span>${q.oi?esc(M[j]+' (그림 참고)'):esc(o)}</span></button>`}).join('')}</div>
+    ${show?`<div class="exp"><b>정답 ${M[q.a]}</b>${q.e?'\n'+esc(q.e):''}</div>`:''}
+  </section>`;
+}
+function renderQ(){
+  const p=per(); X.i=Math.floor(X.i/p)*p;
+  const ks=[X.i,X.i+1].slice(0,p).filter(k=>k<X.qs.length);
+  $('#qa').innerHTML=`<div class="qgrid${p===2?' two':''}">${ks.map(qhtml).join('')}</div>`;
+  $('#qa').scrollTop=0;
+  $('#prev').disabled=X.i===0; $('#next').disabled=X.i+p>=X.qs.length;
+  document.querySelectorAll('.orow').forEach(r=>r.classList.toggle('cur',ks.includes(+r.dataset.k)));
+}
+function renderOMR(){
+  let h='', last=null;
+  X.qs.forEach((q,k)=>{
+    if(q.s&&q.s!==last){h+=`<div class="osub">${q.s}과목</div>`;last=q.s}
+    h+=`<div class="orow" data-k="${k}"><button class="n${X.ans[k]<0?' empty':''}" type="button" data-jump="${k}" aria-label="${k+1}번 문제로">${k+1}</button>${[0,1,2,3].map(j=>`<button class="ob${X.done&&j===q.a?' ans':''}" type="button" data-q="${k}" data-o="${j}" aria-pressed="${X.ans[k]===j}" aria-label="${k+1}번 ${j+1}" ${X.done?'disabled':''}>${j+1}</button>`).join('')}</div>`;
+  });
+  $('#ol').innerHTML=h;
+  const un=X.ans.filter(a=>a<0).length; if($('#un')) $('#un').textContent=un;
+  const p=per(); document.querySelectorAll('.orow').forEach(r=>r.classList.toggle('cur',+r.dataset.k>=X.i&&+r.dataset.k<X.i+p));
+}
+function go(k){X.i=Math.max(0,Math.min(X.qs.length-1,k)); renderQ(); renderOMR()}
+function onExamClick(e){
+  const b=e.target.closest('button'); if(!b) return;
+  if(b.dataset.o!=null&&!X.done){const k=+b.dataset.q,j=+b.dataset.o; X.ans[k]=X.ans[k]===j&&!S.reveal?-1:j; if(S.reveal&&X.ans[k]<0)X.ans[k]=j; const keep=$('#qa').scrollTop; renderQ(); $('#qa').scrollTop=keep; renderOMR(); if(b.closest('.omr')&&innerWidth<=860){} return}
+  if(b.dataset.jump!=null){go(+b.dataset.jump); if(innerWidth<=860) $('#omr').classList.remove('open'); return}
+  if(b.dataset.fs!=null){S.fs=+b.dataset.fs;store.set('fs',S.fs);document.documentElement.style.setProperty('--fs',FS[S.fs]+'px');document.querySelectorAll('[data-fs]').forEach(x=>x.setAttribute('aria-pressed',+x.dataset.fs===S.fs));return}
+  if(b.dataset.lay!=null){S.lay=+b.dataset.lay;store.set('lay',S.lay);document.querySelectorAll('[data-lay]').forEach(x=>x.setAttribute('aria-pressed',+x.dataset.lay===S.lay));renderQ();renderOMR();return}
+  switch(b.id){
+    case 'prev': go(X.i-per()); break;
+    case 'next': go(X.i+per()); break;
+    case 'unb': {const k=X.ans.findIndex((a,i)=>a<0&&i>X.i); const k2=k>=0?k:X.ans.findIndex(a=>a<0); if(k2>=0) go(k2); else toast('안 푼 문제가 없습니다.'); break}
+    case 'omrb': $('#omr').classList.add('open'); break;
+    case 'omrx': $('#omr').classList.remove('open'); break;
+    case 'calcb': calc(); break;
+    case 'sub': X.done?showResult():confirmSubmit(); break;
+  }
+}
+document.addEventListener('keydown',e=>{
+  if(!X||$('#exam').hidden||e.target.matches('input')) return;
+  if(e.key==='ArrowRight'&&!$('#next').disabled) go(X.i+per());
+  else if(e.key==='ArrowLeft'&&!$('#prev').disabled) go(X.i-per());
+  else if(/^[1-4]$/.test(e.key)&&!X.done&&!$('#layer').firstChild){X.ans[X.i]=+e.key-1;renderQ();renderOMR()}
+});
+addEventListener('resize',()=>{if(X&&!$('#exam').hidden){renderQ();renderOMR()}});
+function modal(title,msg,acts){
+  $('#layer').innerHTML=`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt"><div class="dlg"><h4 id="mt">${title}</h4><p>${msg}</p><div class="acts">${acts.map((a,i)=>`<button class="btn ${a.pri?'pri':''}" type="button" data-a="${i}">${a.t}</button>`).join('')}</div></div></div>`;
+  const first=$('#layer [data-a]'); first&&first.focus();
+  $('#layer').onclick=e=>{const b=e.target.closest('[data-a]'); if(!b) return; const a=acts[+b.dataset.a]; $('#layer').innerHTML=''; a.f&&a.f()};
+}
+function confirmSubmit(){
+  const un=X.ans.filter(a=>a<0).length;
+  modal('답안 제출',un?`안 푼 문제가 <b>${un}문항</b> 있습니다. 그래도 제출하시겠습니까?`:'답안을 제출하시겠습니까?',[{t:'취소'},{t:'제출',pri:1,f:()=>modal('답안 제출 확인','제출하면 답안을 더 이상 바꿀 수 없습니다. 정말 제출하시겠습니까?',[{t:'취소'},{t:'최종 제출',pri:1,f:()=>submit(false)}])}]);
+}
+function submit(auto){
+  if(X.done) return;
+  X.done=true; clearInterval(tick); $('#layer').innerHTML='';
+  const by={1:[0,0],2:[0,0],0:[0,0]};
+  X.qs.forEach((q,k)=>{const s=q.s||0; by[s][1]++; if(X.ans[k]===q.a) by[s][0]++});
+  const sc=s=>by[s][1]?Math.round(by[s][0]/by[s][1]*100):null;
+  const s1=sc(1), s2=sc(2), s0=sc(0);
+  const parts=[s1,s2].filter(v=>v!=null);
+  const avg=parts.length?Math.round(parts.reduce((a,b)=>a+b,0)/parts.length):s0;
+  const pass=parts.length===2?(s1>=40&&s2>=40&&avg>=60):avg>=60;
+  X.score={s1,s2,avg,pass,ok:X.qs.filter((q,k)=>X.ans[k]===q.a).length,used:Math.min(X.total,Math.round(X.total-(X.end-Date.now())/1000))};
+  // 오답 저장 (맞힌 문제는 오답 목록에서 뺌)
+  X.qs.forEach((q,k)=>CS.record(q.id,X.ans[k]===q.a));
+  CS.addHist({k:X.k,t:X.title,avg,pass});
+  if(auto) toast('시험 시간이 끝나 답안이 자동 제출되었습니다.');
+  showResult();
+}
+function showResult(){
+  show('result'); const r=X.score;
+  $('#result').innerHTML=`<div class="hbar"><div class="in gut"><h1>${esc(X.title)} 결과</h1><span class="tag">수험번호 ${X.no}</span></div></div>
+  <div class="res gut">
+    <div class="panel">
+      <p class="big ${r.pass?'ok':'bad'}">${r.pass?'합격':'불합격'}</p>
+      <p class="note">${r.s1!=null&&r.s2!=null?(r.pass?'두 과목 모두 40점 이상이고 평균 60점 이상입니다.':(Math.min(r.s1,r.s2)<40?'40점 미만인 과목이 있어 과락입니다.':'평균이 60점에 못 미칩니다.')):'60점 이상이면 통과로 표시합니다.'} 걸린 시간 ${fmt(r.used)}</p>
+      <div class="score" style="margin-top:12px">
+        ${r.s1!=null?`<div class="sbox"><span>1과목 컴퓨터 일반</span><b>${r.s1}</b><small>${r.s1<40?'과락':'통과'}</small></div>`:''}
+        ${r.s2!=null?`<div class="sbox"><span>2과목 스프레드시트 일반</span><b>${r.s2}</b><small>${r.s2<40?'과락':'통과'}</small></div>`:''}
+        <div class="sbox"><span>평균</span><b>${r.avg}</b><small>${X.qs.length}문항 중 ${r.ok}개 정답</small></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>문항별 결과 <small>누르면 그 문제의 정답과 해설을 본다</small></h2>
+      <div class="legend"><span class="pill ok">정답</span><span class="pill bad">오답·안 푼 문제</span></div>
+      <div class="grid40" style="margin-top:10px">${X.qs.map((q,k)=>`<button class="cell ${X.ans[k]===q.a?'ok':'bad'}" type="button" data-rev="${k}" aria-label="${k+1}번 ${X.ans[k]===q.a?'정답':'오답'}">${k+1}</button>`).join('')}</div>
+    </div>
+    <div class="acts2"><button class="btn pri" type="button" id="rev">정답·해설 보기</button><button class="btn" type="button" id="again">같은 시험 다시 풀기</button><button class="btn" type="button" id="wr">틀린 문제만 다시 풀기</button><button class="btn" type="button" id="hm">처음 화면</button></div>
+  </div>`;
+  $('#result').onclick=e=>{const b=e.target.closest('button'); if(!b) return;
+    if(b.dataset.rev!=null){X.i=+b.dataset.rev; show('exam'); renderExam(); return}
+    if(b.id==='rev'){X.i=0; show('exam'); renderExam()}
+    if(b.id==='again'){start()}
+    if(b.id==='wr'){S.sel='wrong';store.set('sel','wrong');start()}
+    if(b.id==='hm'){home()}};
+}
+/* ---------- 계산기 */
+function calc(){
+  if($('#calc')){$('#calc').remove();return}
+  const d=document.createElement('div'); d.className='calc'; d.id='calc'; d.setAttribute('role','dialog'); d.setAttribute('aria-label','계산기');
+  d.innerHTML=`<div class="top"><span>계산기</span><button class="x" type="button" aria-label="계산기 닫기">×</button></div><div class="ex" id="cx"></div><div class="disp" id="cd">0</div>
+  <div class="keys">${['C','(',')','÷','7','8','9','×','4','5','6','−','1','2','3','+','0','.','⌫','='].map(k=>`<button type="button" class="${'÷×−+'.includes(k)?'op':k==='='?'eq':''}">${k}</button>`).join('')}</div>`;
+  document.body.appendChild(d);
+  let ex='';
+  const upd=v=>{$('#cd').textContent=v||'0'};
+  d.onclick=e=>{const b=e.target.closest('button'); if(!b) return; const k=b.textContent;
+    if(b.classList.contains('x')){d.remove();return}
+    if(k==='C'){ex='';$('#cx').textContent='';upd('');return}
+    if(k==='⌫'){ex=ex.slice(0,-1);upd(ex);return}
+    if(k==='='){try{const js=ex.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-'); if(!/^[\d+\-*/().\s]+$/.test(js)) throw 0; const v=Function('"use strict";return ('+js+')')(); $('#cx').textContent=ex+' ='; ex=String(Math.round(v*1e10)/1e10); upd(ex)}catch(err){$('#cx').textContent='식을 확인하세요';}return}
+    ex+=k; upd(ex)};
+}
+function show(id){['home','exam','result'].forEach(x=>$('#'+x).hidden=x!==id); window.scrollTo(0,0)}
+home();
+CS.on(w=>{if(w==='data'&&!$('#home').hidden)home()});
+};
+</script>
+
+<script>
+(async()=>{
+  const box=document.getElementById('home');
+  let d=await CS.loadCBT(); if(d){BOOT(d.SETS,d.FIGS);return}
+  box.hidden=false;
+  box.innerHTML=`<div class="hbar"><div class="in gut"><a class="home-a" href="index.html" aria-label="첫 화면으로" title="첫 화면으로">‹</a><h1>컴퓨터활용능력 2급 필기 CBT</h1><span id="csp"></span></div></div>
+  <div class="home gut" style="grid-template-columns:minmax(0,560px)"><div class="panel"><h2>기출문제 잠금</h2>
+  <p class="note">CBT 문제는 시나공 기출 자료라 공개 저장소에 비밀번호로 잠가 두었다. 한 번 풀면 이 기기에서는 다시 묻지 않는다. 다른 기기 연결 주소로 열었다면 자동으로 풀린다.</p>
+  <form class="form" id="ul" autocomplete="off" style="margin-top:12px"><label>비밀번호<input id="pw" type="password" autocomplete="off"></label><button class="btn pri" type="submit">풀기</button></form><p class="note" id="msg" role="status" style="margin-top:8px"></p></div></div>`;
+  CS.mountPill(document.getElementById('csp'));
+  document.getElementById('ul').onsubmit=async e=>{e.preventDefault();const m=document.getElementById('msg');m.textContent='확인하는 중…';
+    if(await CS.unlock(document.getElementById('pw').value)){box.innerHTML='';d=window.CBT_PLAIN;BOOT(d.SETS,d.FIGS)}else m.textContent='비밀번호가 맞지 않습니다.'};
+})();
+</script>
+
+</body></html>

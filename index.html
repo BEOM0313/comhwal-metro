@@ -1,153 +1,179 @@
 <!doctype html>
-<html lang="ko" data-accent="ikb"><head><meta charset="utf-8">
+<html lang="ko">
+<head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>컴활 METRO</title>
-<meta name="theme-color" content="#fafaf8">
+<meta name="theme-color" content="#f4f5f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#101218" media="(prefers-color-scheme: dark)">
+<title>컴활 2급</title>
+<meta name="description" content="컴퓨터활용능력 2급 필기 공부: 학습 카드, 강의 문제, CBT, 컴활위키, PDF 노트">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="컴활 METRO">
+<meta name="apple-mobile-web-app-title" content="컴활 2급">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=Noto+Sans+KR:wght@200;300;400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
 
 <style>
-/* Swiss International (guizang-social-card-skill) · IKB Blue
-   레이아웃: 12열 격자. 왼쪽 3열은 구역 번호·이름, 오른쪽 9열은 머리선(hairline)으로 나눈 목록.
-   한 가지 강조색만, 둥근 모서리·그림자·그라데이션 없음, 큰 글씨일수록 가늘게. 의도적으로 밝은 단일 테마 */
 :root{
-  --paper:#fafaf8; --ink:#0a0a0a; --grey-1:#f0f0ee; --grey-2:#d4d4d2; --grey-3:#6b6b6b;
-  --accent:#002FA7; --accent-on:#ffffff;
-  --sans:"Inter","Helvetica Neue",Helvetica,"Noto Sans KR","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Consolas,monospace;
-  color-scheme:light;
+  --bg:#f4f5f7; --card:#ffffff; --ink:#15181f; --sub:#5d6575; --line:#e3e6ec; --soft:#eef0f4;
+  --l1:#0052a4; --l2:#00a84d; --l3:#ef7c1c; --l4:#00a5de; --l5:#996cac; --l9:#a8924a;
+  --f:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
 }
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101218;--card:#191c24;--ink:#eceef3;--sub:#9aa1b0;--line:#2a2e39;--soft:#20232c;--l1:#4f8fe0;--l9:#cdbb7a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#101218;--card:#191c24;--ink:#eceef3;--sub:#9aa1b0;--line:#2a2e39;--soft:#20232c;--l1:#4f8fe0;--l9:#cdbb7a;color-scheme:dark}
 *{box-sizing:border-box}
-html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--paper)}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;word-break:keep-all;overflow-wrap:anywhere;-webkit-font-smoothing:antialiased}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);-webkit-text-size-adjust:100%;word-break:keep-all;overflow:hidden}
 a{color:inherit;text-decoration:none}
-a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.gut{padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
-.page{max-width:1240px;margin:0 auto}
-.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px}
-.t-meta{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:500;color:var(--grey-3)}
-.rule{border:0;border-top:1px solid var(--ink);margin:0}
-.rule.thin{border-top-color:var(--grey-2)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--l1);outline-offset:2px}
 
-/* 머리 */
-.top{padding-block:28px 0}
-.top .meta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-bottom:14px}
-.hero{padding-block:40px 36px;align-items:end;row-gap:24px}
-.hero h1{grid-column:1/9;margin:0;font-weight:200;font-size:clamp(64px,13vw,168px);line-height:.92;letter-spacing:-.04em}
-.hero h1 .ac{color:var(--accent)}
-.hero .lead{grid-column:9/13;margin:0;font-size:19px;line-height:1.5;font-weight:400}
-.hero .lead b{font-weight:600}
-.sq{display:inline-block;width:14px;height:14px;background:var(--accent);margin-right:10px;vertical-align:1px}
+/* 한 화면: 머리말 · 진도 · 타일 · 꼬리말이 화면 높이를 나눠 쓴다 (스크롤 없음) */
+.app{height:100vh;height:100dvh;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;gap:12px;
+  padding:calc(env(safe-area-inset-top,0px) + 14px) max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 10px) max(16px,env(safe-area-inset-left,0px));
+  max-width:1360px;margin:0 auto}
+.hd{display:flex;align-items:center;gap:12px;min-width:0}
+.mark{width:40px;height:40px;border-radius:12px;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-weight:700;font-size:14px;letter-spacing:-.5px;flex:none}
+.hd h1{margin:0;font-size:19px;line-height:1.15;letter-spacing:-.4px;white-space:nowrap}
+.hd p{margin:2px 0 0;font-size:12.5px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hd>div:nth-child(2){min-width:0}
+.hd .sp{margin-left:auto;color:var(--sub);flex:none}
 
-/* 숫자 탑 */
-.kpi{border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
-.kpi .cell{grid-column:span 3;padding:18px 0 16px;border-left:1px solid var(--grey-2);padding-left:16px}
-.kpi .cell:first-child{border-left:0;padding-left:0}
-.kpi .num{font-weight:200;font-size:clamp(40px,6vw,72px);line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
-.kpi .cell.ac .num{color:var(--accent)}
-.kpi .lab{margin-top:8px}
+.prog{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.st{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;min-width:0}
+.st b{display:block;font-size:22px;line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-.5px;white-space:nowrap}
+.st b small{font-size:13px;color:var(--sub);font-weight:500;margin-left:2px}
+.st span{display:block;font-size:12px;color:var(--sub);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.st .meter{height:4px;border-radius:2px;background:var(--soft);margin-top:7px;overflow:hidden}
+.st .meter i{display:block;height:100%;background:var(--c)}
 
-/* 구역 */
-.sec{padding-block:36px 8px}
-.sec+.sec{border-top:1px solid var(--ink)}
-.sec .side{grid-column:1/4}
-.sec .no{font-weight:200;font-size:56px;line-height:1;letter-spacing:-.03em;color:var(--accent);font-variant-numeric:tabular-nums}
-.sec h2{margin:10px 0 6px;font-size:26px;font-weight:300;letter-spacing:-.01em}
-.sec .why{margin:0;color:var(--grey-3);font-size:14.5px;max-width:28ch}
-.rows{grid-column:4/13;list-style:none;margin:0;padding:0}
-.rows li{border-top:1px solid var(--grey-2)}
-.rows li:first-child{border-top:1px solid var(--ink)}
-.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 20px;align-items:center;padding:16px 0 16px 0;min-height:72px;position:relative}
-a.row::before{content:"";position:absolute;left:-20px;top:-1px;bottom:0;width:6px;background:var(--accent);transform:scaleY(0);transform-origin:top;transition:transform .18s}
-a.row:hover::before,a.row:focus-visible::before{transform:scaleY(1)}
-a.row:hover .tt{color:var(--accent)}
-.tt{font-size:21px;font-weight:400;letter-spacing:-.01em;line-height:1.3}
-.ds{grid-column:1;color:var(--grey-3);font-size:14.5px;line-height:1.45}
-.go{grid-row:1/3;grid-column:2;font-family:var(--mono);font-size:12px;letter-spacing:.08em;font-weight:600;text-transform:uppercase;border:1px solid var(--ink);padding:6px 10px;white-space:nowrap}
-a.row:hover .go{background:var(--accent);border-color:var(--accent);color:var(--accent-on)}
-.recent .go{background:var(--ink);color:var(--paper)}
-.lk .tt{color:var(--grey-3)}
-.lk .go{border-style:dashed;color:var(--grey-3);border-color:var(--grey-3)}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:10px;min-height:0}
+.tile{position:relative;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 14px 16px;min-height:0;overflow:hidden;transition:transform .15s ease,border-color .15s ease}
+.tile:hover{border-color:var(--c);transform:translateY(-2px)}
+.tile:active{transform:scale(.985)}
+.tile::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--c)}
+.tile .no{width:34px;height:34px;border-radius:50%;border:3px solid var(--c);display:grid;place-items:center;font:600 14px var(--mono);color:var(--c);background:var(--card);flex:none}
+.tile h2{margin:auto 0 0;font-size:18px;line-height:1.25;letter-spacing:-.3px}
+.tile p{margin:4px 0 0;font-size:12.5px;line-height:1.45;color:var(--sub);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tile .tag{position:absolute;top:14px;right:14px;font-size:11.5px;color:var(--sub);border:1px solid var(--line);border-radius:999px;padding:1px 8px;background:var(--card)}
+.tile .tag.now{color:#fff;background:var(--c);border-color:var(--c)}
+.ft{display:flex;justify-content:space-between;gap:8px;font-size:11.5px;color:var(--sub)}
+.ft span:last-child{text-align:right}
 
-.foot{padding-block:28px 40px;border-top:1px solid var(--ink);margin-top:28px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.foot p{margin:0;max-width:70ch;font-size:13.5px;color:var(--grey-3)}
-
-@media (max-width:860px){
-  .hero h1,.hero .lead{grid-column:1/-1}
-  .kpi .cell{grid-column:span 6;border-left:0;padding-left:0;border-top:1px solid var(--grey-2)}
-  .kpi .cell:nth-child(-n+2){border-top:0}
-  .kpi .cell:nth-child(even){border-left:1px solid var(--grey-2);padding-left:16px}
-  .sec .side,.rows{grid-column:1/-1}
-  .sec .side{display:flex;align-items:baseline;gap:14px;margin-bottom:14px}
-  .sec .no{font-size:40px}.sec h2{margin:0}.sec .why{display:none}
-  .tt{font-size:18.5px}
-  a.row::before{left:-14px;width:4px}
+/* 넓은 화면(16:9 PC): 왼쪽에 진도, 오른쪽에 3×2 타일 */
+@media (min-width:900px){
+  body{display:grid;place-items:center}
+  .app{width:100%;max-width:1280px;max-height:880px;grid-template-columns:300px minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;column-gap:18px;row-gap:18px;padding-top:calc(env(safe-area-inset-top,0px) + 24px);padding-bottom:16px}
+  .hd{grid-column:1/-1}
+  .mark{width:48px;height:48px;font-size:16px}.hd h1{font-size:24px}.hd p{font-size:13.5px}
+  .prog{grid-template-columns:1fr;grid-auto-rows:minmax(0,1fr);gap:14px;min-height:0}
+  .st{padding:18px 20px;display:flex;flex-direction:column;justify-content:center;border-radius:18px}
+  .st b{font-size:36px}.st b small{font-size:15px}.st span{font-size:13.5px;margin-top:6px}.st .meter{height:5px;margin-top:12px}
+  .tiles{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+  .tile{padding:24px 24px 26px;border-radius:22px}
+  .tile .no{width:46px;height:46px;font-size:17px;border-width:4px}
+  .tile h2{font-size:25px}.tile p{font-size:14.5px;-webkit-line-clamp:3;margin:8px 0 0}
+  .tile .tag{top:24px;right:24px;font-size:12.5px;padding:2px 10px}
+  .ft{grid-column:1/-1;font-size:12.5px}
 }
-@media (prefers-reduced-motion:reduce){a.row::before{transition:none}}
+/* 낮은 화면에서도 스크롤 없이: 설명을 줄인다 */
+@media (max-height:700px) and (max-width:899px){.tile p{display:none}.st span{display:none}.st b{font-size:19px}.app{gap:9px}.tile{padding:11px 11px 13px}.tile .no{width:30px;height:30px}.tile .tag{top:11px;right:11px}}
+@media (max-height:640px) and (min-width:900px){.tile p{display:none}.st span{font-size:12px}}
+@media (max-width:899px) and (orientation:landscape) and (max-height:500px){.tiles{grid-template-columns:repeat(3,minmax(0,1fr))}.prog{display:none}.app{grid-template-rows:auto 0 minmax(0,1fr) auto}}
+
+/* PDF 목록 창 */
+.ov{position:fixed;inset:0;z-index:50;background:rgba(10,12,18,.45);display:flex;align-items:flex-end;justify-content:center}
+.ov[hidden]{display:none}
+.sheet{background:var(--card);width:min(560px,100%);max-height:86dvh;overflow:auto;border-radius:20px 20px 0 0;padding:16px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+@media (min-width:900px){.ov{align-items:center}.sheet{border-radius:20px;padding:22px}}
+.sheet .sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.sheet h3{margin:0;font-size:18px}
+.sheet .x{width:40px;height:40px;border:0;background:var(--soft);border-radius:50%;font-size:20px;cursor:pointer}
+.sheet ul{list-style:none;margin:0;padding:0}
+.sheet li a,.sheet li div{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;align-items:center;padding:11px 4px;border-top:1px solid var(--line);min-height:52px}
+.sheet li b{font-size:15px}
+.sheet li small{grid-column:1;font-size:12.5px;color:var(--sub)}
+.sheet li em{grid-row:1/span 2;grid-column:2;font-style:normal;font-size:12px;color:var(--sub);border:1px solid var(--line);border-radius:999px;padding:1px 9px}
+.sheet li div{opacity:.55}
+@media (prefers-reduced-motion:reduce){.tile{transition:none}}
 </style>
-</head><body>
-<div class="page gut">
- <header class="top">
-  <div class="meta"><span class="t-meta">Computer Specialist Lv.2 · Written Test</span><span class="t-meta" id="today"></span></div>
-  <hr class="rule">
-  <div class="grid hero">
-   <h1>컴활<br><span class="ac">2급</span></h1>
-   <p class="lead"><span class="sq" aria-hidden="true"></span>필기 합격까지 필요한 것을 <b>한 화면</b>에 모았다. 외우고, 읽고, 인쇄하고, 실제 시험처럼 풀어 본다.</p>
-  </div>
- </header>
- <section class="grid kpi" id="kpi" aria-label="자료 규모"></section>
- <main id="map"></main>
- <footer class="foot"><p id="foot"></p><span class="t-meta">컴활 METRO</span></footer>
+</head>
+<body>
+<div class="app">
+  <header class="hd">
+    <div class="mark" aria-hidden="true">컴활</div>
+    <div><h1>컴퓨터활용능력 2급</h1><p id="sub">필기 공부</p></div>
+    <div class="sp" id="sp"></div>
+  </header>
+  <section class="prog" aria-label="공부 현황" id="prog"></section>
+  <nav class="tiles" aria-label="공부 메뉴" id="tiles"></nav>
+  <footer class="ft"><span id="today"></span><span id="foot"></span></footer>
 </div>
+<div class="ov" id="ov" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pdfT">
+  <div class="sh"><h3 id="pdfT">PDF 노트</h3><button class="x" type="button" id="ovx" aria-label="닫기">×</button></div>
+  <ul id="pdfs"></ul>
+</div></div>
+<script>window.CS_MODE=/*MODE*/'online'</script>
+<script src="common.js"></script>
 <script>
-const MODE=/*MODE*/'online';
-const CBT_URL='https://claude.ai/artifact/42LB1ckXhFySfqMuHxAjV4';
-const SECS=[
- {name:'외우기',why:'카드로 용어를 익히고 단축키·수식을 직접 해 본다',rows:[
-   {id:'study',t:'학습 카드',s:'강의별 용어 카드 넘기며 외우기, 강의 복습',href:'metro.html#study'},
-   {id:'practice',t:'응용 연습',s:'단축키 직접 눌러 보기, 미니 엑셀 수식, 표시 형식 실험실',href:'metro.html#practice'},
-   {id:'exam',t:'강의 복습 문제',s:'강의별 확인 문제, 오늘 공부 복습, 오답 다시 풀기',href:'metro.html#exam'}]},
- {name:'읽기',why:'헷갈리는 개념을 그림과 각주로 이해한다',rows:[
-   {id:'wiki',t:'컴활위키',s:'1과목 22개 · 2과목 12개 문서, 그림 14개, 검색과 랜덤 문서',href:'wiki.html#main'},
-   {id:'wiki1',t:'1과목 컴퓨터 일반',s:'1강 컴퓨터의 기본 개념부터',href:'wiki.html#d1'},
-   {id:'wiki2',t:'2과목 스프레드시트',s:'2-1 데이터 입력부터',href:'wiki.html#e1'}]},
- {name:'인쇄하기',why:'흑백 프린터로 뽑아 들고 다니는 노트',pdf:true,rows:[
-   {id:'p-pass',t:'합격 노트',s:'시험 정보, 강의 노트, 1·2과목 핵심, 계산 연습, OX · 컬러',href:'pdf/합격노트_컬러.pdf'},
-   {id:'p-mono',t:'합격 노트 흑백',s:'흑백 프린터용',href:'pdf/합격노트_흑백.pdf'},
-   {id:'p-2up',t:'합격 노트 2쪽 모아',s:'A4 한 장에 두 쪽',href:'pdf/합격노트_2쪽모아.pdf'},
-   {id:'p-s1',t:'1과목 총정리',s:'강의 1~22강 노트와 확인 문제 139',href:'pdf/1과목_총정리.pdf'},
-   {id:'p-d2',t:'공부 노트 10/19',s:'9~22강 지하철 노트',href:'pdf/공부노트_2026-10-19.pdf'},
-   {id:'p-d1',t:'공부 노트 10/18',s:'1~8강 지하철 노트',href:'pdf/공부노트_2026-10-18.pdf'},
-   {id:'p-c1',t:'1과목 완성 노트',s:'핵심 요약 001~082와 강의 노트, OX, 확인 문제',href:'pdf/1과목_완성노트.pdf',off:true},
-   {id:'p-c2',t:'2과목 완성 노트',s:'핵심 요약 083~134와 함수 연습, 실기 미리보기',href:'pdf/2과목_완성노트.pdf',off:true},
-   {id:'p-sum',t:'핵심 요약 재디자인',s:'핵심 요약 134항목',href:'pdf/핵심요약_재디자인.pdf',off:true}]},
- {name:'시험 보기',why:'실제 시험과 같은 40문항 40분',rows:[
-   {id:'cbt',t:'컴활 2급 필기 CBT',s:'2025~2026 기출 9회, 무작위 모의고사, 유형별 연습 150문항, 자동 채점',href:MODE==='offline'?'cbt.html':CBT_URL,ext:MODE!=='offline',note:MODE==='offline'?'':'Claude 로그인 후 본인만 열림'}]}
-];
+const MODE=window.CS_MODE, CARDS=271, CBT_N=510;
+const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-let last='';try{last=localStorage.getItem('launcher-last')||''}catch(e){}
-const open=r=>!(r.off&&MODE!=='offline');
-const pdfN=SECS.find(s=>s.pdf).rows.filter(open).length;
-document.getElementById('kpi').innerHTML=[['22','강의 노트'],['34','위키 문서'],['510','CBT 문항',1],[String(pdfN),'PDF 노트']]
- .map(([n,l,a])=>`<div class="cell${a?' ac':''}"><div class="num">${n}</div><div class="lab t-meta">${l}</div></div>`).join('');
-document.getElementById('map').innerHTML=SECS.map((S,i)=>`<section class="grid sec" aria-labelledby="h${i}">
- <div class="side"><div class="no">${String(i+1).padStart(2,'0')}</div><h2 id="h${i}">${S.name}</h2><p class="why">${S.why}</p></div>
- <ul class="rows">${S.rows.map(r=>{
-   if(!open(r)) return `<li class="lk"><div class="row"><span class="tt">${esc(r.t)}</span><span class="ds">USB 오프라인 묶음에만 있음 · 시나공 원문 기반</span><span class="go">Private</span></div></li>`;
-   const ext=r.ext?' target="_blank" rel="noopener"':'';
-   const tag=r.id===last?'최근':r.href.endsWith('.pdf')?'PDF':r.ext?'Open ↗':'Open →';
-   return `<li class="${r.id===last?'recent':''}"><a class="row" href="${esc(r.href)}" data-id="${r.id}"${ext}><span class="tt">${esc(r.t)}</span><span class="ds">${esc(r.s)}${r.note?' · '+esc(r.note):''}</span><span class="go">${tag}</span></a></li>`}).join('')}</ul></section>`).join('');
-document.getElementById('map').addEventListener('click',e=>{const a=e.target.closest('a[data-id]');if(a){try{localStorage.setItem('launcher-last',a.dataset.id)}catch(err){}}});
-const d=new Date();document.getElementById('today').textContent=`${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
-document.getElementById('foot').textContent=MODE==='offline'
- ?'오프라인 묶음: 인터넷 없이 모든 항목이 열린다. 기록은 이 컴퓨터의 브라우저에만 저장된다. 각 화면 왼쪽 위 ‹ 로 돌아온다.'
- :'각 화면 왼쪽 위 ‹ 로 이 첫 화면에 돌아온다. 예전 주소나 홈 화면 아이콘으로 들어와도 학습 기록은 그대로 남아 있다.';
-function fwd(){if(/^#(study|practice|exam|sync=)/.test(location.hash)) location.replace('metro.html'+location.hash)}
+const PDFS=[
+  ['합격 노트','시험 정보, 강의 노트, 1·2과목 핵심, 계산 연습, OX · 컬러','pdf/합격노트_컬러.pdf'],
+  ['합격 노트 흑백','흑백 프린터용','pdf/합격노트_흑백.pdf'],
+  ['합격 노트 2쪽 모아','A4 한 장에 두 쪽','pdf/합격노트_2쪽모아.pdf'],
+  ['1과목 총정리','강의 1~22강 노트와 확인 문제 139','pdf/1과목_총정리.pdf'],
+  ['공부 노트 10/19','9~22강 지하철 노트','pdf/공부노트_2026-10-19.pdf'],
+  ['공부 노트 10/18','1~8강 지하철 노트','pdf/공부노트_2026-10-18.pdf'],
+  ['1과목 완성 노트','핵심 요약 001~082와 강의 노트, OX','pdf/1과목_완성노트.pdf',1],
+  ['2과목 완성 노트','핵심 요약 083~134와 함수 연습','pdf/2과목_완성노트.pdf',1],
+  ['핵심 요약 재디자인','핵심 요약 134항목','pdf/핵심요약_재디자인.pdf',1]];
+const pdfOpen=p=>!(p[3]&&MODE!=='offline');
+function tiles(){
+  let last='';try{last=localStorage.getItem('launcher-last')||''}catch(e){}
+  const lock=window.CS&&CS.locked();
+  const T=[
+    ['study','1','--l1','학습 카드','강의별 용어 카드를 넘기며 외운다','metro.html#study'],
+    ['exam','2','--l2','강의 문제','강의 확인 문제, 오늘 복습, 오답 다시 풀기','metro.html#exam'],
+    ['practice','3','--l3','응용 연습','단축키 눌러 보기, 미니 엑셀 수식, 표시 형식','metro.html#practice'],
+    ['cbt','4','--l4','CBT 모의시험','실제 시험처럼 40문항 40분 · 기출 9회와 유형 연습','cbt.html',lock?'잠김':''],
+    ['wiki','5','--l5','컴활위키','문서 34개 · 문서마다 그 범위의 문제와 해설','wiki.html#main'],
+    ['pdf','9','--l9','PDF 노트',`인쇄용 노트 ${PDFS.filter(pdfOpen).length}개`,'#pdf']];
+  $('#tiles').innerHTML=T.map(([id,n,c,t,s,h,tag])=>`<a class="tile" href="${h}" data-id="${id}" style="--c:var(${c})"><span class="no" aria-hidden="true">${n}</span>${id===last?'<span class="tag now">최근</span>':tag?`<span class="tag">${tag}</span>`:''}<h2>${t}</h2><p>${esc(s)}</p></a>`).join('');
+}
+function prog(){
+  let known=0;try{known=JSON.parse(localStorage.getItem('cm_known')||'[]').length}catch(e){}
+  const st=window.CS?CS.stats():{n:0,ok:0}, hist=window.CS?CS.hist():[];
+  const best=hist.reduce((m,h)=>Math.max(m,h.avg||0),0), lastH=hist[hist.length-1];
+  const pct=st.n?Math.round(st.ok/st.n*100):0;
+  const cell=(v,unit,lab,w,c)=>`<div class="st"><b>${v}<small>${unit}</small></b><span>${lab}</span><div class="meter"><i style="width:${Math.max(0,Math.min(100,w))}%;--c:var(${c})"></i></div></div>`;
+  $('#prog').innerHTML=
+    cell(known,'/'+CARDS,'외운 학습 카드',CARDS?known/CARDS*100:0,'--l1')+
+    cell(st.n?pct:'–',st.n?'%':'',st.n?`푼 문제 ${st.n}개 중 ${st.ok}개 정답`:'문제 정답률',pct,'--l2')+
+    cell(best||'–',best?'점':'',lastH?`CBT 최고 · 최근 ${lastH.avg}점 ${lastH.pass?'합격':'불합격'}`:'CBT 최고 점수',best,'--l4');
+}
+function openPdf(){
+  $('#pdfs').innerHTML=PDFS.map(p=>pdfOpen(p)?`<li><a href="${esc(p[2])}"><b>${esc(p[0])}</b><small>${esc(p[1])}</small><em>PDF</em></a></li>`:`<li><div><b>${esc(p[0])}</b><small>USB 오프라인 묶음에만 있음</small><em>개인용</em></div></li>`).join('');
+  $('#ov').hidden=false; $('#ovx').focus();
+}
+const closePdf=()=>{$('#ov').hidden=true};
+document.addEventListener('click',e=>{
+  const a=e.target.closest('a[data-id]'); if(!a) return;
+  try{localStorage.setItem('launcher-last',a.dataset.id)}catch(err){}
+  if(a.getAttribute('href')==='#pdf'){e.preventDefault();openPdf()}
+});
+$('#ovx').onclick=closePdf; $('#ov').addEventListener('click',e=>{if(e.target.id==='ov')closePdf()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#ov').hidden)closePdf()});
+const d=new Date(); $('#today').textContent=`${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+$('#sub').textContent=`필기 · 강의 22강 · 기출 ${CBT_N}문항`;
+$('#foot').textContent=MODE==='offline'?'오프라인 묶음 · 기록은 이 컴퓨터에 저장':'각 화면 왼쪽 위 ‹ 로 돌아온다';
+if(window.CS){CS.mountPill($('#sp'));CS.on(w=>{if(w==='data'||w==='unlock'||w==='lock'){prog();tiles()}})}
+tiles(); prog();
+addEventListener('pageshow',()=>{prog();tiles()});
+function fwd(){if(/^#(study|practice|exam)/.test(location.hash)) location.replace('metro.html'+location.hash)}
 fwd(); addEventListener('hashchange',fwd);
 </script>
 </body></html>
