@@ -94,6 +94,31 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .qgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;max-width:1100px;margin:0 auto}
 .qgrid.two{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
 .qcard{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:18px clamp(14px,2vw,22px);font-size:var(--fs);min-width:0}
+.weak{grid-column:1/-1}
+.weak .sum{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13.5px;color:var(--sub);margin:2px 0 10px}
+.weak .sum b{color:var(--ink);font-variant-numeric:tabular-nums}
+.wrow{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(90px,1fr) auto;gap:6px 14px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.wrow .nm b{display:block;font-size:15px}.wrow .nm small{color:var(--sub);font-size:12.5px}
+.wrow .rt{font-size:12.5px;color:var(--sub);font-variant-numeric:tabular-nums}
+.wbar{height:8px;border-radius:4px;background:var(--bad-bg);overflow:hidden;margin-bottom:4px}
+.wbar i{display:block;height:100%;background:var(--ok)}
+.wrow .ac{display:flex;gap:6px}
+.wrow .ac .btn,.wrow .ac a{min-height:36px;padding:0 12px;font-size:13.5px}
+.wrow .ac a{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:8px;color:var(--ink);text-decoration:none;background:var(--paper)}
+.rank{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--bad);color:#fff;font-size:12px;font-weight:700;margin-right:6px;vertical-align:1px}
+.weak details{margin-top:10px}.weak summary{cursor:pointer;color:var(--acc);font-size:14px;min-height:36px;display:flex;align-items:center}
+.wall{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}
+.wall th,.wall td{border-bottom:1px solid var(--line);padding:6px 4px;text-align:left}
+.wall th{color:var(--sub);font-weight:500}.wall td.r,.wall th.r{text-align:right}
+.wall tr.g td{background:var(--soft);font-weight:700;color:var(--sub);font-size:12.5px}
+.wall .lv{display:inline-block;min-width:44px;text-align:center;border-radius:20px;padding:0 8px;font-size:12px}
+.lv.w3{background:var(--bad-bg);color:var(--bad)}.lv.w2{background:var(--warn-bg);color:var(--warn)}.lv.w1{background:var(--ok-bg);color:var(--ok)}.lv.w0{color:var(--sub)}
+.wall button{border:0;background:none;color:var(--acc);font:inherit;font-size:13px;cursor:pointer;padding:4px}
+.tychips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tychips button{border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:999px;padding:5px 12px;font:inherit;font-size:13px;cursor:pointer;min-height:34px}
+.tychips button b{color:var(--bad)}
+.qsubj .ty{border:1px solid var(--line);border-radius:20px;padding:0 8px}
+@media (max-width:640px){.wrow{grid-template-columns:minmax(0,1fr) auto}.wrow .bw{grid-column:1/-1;grid-row:2}.wall .hm{display:none}}
 .qsubj{font-size:12.5px;color:var(--sub);margin-bottom:6px;display:flex;gap:8px;align-items:center}
 .qstem{font-weight:700;line-height:1.65;white-space:pre-line;margin:0 0 12px}
 .qstem .no{color:var(--acc);margin-right:6px}
@@ -198,6 +223,48 @@ const ALL=SETS.flatMap(s=>s.qs).filter(q=>q.a>=0);
 const byId=Object.fromEntries(ALL.map(q=>[q.id,q]));
 const WRONG=()=>{const r=CS.res();return Object.keys(r).filter(id=>byId[id]&&!r[id][0]).sort((a,b)=>r[b][1]-r[a][1])};
 const PILL=document.createElement('span');PILL.className='cspw';CS.mountPill(PILL);
+/* ---------- 유형(위키 문서 단위) 분석 */
+const TYPES={"d1": ["컴퓨터의 기본 개념", 1, "하드웨어·소프트웨어"], "d2": ["CPU (중앙처리장치)", 1, "하드웨어·소프트웨어"], "d3": ["주기억장치", 1, "하드웨어·소프트웨어"], "d4": ["보조기억장치", 1, "하드웨어·소프트웨어"], "d5": ["기타 메모리", 1, "하드웨어·소프트웨어"], "d6": ["메인보드와 기타 장치", 1, "하드웨어·소프트웨어"], "d7": ["컴퓨터 단위와 문자 코드", 1, "하드웨어·소프트웨어"], "d8": ["운영체제와 소프트웨어", 1, "하드웨어·소프트웨어"], "d9": ["운영 방식과 세대별 특징", 1, "Windows"], "d10": ["Windows 특징과 단축키", 1, "Windows"], "d11": ["Windows 설정 1", 1, "Windows"], "d12": ["Windows 설정 2", 1, "Windows"], "d13": ["Windows 설정 3", 1, "Windows"], "d14": ["Windows 도구", 1, "Windows"], "d15": ["멀티미디어", 1, "멀티미디어"], "d16": ["멀티미디어 데이터", 1, "멀티미디어"], "d17": ["정보통신 기초", 1, "정보통신·보안"], "d18": ["통신장비와 프로토콜", 1, "정보통신·보안"], "d19": ["IP와 도메인", 1, "정보통신·보안"], "d20": ["정보통신 용어", 1, "정보통신·보안"], "d21": ["정보통신 보안", 1, "정보통신·보안"], "d22": ["프로그래밍 언어", 1, "프로그래밍"], "e1": ["데이터 입력", 2, "입력·편집"], "e2": ["셀 이동과 편집", 2, "입력·편집"], "e3": ["워크시트와 통합 문서", 2, "입력·편집"], "e4": ["셀 서식과 사용자 지정 표시 형식", 2, "서식·수식"], "e5": ["수식과 참조", 2, "서식·수식"], "e6": ["함수 1: 통계와 수학", 2, "함수"], "e7": ["함수 2: 텍스트, 날짜, 논리, 찾기", 2, "함수"], "e8": ["차트", 2, "차트"], "e9": ["정렬과 필터", 2, "데이터 관리"], "e10": ["부분합과 데이터 분석", 2, "데이터 관리"], "e11": ["인쇄와 화면", 2, "인쇄·매크로"], "e12": ["매크로", 2, "인쇄·매크로"]};
+const TT=w=>TYPES[w]?TYPES[w][0]:'';
+const UK=q=>q.q.replace(/[\s\W]/g,'').slice(0,60)+'|'+q.o.join('').replace(/[\s\W]/g,'').slice(0,60);
+function typeStats(){
+  const r=CS.res(), st={}, seen={};
+  Object.keys(TYPES).forEach(w=>st[w]={w,tot:0,n:0,bad:0,qs:[]});
+  ALL.forEach(q=>{if(!q.w||!st[q.w])return; const k=UK(q), x=r[q.id];
+    const prev=seen[k];
+    if(!prev){seen[k]={q,x}; st[q.w].tot++; st[q.w].qs.push(q)}
+    else if(x&&(!prev.x||x[1]>prev.x[1])) prev.x=x;});
+  Object.values(seen).forEach(({q,x})=>{if(!x)return; const s=st[q.w]; s.n++; if(!x[0])s.bad++});
+  Object.values(st).forEach(s=>{s.pct=s.n?Math.round((s.n-s.bad)/s.n*100):null; s.risk=(s.bad+1)/(s.n+2)});
+  return st;
+}
+function weakList(st){return Object.values(st).filter(s=>s.n>=3&&s.bad>0).sort((a,b)=>b.risk-a.risk||b.bad-a.bad).slice(0,5)}
+const lvOf=s=>s.n<3?0:s.pct<50?3:s.pct<75?2:1, LV=['','튼튼','보통','약함'];
+const wikiA=w=>CS.MODE==='local'?'':`<a href="wiki.html#${w}">위키</a>`;
+function weakPanel(){
+  const st=typeStats(), all=Object.values(st), n=all.reduce((a,s)=>a+s.n,0), ok=all.reduce((a,s)=>a+s.n-s.bad,0), wl=weakList(st);
+  try{CS.set('weak',wl.slice(0,3).map(s=>({w:s.w,t:TT(s.w),pct:s.pct})))}catch(e){}
+  const sub=sj=>{const a=all.filter(s=>TYPES[s.w][1]===sj),nn=a.reduce((x,s)=>x+s.n,0),oo=a.reduce((x,s)=>x+s.n-s.bad,0);return nn?Math.round(oo/nn*100)+'%':'–'};
+  const row=(s,i)=>`<div class="wrow"><div class="nm"><b><span class="rank">${i+1}</span>${esc(TT(s.w))}</b><small>${TYPES[s.w][1]}과목 · ${esc(TYPES[s.w][2])}</small></div>
+    <div class="bw"><div class="wbar" aria-hidden="true"><i style="width:${s.pct}%"></i></div><div class="rt">정답률 ${s.pct}% · ${s.n}문항 중 ${s.bad}개 틀림</div></div>
+    <div class="ac"><button class="btn pri" type="button" data-ty="${s.w}">연습<span class="hidem">하기</span></button>${wikiA(s.w)}</div></div>`;
+  let body;
+  if(n<5) body=`<p class="note">기출을 풀면 문제마다 유형을 따져 자주 틀리는 유형을 여기에 모아 보여 준다. 위키 문제 창에서 푼 기출도 함께 센다. (지금 ${n}문항)</p>`;
+  else body=`<div class="sum"><span>푼 기출 <b>${n}</b>문항</span><span>정답률 <b>${Math.round(ok/n*100)}%</b></span><span>1과목 <b>${sub(1)}</b></span><span>2과목 <b>${sub(2)}</b></span></div>
+    ${wl.length?wl.map(row).join(''):'<p class="note">3문항 이상 푼 유형 중에 틀린 유형이 아직 없다.</p>'}`;
+  const groups=[];[1,2].forEach(sj=>{const gs=[];Object.keys(TYPES).forEach(w=>{const t=TYPES[w];if(t[1]===sj&&!gs.includes(t[2]))gs.push(t[2])});gs.forEach(g=>groups.push([sj,g]))});
+  const table=`<table class="wall"><tr><th>유형</th><th class="r">푼 문항</th><th class="r">틀림</th><th class="r">정답률</th><th>상태</th><th class="hm"></th></tr>${groups.map(([sj,g])=>`<tr class="g"><td colspan="6">${sj}과목 · ${esc(g)}</td></tr>`+Object.keys(TYPES).filter(w=>TYPES[w][1]===sj&&TYPES[w][2]===g).map(w=>{const s=st[w];const lv=lvOf(s);return `<tr><td>${esc(TT(w))}</td><td class="r">${s.n}/${s.tot}</td><td class="r">${s.bad}</td><td class="r">${s.pct==null?'–':s.pct+'%'}</td><td><span class="lv w${lv}">${s.n<3?'자료 부족':LV[lv]}</span></td><td class="hm"><button type="button" data-ty="${w}">연습</button></td></tr>`}).join('')).join('')}</table>`;
+  return `<div class="panel weak"><h2>내 약점 유형 <small>위키 문서 34개 단위로 기출 ${ALL.length}문항을 나눔 · 같은 문제는 한 번만 셈</small></h2>${body}
+    <details><summary>전체 유형별 정답률 보기</summary>${table}</details></div>`;
+}
+function startType(w){
+  const r=CS.res(), seen=new Set();
+  let qs=ALL.filter(q=>q.w===w).filter(q=>{const k=UK(q);if(seen.has(k))return false;seen.add(k);return true});
+  const rank=q=>{const x=r[q.id];return !x?1:x[0]?2:0};
+  qs=shuffle(qs).sort((a,b)=>rank(a)-rank(b)).slice(0,20);
+  if(!qs.length) return;
+  S.selType=w; S._type={qs,title:'유형 연습: '+TT(w)}; S.prevSel=S.sel; S.sel='t:'+w; start(); S.sel=S.prevSel;
+}
 const S={name:store.get('name',''),sel:store.get('sel','y2026_3'),reveal:false,fs:store.get('fs',0),lay:store.get('lay',1)};
 const FS=[16,19,22];
 
@@ -210,6 +277,7 @@ function home(){
   const card=(k,t,sub)=>`<button class="set" type="button" data-sel="${k}" aria-pressed="${S.sel===k}"><b>${esc(t)}</b><span>${sub}</span>${best[k]!=null?`<span class="best">최고 ${best[k]}점</span>`:''}</button>`;
   $('#home').innerHTML=`<div class="hbar"><div class="in gut"><a class="home-a" href="index.html" aria-label="첫 화면으로" title="첫 화면으로">‹</a><h1>컴퓨터활용능력 2급 필기 CBT</h1><span class="tag">대한상공회의소 형식 · 40문항 40분</span><span id="csp"></span></div></div>
   <div class="home gut">
+    ${weakPanel()}
     <div class="panel">
       <h2>실제 기출 <small>2025~2026 상시 · 회차당 40문항</small></h2>
       <div class="sets">${EXAMS.map(s=>card(s.k,s.t,`1과목 20 · 2과목 20 · 40분`)).join('')}</div>
@@ -238,7 +306,7 @@ function home(){
     </div>
   </div>`;
   $('#csp').appendChild(PILL);
-  $('#home').onclick=e=>{const b=e.target.closest('[data-sel]'); if(!b) return; S.sel=b.dataset.sel; store.set('sel',S.sel); home();};
+  $('#home').onclick=e=>{const t=e.target.closest('[data-ty]'); if(t){startType(t.dataset.ty);return} const b=e.target.closest('[data-sel]'); if(!b) return; S.sel=b.dataset.sel; store.set('sel',S.sel); home();};
   $('#f').onsubmit=e=>{e.preventDefault(); S.name=$('#nm').value.trim(); S.reveal=$('#rv').checked; store.set('name',S.name); start();};
 }
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
@@ -251,10 +319,11 @@ function pickMix(){
 let X=null, tick=null;
 function start(){
   let qs,title,min;
-  if(S.sel==='mix'){qs=pickMix();title='무작위 모의고사';min=40}
+  if(S.sel.startsWith('t:')){qs=S._type.qs;title=S._type.title;min=Math.max(5,qs.length)}
+  else if(S.sel==='mix'){qs=pickMix();title='무작위 모의고사';min=40}
   else if(S.sel==='wrong'){qs=WRONG().map(id=>byId[id]).filter(Boolean).slice(0,40);qs.sort((a,b)=>(a.s||1)-(b.s||1));title='틀린 문제 다시 풀기';min=Math.max(5,qs.length)}
   else {const s=SETS.find(x=>x.k===S.sel);qs=s.qs.filter(q=>q.a>=0);title=s.t;min=s.kind==='exam'?40:qs.length}
-  X={k:S.sel,title,qs,ans:Array(qs.length).fill(-1),i:0,end:Date.now()+min*60000,total:min*60,warned:{},done:false,no:String(Math.floor(10000000+Math.random()*89999999))};
+  X={k:S.sel,rev:S.sel.startsWith('t:'),title,qs,ans:Array(qs.length).fill(-1),i:0,end:Date.now()+min*60000,total:min*60,warned:{},done:false,no:String(Math.floor(10000000+Math.random()*89999999))};
   show('exam'); renderExam(); clearInterval(tick); tick=setInterval(timerTick,500); timerTick();
 }
 function fmt(sec){sec=Math.max(0,Math.ceil(sec));return String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0')}
@@ -293,10 +362,10 @@ function renderExam(){
   $('#exam').onclick=onExamClick;
 }
 function qhtml(k){
-  const q=X.qs[k], a=X.ans[k], show=X.done||(S.reveal&&a>=0);
+  const q=X.qs[k], a=X.ans[k], show=X.done||((S.reveal||X.rev)&&a>=0);
   const subj=q.s?`${q.s}과목 ${q.s===1?'컴퓨터 일반':'스프레드시트 일반'}`:'';
   return `<section class="qcard" aria-label="${k+1}번 문제">
-    <div class="qsubj">${subj?`<span>${subj}</span>`:''}<span>${esc(q.src)} ${q.n}번</span>${show&&a>=0?`<span class="verdict ${a===q.a?'ok':'bad'}">${a===q.a?'정답':'오답'}</span>`:''}${X.done&&a<0?'<span class="verdict bad">안 푼 문제</span>':''}</div>
+    <div class="qsubj">${subj?`<span>${subj}</span>`:''}<span>${esc(q.src)} ${q.n}번</span>${show&&q.w&&TT(q.w)?`<span class="ty">유형 · ${esc(TT(q.w))}</span>`:''}${show&&a>=0?`<span class="verdict ${a===q.a?'ok':'bad'}">${a===q.a?'정답':'오답'}</span>`:''}${X.done&&a<0?'<span class="verdict bad">안 푼 문제</span>':''}</div>
     <p class="qstem"><span class="no">${k+1}.</span>${esc(q.q)}</p>
     ${q.f.map(i=>`<img class="qfig" src="${FIGS[i][0]}" width="${FIGS[i][1]}" height="${FIGS[i][2]}" alt="${k+1}번 문제 그림" loading="lazy">`).join('')}
     <div class="opts" role="radiogroup" aria-label="${k+1}번 보기">${q.o.map((o,j)=>{
@@ -369,7 +438,7 @@ function submit(auto){
   X.score={s1,s2,avg,pass,ok:X.qs.filter((q,k)=>X.ans[k]===q.a).length,used:Math.min(X.total,Math.round(X.total-(X.end-Date.now())/1000))};
   // 오답 저장 (맞힌 문제는 오답 목록에서 뺌)
   X.qs.forEach((q,k)=>CS.record(q.id,X.ans[k]===q.a));
-  CS.addHist({k:X.k,t:X.title,avg,pass});
+  if(!X.rev) CS.addHist({k:X.k,t:X.title,avg,pass});
   if(auto) toast('시험 시간이 끝나 답안이 자동 제출되었습니다.');
   showResult();
 }
@@ -378,11 +447,11 @@ function showResult(){
   $('#result').innerHTML=`<div class="hbar"><div class="in gut"><h1>${esc(X.title)} 결과</h1><span class="tag">수험번호 ${X.no}</span></div></div>
   <div class="res gut">
     <div class="panel">
-      <p class="big ${r.pass?'ok':'bad'}">${r.pass?'합격':'불합격'}</p>
-      <p class="note">${r.s1!=null&&r.s2!=null?(r.pass?'두 과목 모두 40점 이상이고 평균 60점 이상입니다.':(Math.min(r.s1,r.s2)<40?'40점 미만인 과목이 있어 과락입니다.':'평균이 60점에 못 미칩니다.')):'60점 이상이면 통과로 표시합니다.'} 걸린 시간 ${fmt(r.used)}</p>
+      <p class="big ${r.pass?'ok':'bad'}">${X.rev?r.avg+'점':r.pass?'합격':'불합격'}</p>
+      <p class="note">${X.rev?'유형 연습은 합격 판정 없이 정답률만 본다. 틀린 문제는 오답 목록과 약점 분석에 반영된다.':r.s1!=null&&r.s2!=null?(r.pass?'두 과목 모두 40점 이상이고 평균 60점 이상입니다.':(Math.min(r.s1,r.s2)<40?'40점 미만인 과목이 있어 과락입니다.':'평균이 60점에 못 미칩니다.')):'60점 이상이면 통과로 표시합니다.'} 걸린 시간 ${fmt(r.used)}</p>
       <div class="score" style="margin-top:12px">
-        ${r.s1!=null?`<div class="sbox"><span>1과목 컴퓨터 일반</span><b>${r.s1}</b><small>${r.s1<40?'과락':'통과'}</small></div>`:''}
-        ${r.s2!=null?`<div class="sbox"><span>2과목 스프레드시트 일반</span><b>${r.s2}</b><small>${r.s2<40?'과락':'통과'}</small></div>`:''}
+        ${r.s1!=null?`<div class="sbox"><span>1과목 컴퓨터 일반</span><b>${r.s1}</b><small>${X.rev?'':r.s1<40?'과락':'통과'}</small></div>`:''}
+        ${r.s2!=null?`<div class="sbox"><span>2과목 스프레드시트 일반</span><b>${r.s2}</b><small>${X.rev?'':r.s2<40?'과락':'통과'}</small></div>`:''}
         <div class="sbox"><span>평균</span><b>${r.avg}</b><small>${X.qs.length}문항 중 ${r.ok}개 정답</small></div>
       </div>
     </div>
@@ -391,12 +460,15 @@ function showResult(){
       <div class="legend"><span class="pill ok">정답</span><span class="pill bad">오답·안 푼 문제</span></div>
       <div class="grid40" style="margin-top:10px">${X.qs.map((q,k)=>`<button class="cell ${X.ans[k]===q.a?'ok':'bad'}" type="button" data-rev="${k}" aria-label="${k+1}번 ${X.ans[k]===q.a?'정답':'오답'}">${k+1}</button>`).join('')}</div>
     </div>
+    ${(()=>{const c={};X.qs.forEach((q,k)=>{if(X.ans[k]!==q.a&&q.w&&TT(q.w))c[q.w]=(c[q.w]||0)+1});const ks=Object.keys(c).sort((a,b)=>c[b]-c[a]);
+      return ks.length?`<div class="panel"><h2>이번에 틀린 유형 <small>누르면 그 유형만 모아 연습한다 (정답 바로 확인)</small></h2><div class="tychips">${ks.map(w=>`<button type="button" data-ty="${w}">${esc(TT(w))} <b>${c[w]}</b></button>`).join('')}</div></div>`:''})()}
     <div class="acts2"><button class="btn pri" type="button" id="rev">정답·해설 보기</button><button class="btn" type="button" id="again">같은 시험 다시 풀기</button><button class="btn" type="button" id="wr">틀린 문제만 다시 풀기</button><button class="btn" type="button" id="hm">처음 화면</button></div>
   </div>`;
   $('#result').onclick=e=>{const b=e.target.closest('button'); if(!b) return;
     if(b.dataset.rev!=null){X.i=+b.dataset.rev; show('exam'); renderExam(); return}
     if(b.id==='rev'){X.i=0; show('exam'); renderExam()}
-    if(b.id==='again'){start()}
+    if(b.dataset.ty){startType(b.dataset.ty);return}
+    if(b.id==='again'){X.k.startsWith('t:')?startType(X.k.slice(2)):start()}
     if(b.id==='wr'){S.sel='wrong';store.set('sel','wrong');start()}
     if(b.id==='hm'){home()}};
 }

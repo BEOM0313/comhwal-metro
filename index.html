@@ -134,12 +134,12 @@ const PDFS=[
 const pdfOpen=p=>!(p[3]&&MODE!=='offline');
 function tiles(){
   let last='';try{last=localStorage.getItem('launcher-last')||''}catch(e){}
-  const lock=window.CS&&CS.locked();
+  const lock=window.CS&&CS.locked(); const weak=window.CS?CS.get('weak',[]):[];
   const T=[
     ['study','1','--l1','학습 카드','강의별 용어 카드를 넘기며 외운다','metro.html#study'],
     ['exam','2','--l2','강의 문제','강의 확인 문제, 오늘 복습, 오답 다시 풀기','metro.html#exam'],
     ['practice','3','--l3','응용 연습','단축키 눌러 보기, 미니 엑셀 수식, 표시 형식','metro.html#practice'],
-    ['cbt','4','--l4','CBT 모의시험','실제 시험처럼 40문항 40분 · 기출 9회와 유형 연습','cbt.html',lock?'잠김':''],
+    ['cbt','4','--l4','CBT 모의시험',weak.length?`약한 유형: ${weak.map(x=>x.t.replace(/\s*\(.*\)/,'').split(':')[0]+' '+x.pct+'%').join(', ')}`:'실제 시험처럼 40문항 40분 · 기출 9회와 유형 연습','cbt.html',lock?'잠김':weak.length?'약점 '+weak.length:''],
     ['wiki','5','--l5','컴활위키','문서 34개 · 문서마다 그 범위의 문제와 해설','wiki.html#main'],
     ['pdf','9','--l9','PDF 노트',`인쇄용 노트 ${PDFS.filter(pdfOpen).length}개`,'#pdf']];
   $('#tiles').innerHTML=T.map(([id,n,c,t,s,h,tag])=>`<a class="tile" href="${h}" data-id="${id}" style="--c:var(${c})"><span class="no" aria-hidden="true">${n}</span>${id===last?'<span class="tag now">최근</span>':tag?`<span class="tag">${tag}</span>`:''}<h2>${t}</h2><p>${esc(s)}</p></a>`).join('');
