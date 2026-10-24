@@ -1,7 +1,8 @@
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#1f3a5f">
+<meta name="theme-color" content="#1f3a5f" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#13254a" media="(prefers-color-scheme: dark)">
 <title>컴활 2급 필기 CBT</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap">
@@ -50,7 +51,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .panel h2 small{color:var(--sub);font-weight:400;font-size:13px}
 .sets{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:18px}
 .set{text-align:left;border:1px solid var(--line);background:var(--soft);border-radius:10px;padding:12px 14px;cursor:pointer;min-height:76px;display:flex;flex-direction:column;gap:3px}
-.set:hover{border-color:var(--acc)}
+@media (hover:hover) and (pointer:fine){.set:hover{border-color:var(--acc)}}
 .set[aria-pressed="true"]{border-color:var(--acc);background:var(--sel);box-shadow:inset 0 0 0 1px var(--acc)}
 .set b{font-size:15px}
 .set span{font-size:12.5px;color:var(--sub)}
@@ -125,7 +126,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .qfig{display:block;max-width:100%;height:auto;margin:6px 0 12px;border-radius:4px;background:#fff}
 .opts{display:grid;gap:8px;margin:0;padding:0;list-style:none}
 .opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:10px 12px;cursor:pointer;min-height:48px;line-height:1.55}
-.opt:hover{border-color:var(--acc)}
+@media (hover:hover) and (pointer:fine){.opt:hover{border-color:var(--acc)}}
 .opt .m{flex:none;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--sub);display:grid;place-items:center;font-size:14px;font-weight:700;margin-top:-1px}
 .opt[aria-checked="true"]{background:var(--sel);border-color:var(--acc)}
 .opt[aria-checked="true"] .m{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
@@ -155,7 +156,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 @media (max-width:860px){
   .ebody{grid-template-columns:minmax(0,1fr)}
   .qgrid.two{grid-template-columns:minmax(0,1fr)}
-  .omr{position:fixed;left:0;right:0;bottom:0;z-index:25;max-height:72vh;border-left:0;border-top:1px solid var(--line);border-radius:16px 16px 0 0;box-shadow:0 -10px 30px rgba(0,0,0,.25);padding-bottom:env(safe-area-inset-bottom,0px);transform:translateY(105%);transition:transform .22s}
+  .omr{position:fixed;left:0;right:0;bottom:0;z-index:25;max-height:72vh;border-left:0;border-top:1px solid var(--line);border-radius:16px 16px 0 0;box-shadow:0 -10px 30px rgba(0,0,0,.25);padding-bottom:env(safe-area-inset-bottom,0px);transform:translateY(105%);transition:transform 320ms var(--ease-drawer)}
   .omr.open{transform:none}
   .omrbtn{display:inline-flex;align-items:center}
   .ehead .who{display:none}
@@ -199,6 +200,55 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .cell.bad{background:var(--bad-bg);color:var(--bad);border-color:var(--bad);font-weight:700}
 .legend{display:flex;gap:12px;font-size:12.5px;color:var(--sub);flex-wrap:wrap}
 .acts2{display:flex;gap:8px;flex-wrap:wrap}
+</style>
+<style id="polish">
+/* 공통 다듬기 (Emil Kowalski 디자인 엔지니어링 원칙)
+   - 강한 ease-out 곡선, UI 애니메이션 300ms 이하, transform·opacity만 움직임
+   - 누르면 바로 반응(:active scale), 마우스가 있는 기기에서만 hover
+   - 휴대폰: 탭 번쩍임 없애기, 탭 지연 없애기, 버튼 글자 길게 눌러 선택되지 않게, 입력칸 16px(확대 방지) */
+:root{--ease-out:cubic-bezier(.23,1,.32,1);--ease-in-out:cubic-bezier(.77,0,.175,1);--ease-drawer:cubic-bezier(.32,.72,0,1)}
+html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+a,button,summary,label,select,[role=button],[data-go],[data-fn]{touch-action:manipulation}
+button,summary,[role=button],.tile,.set,.opt,.op,.cell,.card,.tab,.tbtn,.btn,.cs-pill,.tychips button,.chips button,.qf button,.orow .n,.keys button{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+@media (pointer:coarse){input:not([type=checkbox]):not([type=radio]),textarea,select{font-size:max(16px,1em)}}
+
+/* 누름 피드백: 손가락이 닿는 순간 반응 (작은 버튼 .97, 큰 카드 .98) */
+.btn,.tbtn,.cs-pill,.cs-dlg button,.op,.qf button,.nv button,.lockb,.chips button,.tychips button,.wall button,.tab,.res button,.homeback,.home-a,.keys button,.calc .x,.pop .x,.sheet .x,.qjump,.wrow .ac a,.orow .n,.cell,
+.set,.opt,.card,.tile,.sheet li a,.pn a{transition:transform 140ms var(--ease-out),background-color 150ms ease,border-color 150ms ease,color 150ms ease,box-shadow 150ms ease}
+.btn:active:not(:disabled),.tbtn:active:not(:disabled),.cs-pill:active,.cs-dlg button:active,.op:active:not(:disabled),.qf button:active,.nv button:active:not(:disabled),.lockb:active,.chips button:active,.tychips button:active,.wall button:active,.tab:active,.res button:active,.homeback:active,.home-a:active,.keys button:active,.calc .x:active,.pop .x:active,.sheet .x:active,.qjump:active,.wrow .ac a:active,.orow .n:active,.cell:active{transform:scale(.97)}
+.set:active,.opt:active:not(:disabled),.card:active,.tile:active,.sheet li a:active,.pn a:active{transform:scale(.98)}
+
+/* 열리는 창: 아래에서 올라오는 시트는 드로어 곡선, 가운데 창은 .96에서 커지며 나타남 (닫힐 땐 바로) */
+@media (prefers-reduced-motion:no-preference){
+  .cs-ov,.modal,.ov:not([hidden]),.sheetwrap:not([hidden]){transition:opacity 200ms ease}
+  .cs-dlg,.dlg,.sheetwrap .sheet{transition:transform 220ms var(--ease-out),opacity 220ms var(--ease-out)}
+  .ov .sheet{transition:transform 320ms var(--ease-drawer)}
+  .calc{transform-origin:right bottom;transition:transform 180ms var(--ease-out),opacity 180ms var(--ease-out)}
+  .toast{transition:transform 260ms var(--ease-out),opacity 260ms var(--ease-out)}
+  .pop:not([hidden]){transform-origin:top center;transition:transform 160ms var(--ease-out),opacity 160ms var(--ease-out)}
+  .qz .ex,.exp{transition:transform 200ms var(--ease-out),opacity 200ms var(--ease-out)}
+  @starting-style{.cs-ov,.modal,.ov:not([hidden]),.sheetwrap:not([hidden]){opacity:0}.cs-dlg,.dlg,.sheetwrap .sheet{opacity:0;transform:scale(.96)}.ov .sheet{transform:translateY(100%)}.calc{opacity:0;transform:scale(.95)}.toast{opacity:0;transform:translate(-50%,-8px)}.pop:not([hidden]){opacity:0;transform:scale(.97)}.qz .ex,.exp{opacity:0;transform:translateY(4px)}}
+}
+@media (prefers-reduced-motion:no-preference) and (min-width:900px){
+  .ov .sheet{transition:transform 220ms var(--ease-out),opacity 220ms var(--ease-out)}
+  @starting-style{.ov .sheet{opacity:0;transform:scale(.96)}}
+}
+@media (prefers-reduced-motion:no-preference) and (max-width:700px){
+  .pop:not([hidden]){transition:transform 280ms var(--ease-drawer)}
+  @starting-style{.pop:not([hidden]){transform:translateY(100%);opacity:1}}
+}
+@media (prefers-reduced-motion:no-preference) and (max-width:720px){
+  .sheetwrap .sheet{transition:transform 320ms var(--ease-drawer)}
+  @starting-style{.sheetwrap .sheet{transform:translateY(100%);opacity:1}}
+}
+
+/* 움직임 줄이기 설정: 위치·크기 변화는 빼고 색과 투명도만 */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important}
+  .btn:active,.tbtn:active,.op:active,.set:active,.opt:active,.card:active,.tile:active,.cell:active,.sheet li a:active{transform:none!important}
+}
+/* 안에서 스크롤되는 창은 끝에 닿아도 뒤 페이지가 따라 움직이지 않게 */
+.sheet,.cs-dlg,.omr .list,.res,.pop{overscroll-behavior:contain}
 </style>
 </head><body>
 

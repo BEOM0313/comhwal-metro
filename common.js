@@ -125,14 +125,14 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 const fmtT=t=>{if(!t)return '아직 없음';const d=new Date(t);return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};
 let css=false;
 function injectCSS(){if(css)return;css=true;const s=document.createElement('style');s.textContent=`
-.cs-pill{display:inline-flex;align-items:center;gap:7px;min-height:36px;padding:0 12px;border-radius:999px;border:1px solid currentColor;background:none;color:inherit;font:inherit;font-size:13px;cursor:pointer;white-space:nowrap;opacity:.92}
+.cs-pill{display:inline-flex;align-items:center;gap:7px;min-height:36px;padding:0 12px;border-radius:999px;border:1px solid currentColor;background:none;color:inherit;font:inherit;font-size:13px;cursor:pointer;white-space:nowrap;opacity:.92;touch-action:manipulation;-webkit-user-select:none;user-select:none}
 .cs-pill i{width:8px;height:8px;border-radius:50%;background:#9aa2b8;flex:none}
 .cs-pill[data-k=ok] i{background:#2fbf71}.cs-pill[data-k=busy] i{background:#f2b632}.cs-pill[data-k=err] i{background:#ef5a4c}
 .cs-ov{position:fixed;inset:0;z-index:1000;background:rgba(10,12,20,.5);display:grid;place-items:center;padding:16px}
 .cs-dlg{width:min(440px,100%);max-height:calc(100dvh - 32px);overflow:auto;background:#fff;color:#1d2333;border-radius:14px;padding:20px;font:15px/1.6 "IBM Plex Sans KR","Malgun Gothic",sans-serif;box-shadow:0 20px 50px rgba(0,0,0,.3)}
 .cs-dlg h3{margin:0 0 4px;font-size:18px}.cs-dlg p{margin:6px 0;color:#5b6478;font-size:14px}.cs-dlg b{color:#1d2333}
 .cs-dlg .row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
-.cs-dlg input{flex:1;min-width:0;min-height:42px;border:1px solid #cfd4e0;border-radius:8px;padding:0 10px;font:inherit;font-size:14px;background:#fff;color:#1d2333}
+.cs-dlg input{flex:1;min-width:0;min-height:42px;border:1px solid #cfd4e0;border-radius:8px;padding:0 10px;font:inherit;font-size:16px;background:#fff;color:#1d2333}
 .cs-dlg button{min-height:42px;border-radius:8px;border:1px solid #cfd4e0;background:#f3f5fa;color:#1d2333;padding:0 14px;font:inherit;font-size:14px;cursor:pointer}
 .cs-dlg button.pri{background:#2f45c7;border-color:#2f45c7;color:#fff}
 .cs-dlg hr{border:0;border-top:1px solid #e4e7ef;margin:14px 0}

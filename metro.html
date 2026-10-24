@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#1f2a3c">
+<meta name="theme-color" content="#1f2a3c" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1016" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -56,7 +57,7 @@ header.top{background:var(--sign);color:var(--signink);position:sticky;top:env(s
 .top .wrap{display:flex;align-items:center;gap:14px;padding-block:10px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:10px;margin-right:auto}
 .homeback{display:grid;place-items:center;width:36px;height:44px;margin-right:-4px;font-size:30px;line-height:1;text-decoration:none;color:inherit;border-radius:8px}
-.homeback:hover{background:rgba(127,127,127,.15)}
+@media (hover:hover) and (pointer:fine){.homeback:hover{background:rgba(127,127,127,.15)}}
 .brand .mark{width:34px;height:34px;border-radius:50%;border:4px solid var(--l2);display:grid;place-items:center;font-family:var(--f-disp);font-size:15px;background:var(--sign)}
 .brand b{font-family:var(--f-disp);font-size:24px;font-weight:400;letter-spacing:.5px}
 .brand small{display:block;font-size:11px;opacity:.7;letter-spacing:2px;margin-top:-4px}
@@ -81,7 +82,9 @@ h1,h2,h3{text-wrap:balance;margin:0}
 .seg button{border:0;background:transparent;padding:8px 16px;min-height:40px;border-radius:30px;font-weight:600;color:var(--sub)}
 .seg button[aria-pressed="true"]{background:var(--panel);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
 .btn{border:0;border-radius:30px;padding:10px 20px;min-height:44px;font-weight:700;background:var(--acc);color:var(--onacc)}
-.btn:active,.choice:active,.seg button:active,.task:active,.mc:active{transform:scale(.98)}
+.btn,.choice,.seg button,.task,.mc,.syncbtn{transition:transform 140ms var(--ease-out),background-color 150ms ease,border-color 150ms ease,color 150ms ease,box-shadow 150ms ease}
+.btn:active:not(:disabled),.seg button:active,.syncbtn:active{transform:scale(.97)}
+.choice:active:not(:disabled),.task:active,.mc:active{transform:scale(.98)}
 .btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
 .btn.sm{padding:6px 14px;font-size:14px;min-height:36px}
 .btn:disabled{opacity:.45;cursor:not-allowed}
@@ -106,8 +109,9 @@ kbd{font-family:var(--f-mono);font-size:.85em;background:var(--panel2);border:1p
 .route ol{list-style:none;margin:0;padding:26px 10px 8px;display:flex;min-width:max-content;position:relative}
 .route ol::before{content:"";position:absolute;left:24px;right:24px;top:43px;height:8px;border-radius:8px;background:var(--lc,var(--cur))}
 .route li{position:relative;width:96px;text-align:center}
-.route .st{position:relative;z-index:1;width:30px;height:30px;margin:0 auto;border-radius:50%;background:var(--panel);border:5px solid var(--lc,var(--cur));display:grid;place-items:center;cursor:pointer;padding:0;transition:transform .15s}
-.route .st:hover{transform:scale(1.12)}
+.route .st{position:relative;z-index:1;width:30px;height:30px;margin:0 auto;border-radius:50%;background:var(--panel);border:5px solid var(--lc,var(--cur));display:grid;place-items:center;cursor:pointer;padding:0;transition:transform 160ms var(--ease-out)}
+@media (hover:hover) and (pointer:fine){.route .st:hover{transform:scale(1.12)}}
+.route .st:active{transform:scale(.94)}
 .route .st.done{background:var(--lc,var(--cur))}
 .route .st.cur{width:38px;height:38px;margin-top:-4px;box-shadow:0 0 0 4px color-mix(in srgb,var(--lc,var(--cur)) 30%,transparent)}
 .route .nm{display:block;margin-top:8px;font-size:13px;font-weight:600;line-height:1.3}
@@ -125,7 +129,8 @@ kbd{font-family:var(--f-mono);font-size:.85em;background:var(--panel2);border:1p
 /* 카드 학습 */
 .cardarea{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;justify-items:center}
 .flash{width:100%;max-width:620px;min-height:240px;perspective:1200px;cursor:pointer;background:none;border:0;padding:0}
-.flash .in{position:relative;width:100%;min-height:240px;transition:transform .45s;transform-style:preserve-3d}
+.flash .in{position:relative;width:100%;min-height:240px;transition:transform 300ms var(--ease-in-out);transform-style:preserve-3d}
+.flash.instant .in{transition:none}
 .flash.flip .in{transform:rotateY(180deg)}
 .flash .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;background:var(--panel);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px;text-align:center;gap:10px}
 .flash .face.back{transform:rotateY(180deg);border:2px solid var(--cur)}
@@ -144,7 +149,7 @@ kbd{font-family:var(--f-mono);font-size:.85em;background:var(--panel2);border:1p
 .ta-input{width:100%;font-size:24px;padding:14px 18px;border-radius:12px;border:2px solid var(--line);background:var(--panel);text-align:center;font-family:var(--f-body)}
 .ta-input:focus{border-color:var(--acc);outline:none}
 .shake{animation:shake .3s}
-@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 .flashok{animation:okp .35s}
 @keyframes okp{50%{border-color:var(--ok);background:var(--okbg)}}
 .miniline{display:flex;align-items:center;gap:0;padding:4px 6px;overflow:hidden}
@@ -238,7 +243,7 @@ table.grid{border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-
 .exp{margin-top:12px;padding:12px 14px;border-radius:10px;background:var(--panel2);font-size:14px}
 .modecards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .mc{text-align:left;border:1.5px solid var(--line);border-radius:12px;padding:16px;background:var(--panel);display:grid;gap:6px;align-content:start}
-.mc:hover{border-color:var(--acc)}
+@media (hover:hover) and (pointer:fine){.mc:hover{border-color:var(--acc)}}
 .mc b{font-family:var(--f-disp);font-weight:400;font-size:22px}
 .mc .lc{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--sub);font-weight:600}
 .dot{width:12px;height:12px;border-radius:50%;display:inline-block}
@@ -286,6 +291,56 @@ details.more[open] summary::before{transform:rotate(90deg)}
   nav.lines button{padding:5px 10px 5px 5px;font-size:13px}
   .brand small{display:none}
 }
+
+/*POLISH*/
+/* 공통 다듬기 (Emil Kowalski 디자인 엔지니어링 원칙)
+   - 강한 ease-out 곡선, UI 애니메이션 300ms 이하, transform·opacity만 움직임
+   - 누르면 바로 반응(:active scale), 마우스가 있는 기기에서만 hover
+   - 휴대폰: 탭 번쩍임 없애기, 탭 지연 없애기, 버튼 글자 길게 눌러 선택되지 않게, 입력칸 16px(확대 방지) */
+:root{--ease-out:cubic-bezier(.23,1,.32,1);--ease-in-out:cubic-bezier(.77,0,.175,1);--ease-drawer:cubic-bezier(.32,.72,0,1)}
+html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+a,button,summary,label,select,[role=button],[data-go],[data-fn]{touch-action:manipulation}
+button,summary,[role=button],.tile,.set,.opt,.op,.cell,.card,.tab,.tbtn,.btn,.cs-pill,.tychips button,.chips button,.qf button,.orow .n,.keys button{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+@media (pointer:coarse){input:not([type=checkbox]):not([type=radio]),textarea,select{font-size:max(16px,1em)}}
+
+/* 누름 피드백: 손가락이 닿는 순간 반응 (작은 버튼 .97, 큰 카드 .98) */
+.btn,.tbtn,.cs-pill,.cs-dlg button,.op,.qf button,.nv button,.lockb,.chips button,.tychips button,.wall button,.tab,.res button,.homeback,.home-a,.keys button,.calc .x,.pop .x,.sheet .x,.qjump,.wrow .ac a,.orow .n,.cell,
+.set,.opt,.card,.tile,.sheet li a,.pn a{transition:transform 140ms var(--ease-out),background-color 150ms ease,border-color 150ms ease,color 150ms ease,box-shadow 150ms ease}
+.btn:active:not(:disabled),.tbtn:active:not(:disabled),.cs-pill:active,.cs-dlg button:active,.op:active:not(:disabled),.qf button:active,.nv button:active:not(:disabled),.lockb:active,.chips button:active,.tychips button:active,.wall button:active,.tab:active,.res button:active,.homeback:active,.home-a:active,.keys button:active,.calc .x:active,.pop .x:active,.sheet .x:active,.qjump:active,.wrow .ac a:active,.orow .n:active,.cell:active{transform:scale(.97)}
+.set:active,.opt:active:not(:disabled),.card:active,.tile:active,.sheet li a:active,.pn a:active{transform:scale(.98)}
+
+/* 열리는 창: 아래에서 올라오는 시트는 드로어 곡선, 가운데 창은 .96에서 커지며 나타남 (닫힐 땐 바로) */
+@media (prefers-reduced-motion:no-preference){
+  .cs-ov,.modal,.ov:not([hidden]),.sheetwrap:not([hidden]){transition:opacity 200ms ease}
+  .cs-dlg,.dlg,.sheetwrap .sheet{transition:transform 220ms var(--ease-out),opacity 220ms var(--ease-out)}
+  .ov .sheet{transition:transform 320ms var(--ease-drawer)}
+  .calc{transform-origin:right bottom;transition:transform 180ms var(--ease-out),opacity 180ms var(--ease-out)}
+  .toast{transition:transform 260ms var(--ease-out),opacity 260ms var(--ease-out)}
+  .pop:not([hidden]){transform-origin:top center;transition:transform 160ms var(--ease-out),opacity 160ms var(--ease-out)}
+  .qz .ex,.exp{transition:transform 200ms var(--ease-out),opacity 200ms var(--ease-out)}
+  @starting-style{.cs-ov,.modal,.ov:not([hidden]),.sheetwrap:not([hidden]){opacity:0}.cs-dlg,.dlg,.sheetwrap .sheet{opacity:0;transform:scale(.96)}.ov .sheet{transform:translateY(100%)}.calc{opacity:0;transform:scale(.95)}.toast{opacity:0;transform:translate(-50%,-8px)}.pop:not([hidden]){opacity:0;transform:scale(.97)}.qz .ex,.exp{opacity:0;transform:translateY(4px)}}
+}
+@media (prefers-reduced-motion:no-preference) and (min-width:900px){
+  .ov .sheet{transition:transform 220ms var(--ease-out),opacity 220ms var(--ease-out)}
+  @starting-style{.ov .sheet{opacity:0;transform:scale(.96)}}
+}
+@media (prefers-reduced-motion:no-preference) and (max-width:700px){
+  .pop:not([hidden]){transition:transform 280ms var(--ease-drawer)}
+  @starting-style{.pop:not([hidden]){transform:translateY(100%);opacity:1}}
+}
+@media (prefers-reduced-motion:no-preference) and (max-width:720px){
+  .sheetwrap .sheet{transition:transform 320ms var(--ease-drawer)}
+  @starting-style{.sheetwrap .sheet{transform:translateY(100%);opacity:1}}
+}
+
+/* 움직임 줄이기 설정: 위치·크기 변화는 빼고 색과 투명도만 */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important}
+  .btn:active,.tbtn:active,.op:active,.set:active,.opt:active,.card:active,.tile:active,.cell:active,.sheet li a:active{transform:none!important}
+}
+/* 안에서 스크롤되는 창은 끝에 닿아도 뒤 페이지가 따라 움직이지 않게 */
+.sheet,.cs-dlg,.omr .list,.res,.pop{overscroll-behavior:contain}
+/*/POLISH*/
 </style>
 
 </head>
@@ -1223,8 +1278,8 @@ function buildDeck(){
 function renderCard(){
   const c=cDeck[cIdx]; if(!c) return;
   const rev=$('#cReverse').checked;
-  $('#flash').classList.remove('flip');
-  setTimeout(()=>{
+  const fl=$('#flash'); fl.classList.add('instant'); fl.classList.remove('flip'); void fl.offsetWidth; fl.classList.remove('instant');
+  {
     $('#fFront').textContent=rev?c.t:c.d;
     $('#fFront').style.fontFamily=rev?'var(--f-disp)':'';
     $('#fFront').style.fontSize=rev?'38px':'';
@@ -1232,7 +1287,7 @@ function renderCard(){
     $('#fBack').textContent=rev?'':c.t;
     $('#fBackSub').textContent=rev?c.d:(known.has(c.id)?'외운 카드 ✓':'');
     if(rev){$('#fBackSub').style.fontSize='19px';$('#fBackSub').style.color='var(--ink)'}else{$('#fBackSub').style.fontSize='';$('#fBackSub').style.color=''}
-  },120);
+  }
   $('#cPos').textContent=`${cIdx+1} / ${cDeck.length}`;
 }
 $('#flash').onclick=()=>$('#flash').classList.toggle('flip');
@@ -1246,7 +1301,7 @@ $('#cOnlyLeft').onchange=()=>{cIdx=0;buildDeck();renderCard()};
 document.addEventListener('keydown',e=>{
   if(currentView!=='study'||$('#cardMode').hidden) return;
   if(e.target.matches('input,select,textarea')) return;
-  if(e.key===' '){e.preventDefault();$('#flash').classList.toggle('flip')}
+  if(e.key===' '){e.preventDefault();const fl=$('#flash');fl.classList.add('instant');fl.classList.toggle('flip');void fl.offsetWidth;fl.classList.remove('instant')}
   else if(e.key==='ArrowRight') $('#cNext').click();
   else if(e.key==='ArrowLeft') $('#cPrev').click();
 });
