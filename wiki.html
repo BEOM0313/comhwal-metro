@@ -1,0 +1,1000 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#232a4a">
+<title>컴활위키</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@500&family=Black+Han+Sans&display=swap">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<style>
+/* 레이아웃: 상단 고정 바 + 위키 문서. PC(넓은 화면)는 본문 오른쪽에 고정 목차, 모바일은 한 열과 아래에서 올라오는 각주 창 */
+:root{
+  --bg:#f3f5fa; --paper:#ffffff; --ink:#1d2333; --sub:#5b6478; --line:#dfe3ec;
+  --acc:#3a4fd8; --acc2:#0f7a55; --acc-ink:#ffffff; --link:#2f45c7; --mark:#ffe58a; --trap:#fff4f2; --trap-line:#d9472f; --tip:#eef3ff;
+  --bar:#232a4a; --bar-ink:#eef0ff; --fold:#f1f3f9; --shadow:0 10px 30px rgba(20,24,40,.18);
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-disp:"Black Han Sans","IBM Plex Sans KR",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11131a; --paper:#191c27; --ink:#e7e9f2; --sub:#9aa2b8; --line:#2c3142;
+  --acc:#8392ff; --acc2:#4cc79a; --acc-ink:#10132a; --link:#9fabff; --mark:#5a4a12; --trap:#2b1a1a; --trap-line:#ff7a62; --tip:#18213a;
+  --bar:#0b0d14; --bar-ink:#e7e9f2; --fold:#20242f; --shadow:0 10px 30px rgba(0,0,0,.5); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11131a; --paper:#191c27; --ink:#e7e9f2; --sub:#9aa2b8; --line:#2c3142;
+  --acc:#8392ff; --acc2:#4cc79a; --acc-ink:#10132a; --link:#9fabff; --mark:#5a4a12; --trap:#2b1a1a; --trap-line:#ff7a62; --tip:#18213a;
+  --bar:#0b0d14; --bar-ink:#e7e9f2; --fold:#20242f; --shadow:0 10px 30px rgba(0,0,0,.5); color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.75;word-break:keep-all;overflow-wrap:anywhere}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bar)}
+a{color:var(--link)}
+a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bar);color:var(--bar-ink)}
+.top .in{max-width:1280px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding-block:9px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.homeback{color:var(--bar-ink);text-decoration:none;font-size:28px;line-height:1;display:grid;place-items:center;width:32px;height:40px;margin-right:-6px;border-radius:8px}
+.homeback:hover{background:rgba(255,255,255,.12)}
+.logo{font-family:var(--f-disp);font-size:22px;color:var(--bar-ink);text-decoration:none;white-space:nowrap;line-height:1}
+.logo span{color:var(--acc)}
+.srch{flex:1;min-width:0;position:relative}
+.srch input{width:100%;border:0;border-radius:8px;padding:9px 12px;font:inherit;font-size:15px;background:rgba(255,255,255,.13);color:var(--bar-ink);min-height:40px}
+.srch input::placeholder{color:rgba(238,240,255,.6)}
+.res{position:absolute;left:0;right:0;top:calc(100% + 4px);background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);overflow:hidden;max-height:60vh;overflow-y:auto}
+.res button{display:block;width:100%;text-align:left;border:0;background:none;padding:10px 12px;font:inherit;font-size:14.5px;color:var(--ink);cursor:pointer;min-height:44px}
+.res button:hover,.res button.on{background:var(--fold)}
+.res small{color:var(--sub)}
+.tb{display:flex;gap:6px}
+.tbtn{border:1px solid rgba(255,255,255,.25);background:none;color:var(--bar-ink);border-radius:8px;padding:0 12px;font:inherit;font-size:13.5px;cursor:pointer;white-space:nowrap;min-height:40px}
+.wrap{max-width:1280px;margin:0 auto;padding-block:20px calc(48px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start}
+@media (min-width:1100px){.layout.has-side{grid-template-columns:minmax(0,1fr) 270px}}
+.doc{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:24px clamp(16px,3.4vw,44px) 30px;min-width:0}
+.side{display:none}
+@media (min-width:1100px){.layout.has-side .side{display:block;position:sticky;top:calc(env(safe-area-inset-top,0px) + 76px);max-height:calc(100vh - 100px);overflow:auto;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:14px 16px;font-size:14px}}
+.side b{display:block;margin-bottom:6px;font-size:13px;color:var(--sub)}
+.side ol{list-style:none;margin:0;padding:0}
+.side li a{display:block;padding:4px 6px;border-radius:5px;text-decoration:none;color:var(--ink);cursor:pointer}
+.side li a.on{background:var(--tip);color:var(--link);font-weight:700}
+.side .sn{color:var(--acc);font-family:var(--f-mono);font-size:12px;margin-right:6px}
+.side .other{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}
+.cats{display:flex;flex-wrap:wrap;align-items:center;gap:6px;border:1px solid var(--line);border-radius:6px;padding:6px 10px;font-size:13px;margin:0 0 14px}
+.cats b{color:var(--sub);font-weight:500;margin-right:2px}
+.cats a{text-decoration:none;cursor:pointer}
+.cats a:not(:last-child)::after{content:"|";color:var(--line);margin-left:8px}
+.doc h1{font-size:clamp(25px,3.2vw,32px);line-height:1.3;margin:0 0 6px;text-wrap:balance}
+.meta{display:flex;flex-wrap:wrap;gap:4px 14px;color:var(--sub);font-size:12.5px;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:14px}
+.notice{border:1px solid var(--line);border-left:6px solid var(--acc);background:var(--tip);border-radius:4px;padding:10px 14px;margin:0 0 16px;font-size:14px}
+.notice.s2{border-left-color:var(--acc2)}
+.toc{display:inline-block;border:1px solid var(--line);background:var(--fold);border-radius:4px;padding:10px 18px 12px;margin:0 0 6px;font-size:14.5px;min-width:min(260px,100%)}
+@media (min-width:1100px){.layout.has-side .toc{display:none}}
+.toc b{display:block;margin-bottom:4px}
+.toc ol{margin:0;padding:0;list-style:none}
+.toc a{text-decoration:none;cursor:pointer;display:inline-block;padding:2px 0}
+.toc .sn{color:var(--acc);font-family:var(--f-mono);font-size:12.5px;margin-right:6px}
+.doc h2{font-size:22px;font-weight:700;border-bottom:1px solid var(--line);padding-bottom:5px;margin:30px 0 10px;display:flex;align-items:baseline;gap:8px;text-wrap:balance;scroll-margin-top:90px}
+.doc h2 .sn{color:var(--acc);font-family:var(--f-mono);font-size:17px;font-weight:500}
+.doc p{margin:0 0 12px;max-width:75ch}
+.doc ul{margin:0 0 12px;padding-left:22px;max-width:75ch}
+.doc li{margin:3px 0}
+mark{background:var(--mark);color:inherit;padding:0 2px}
+code{font-family:var(--f-mono);font-size:.88em;background:var(--fold);border:1px solid var(--line);border-radius:4px;padding:0 4px;white-space:nowrap}
+.wl{color:var(--link);text-decoration:none;border-bottom:1px dashed currentColor;cursor:pointer}
+.tw{overflow-x:auto;margin:6px 0 14px;max-width:100%;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;font-size:14.5px;min-width:min(520px,100%)}
+th,td{border:1px solid var(--line);padding:7px 10px;vertical-align:top;text-align:left}
+th{background:var(--fold);font-weight:700;white-space:nowrap}
+.trap{background:var(--trap);border:1px solid var(--trap-line);border-radius:4px;padding:10px 14px;margin:8px 0 14px;font-size:14.5px;max-width:75ch}
+.trap::before{content:"기출 함정";display:inline-block;font-weight:700;color:var(--trap-line);margin-right:8px;font-size:12.5px;letter-spacing:.5px}
+details.fold{border:1px solid var(--line);border-radius:4px;margin:8px 0 14px;background:var(--fold);max-width:75ch}
+details.fold summary{cursor:pointer;padding:9px 12px;font-weight:700;font-size:14.5px;list-style:none;min-height:44px;display:flex;align-items:center;gap:8px}
+details.fold summary::-webkit-details-marker{display:none}
+details.fold summary::after{content:"[ 펼치기 · 접기 ]";color:var(--sub);font-weight:400;font-size:12.5px;margin-left:auto}
+details.fold>div{padding:2px 14px 10px;font-size:15px}
+sup.fn a{font-family:var(--f-mono);font-size:11.5px;text-decoration:none;color:var(--link);padding:0 2px;cursor:pointer}
+.fns{border-top:1px solid var(--line);margin-top:34px;padding-top:12px;font-size:13.5px;color:var(--sub)}
+.fns ol{list-style:none;padding:0;margin:0}
+.fns li{margin:5px 0;display:flex;gap:8px}
+.fns li a{font-family:var(--f-mono);font-size:12px;text-decoration:none;flex:none;cursor:pointer}
+.fns li.hl{background:var(--mark);color:var(--ink)}
+.pop{position:fixed;z-index:20;max-width:min(380px,calc(100vw - 32px));background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);padding:12px 14px;font-size:14px;line-height:1.65}
+.pop .h{display:flex;justify-content:space-between;align-items:center;font-family:var(--f-mono);color:var(--acc);font-size:12px;margin-bottom:4px}
+.pop .x{border:0;background:none;color:var(--sub);font:inherit;font-size:20px;line-height:1;cursor:pointer;min-width:36px;min-height:36px;margin:-8px -8px -8px 0}
+@media (max-width:700px){.pop{left:0!important;right:0;bottom:0;top:auto!important;max-width:none;border-radius:14px 14px 0 0;padding:12px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}}
+.nav{margin-top:26px;border:1px solid var(--line);border-radius:6px;overflow:hidden;font-size:14px}
+.nav .nh{background:var(--bar);color:var(--bar-ink);text-align:center;font-weight:700;padding:7px}
+.nav .row{display:grid;grid-template-columns:150px minmax(0,1fr);border-top:1px solid var(--line)}
+.nav .row>b{background:var(--fold);padding:7px 10px;display:flex;align-items:center}
+.nav .row>div{padding:7px 10px;display:flex;flex-wrap:wrap;gap:4px 0;min-width:0}
+.nav .it{white-space:nowrap}
+.nav .it:not(:last-child)::after{content:"·";color:var(--sub);margin:0 8px}
+.nav a{text-decoration:none;cursor:pointer}
+.nav .cur{font-weight:700;color:var(--ink)}
+.pn{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;font-size:14.5px}
+.pn a{display:block;border:1px solid var(--line);border-radius:6px;padding:10px 12px;cursor:pointer;text-decoration:none;min-height:44px}
+.pn a small{display:block;color:var(--sub);font-size:12px}
+.pn .r{text-align:right}
+.tabs{display:flex;gap:6px;margin:4px 0 6px;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:20px;padding:0 16px;font:inherit;font-size:14.5px;cursor:pointer;min-height:40px}
+.tab[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin:8px 0 18px}
+.card{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:8px;padding:11px 12px;cursor:pointer;background:var(--paper);color:var(--ink);text-align:left;font:inherit;min-height:64px}
+.card:hover{border-color:var(--acc)}
+.card .n{font-family:var(--f-mono);font-size:12px;background:var(--acc);color:var(--acc-ink);border-radius:4px;padding:1px 6px;flex:none;margin-top:3px}
+.card.s2 .n{background:var(--acc2)}
+.card .t{font-weight:700;font-size:15px;line-height:1.4}
+.card .s{display:block;font-size:12.5px;color:var(--sub);font-weight:400;margin-top:2px}
+.hero{border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:12px}
+.hero .big{font-family:var(--f-disp);font-size:clamp(32px,6vw,52px);line-height:1.1;margin:0}
+.hero .big span{color:var(--acc)}
+.stats{display:flex;flex-wrap:wrap;gap:6px 18px;color:var(--sub);font-size:13.5px;margin-top:8px;font-variant-numeric:tabular-nums}
+.stats b{color:var(--ink)}
+.gh{font-size:18px;margin:20px 0 4px;display:flex;flex-wrap:wrap;align-items:baseline;gap:8px}
+.gh small{color:var(--sub);font-weight:400;font-size:13px}
+@media (max-width:640px){
+  .top .in{gap:8px}
+  .srch{order:3;flex-basis:100%}
+  .tb{margin-left:auto}
+  .doc{padding-top:18px;border-radius:6px}
+  .nav .row{grid-template-columns:1fr}.nav .row>b{padding:5px 10px}
+  .doc h2{font-size:20px}
+  body{font-size:15.5px}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head><body>
+
+
+<header class="top"><div class="in">
+  <a class="homeback" href="index.html" aria-label="첫 화면으로" title="첫 화면으로">‹</a><a class="logo" href="#main" data-go="main">컴활<span>위키</span></a>
+  <div class="srch"><input id="q" type="search" placeholder="문서 검색 (예: 캐시, VLOOKUP, 피벗)" autocomplete="off" aria-label="문서 검색"><div class="res" id="res" hidden></div></div>
+  <div class="tb"><button class="tbtn" id="rnd" type="button">랜덤 문서</button><button class="tbtn" id="home" type="button">대문</button></div>
+</div></header>
+<main class="wrap"><div class="layout" id="layout"><article class="doc" id="doc"></article><aside class="side" id="side" aria-label="이 문서의 목차"></aside></div></main>
+<div class="pop" id="pop" hidden role="dialog" aria-label="각주"></div>
+
+<script>
+const SUBJ={1:{name:'1과목 컴퓨터 일반',short:'1과목',unit:'강',groups:[['하드웨어·소프트웨어',1,8],['Windows',9,14],['멀티미디어',15,16],['정보통신·보안',17,21],['프로그래밍',22,22]]},
+            2:{name:'2과목 스프레드시트 일반',short:'2과목',unit:'',groups:[['입력·편집',1,3],['서식·수식',4,5],['함수',6,7],['차트',8,8],['데이터 관리',9,10],['인쇄·매크로',11,12]]}};
+const D=[
+
+{id:'d1',sj:1,n:1,t:'컴퓨터의 기본 개념',s:'디지털·아날로그, 컴퓨터 분류',cat:['컴퓨터 일반','하드웨어'],
+intro:'**컴퓨터**(Computer)는 입력된 데이터를 프로그램에 따라 처리해 결과를 내놓는 전자 장치다. 이름부터가 "계산하는 것"이라는 뜻인데[*영어 computer는 원래 계산을 직업으로 하는 사람을 부르던 말이었다. 기계가 그 일을 대신하면서 이름까지 가져갔다.], 지금은 계산보다 유튜브 보는 데 더 많이 쓰인다. ',
+sec:[
+['구성: 하드웨어와 소프트웨어',`<p>눈에 보이고 만질 수 있는 기계 부분이 <b>하드웨어</b>, 그 위에서 돌아가는 프로그램이 <b>소프트웨어</b>다. 하드웨어는 크게 입력장치, 출력장치, 중앙처리장치([[d2|CPU]]), 기억장치로 나뉜다.</p>
+<p>둘 다 필요하다. 소프트웨어 없는 하드웨어는 비싼 문진이고, 하드웨어 없는 소프트웨어는 그냥 글자다.[*하드웨어와 소프트웨어의 중간쯤인 <b>펌웨어</b>도 있다. ROM에 들어 있는 소프트웨어로, [[d3|주기억장치]] 문서에서 다룬다.]</p>`],
+['디지털 vs 아날로그',`<p>시험에서 표로 통째로 나오는 단골 주제다. 핵심은 <mark>디지털 = 셈(이산), 아날로그 = 측정(연속)</mark>이라는 것.</p>
+<div class="tw"><table><tr><th>구분</th><th>디지털 컴퓨터</th><th>아날로그 컴퓨터</th></tr>
+<tr><td>입력</td><td>숫자, 문자 (셈)</td><td>전압, 전류, 온도 (측정)</td></tr>
+<tr><td>출력</td><td>숫자, 문자</td><td>곡선, 그래프</td></tr>
+<tr><td>회로</td><td><b>논리 회로</b></td><td><b>증폭 회로</b></td></tr>
+<tr><td>정밀도</td><td>필요한 만큼</td><td>제한적</td></tr>
+<tr><td>프로그램</td><td>필요</td><td>불필요</td></tr>
+<tr><td>용도</td><td><b>범용</b></td><td>특수 목적</td></tr>
+<tr><td>속도</td><td>상대적으로 느림</td><td>빠름</td></tr></table></div>
+<p>둘의 장점을 섞은 것이 <b>하이브리드 컴퓨터</b>다.[*실제로는 특수 산업용 장비나 과거 비행 시뮬레이터 같은 곳에 쓰였다. 일상에서 볼 일은 거의 없지만 시험에는 나온다.]</p>
+<div class="trap">아날로그가 "논리 회로를 쓴다" ✗, 디지털이 "특수 목적용" ✗. 회로와 용도를 서로 바꿔 놓는 문제가 많다.</div>`],
+['처리 능력에 따른 분류',`<p>큰 순서대로 <b>슈퍼컴퓨터 → 메인프레임 → 미니컴퓨터 → 마이크로컴퓨터</b>. 우리가 쓰는 데스크톱·노트북은 전부 마이크로컴퓨터다.[*최초의 범용 전자 컴퓨터로 불리는 ENIAC(1946)은 진공관을 약 1만 8천 개 쓰고 무게가 30톤 가까이 됐다. 그 시절 기준으로 지금 스마트폰은 상상도 못 할 슈퍼컴퓨터다.]</p>
+<details class="fold"><summary>마이크로컴퓨터의 종류</summary><div><p>데스크톱 → 노트북(랩톱) → 팜톱(PDA) → <b>웨어러블</b> 순으로 작아진다. 스마트워치나 스마트 안경이 웨어러블의 예다.</p></div></details>`]]},
+
+{id:'d2',sj:1,n:2,t:'CPU (중앙처리장치)',s:'제어장치, 연산장치, 레지스터',cat:['컴퓨터 일반','하드웨어'],
+intro:'**CPU**(Central Processing Unit)는 컴퓨터의 두뇌다. 명령을 해석하는 **제어장치**, 실제 계산을 하는 **연산장치**, 그리고 둘이 잠깐씩 값을 올려 두는 **레지스터**로 이루어진다.[*CPU 하나를 칩 한 개에 담은 것을 마이크로프로세서라고 한다. 최초의 상용 마이크로프로세서는 1971년 인텔 4004로, 원래는 일본 회사의 계산기용으로 만들어졌다.]',
+sec:[
+['제어장치',`<p>명령을 꺼내 와서 해독하고, 각 장치에 "이거 해" 하고 신호를 보낸다. 교통경찰 같은 역할.</p>
+<div class="tw"><table><tr><th>구성 요소</th><th>하는 일</th></tr>
+<tr><td>프로그램 카운터 (PC)</td><td><b>다음에</b> 실행할 명령의 주소</td></tr>
+<tr><td>명령 레지스터 (IR)</td><td><b>현재</b> 실행 중인 명령</td></tr>
+<tr><td>명령 해독기 (Decoder)</td><td>명령을 해독</td></tr>
+<tr><td>부호기 (Encoder)</td><td>해독한 명령을 신호로 바꿔 각 장치에 전달</td></tr>
+<tr><td>MAR / MBR</td><td>기억장치 <b>주소</b>를 기억 / 기억장치 <b>내용</b>을 잠시 기억</td></tr></table></div>
+<div class="trap">"PC = 현재 실행 중인 명령" ✗. 현재는 IR, 다음은 PC. 이름이 헷갈리면 Program <b>Counter</b>는 "다음 번호를 세는 것"으로 외우자.</div>`],
+['연산장치',`<p>덧셈을 하는 <b>가산기</b>, 뺄셈을 덧셈으로 바꿔 주는 <b>보수기</b>[*컴퓨터는 뺄셈 회로를 따로 두지 않고 보수를 더하는 방식으로 뺄셈을 한다. 회로가 단순해지기 때문이다.], 연산 결과를 잠시 저장하는 <b>누산기</b>(Accumulator), 연산 결과의 상태(부호, 오버플로)를 기억하는 <b>상태 레지스터</b>로 구성된다.</p>`],
+['레지스터',`<p>CPU 안에 있는 <mark>가장 빠른</mark> 임시 기억장소. 용량은 아주 작다. 속도 순서는 레지스터 &gt; [[d5|캐시]] &gt; 주기억장치 &gt; 보조기억장치로 외운다.</p>`],
+['CISC와 RISC',`<p><b>CISC</b>는 명령어가 많고 복잡해서 프로그래밍은 편하지만 전력을 많이 쓴다(주로 PC). <b>RISC</b>는 꼭 필요한 명령어만 둬서 빠르고 전력이 적다.[*스마트폰에 들어가는 ARM 계열 칩이 대표적인 RISC다. 애플이 맥에 넣은 M 시리즈 칩도 ARM 기반이다.]</p>
+<p>CPU 속도는 <b>클럭(Hz)</b>이나 초당 백만 개 명령 수인 <b>MIPS</b>로 나타낸다. 3GHz면 1초에 30억 번 박자를 맞춘다는 뜻이다.</p>`]]},
+
+{id:'d3',sj:1,n:3,t:'주기억장치',s:'ROM과 RAM',cat:['컴퓨터 일반','하드웨어'],
+intro:'CPU가 바로 꺼내 쓰는 기억장치. **ROM**과 **RAM**이 있는데, 시험은 둘의 차이와 ROM의 종류를 집요하게 묻는다.',
+sec:[
+['ROM',`<p>Read Only Memory. 이름은 "읽기만 가능"이지만 종류에 따라 다시 쓸 수 있는 것도 있다. <mark>전원이 꺼져도 내용이 남는다(비휘발성).</mark> 부팅에 필요한 <b>BIOS</b>, 펌웨어가 여기 들어간다.[*요즘 PC는 BIOS 대신 UEFI라는 후속 방식을 쓴다. 그래도 시험과 일상에서는 여전히 "바이오스"라고 부른다.]</p>
+<div class="tw"><table><tr><th>종류</th><th>특징</th></tr>
+<tr><td>Mask ROM</td><td>제조할 때 내용을 기록, 수정 불가</td></tr>
+<tr><td>PROM</td><td>한 번만 기록 가능</td></tr>
+<tr><td>EPROM</td><td><b>자외선</b>으로 지우고 다시 기록</td></tr>
+<tr><td>EEPROM</td><td><b>전기</b>로 지우고 다시 기록 ([[d5|플래시 메모리]]의 조상)</td></tr></table></div>`],
+['RAM',`<p>Random Access Memory. 읽고 쓰기가 자유롭지만 <mark>전원이 꺼지면 사라진다(휘발성).</mark>[*한글 문서를 쓰다 정전이 나서 날려 먹는 이유가 이것이다. 작업 내용은 RAM에 있고, 저장을 눌러야 보조기억장치로 옮겨진다.]</p>
+<div class="tw"><table><tr><th></th><th>DRAM</th><th>SRAM</th></tr>
+<tr><td>재충전(리프레시)</td><td>필요</td><td>불필요</td></tr>
+<tr><td>속도 · 가격</td><td>느림 · 쌈</td><td>빠름 · 비쌈</td></tr>
+<tr><td>집적도 · 용도</td><td>높음 · <b>주기억장치</b></td><td>낮음 · <b>캐시 메모리</b></td></tr></table></div>
+<div class="trap">"SRAM은 주기적인 재충전이 필요하다" ✗. 재충전이 필요한 건 DRAM이다. D는 Dynamic, 계속 움직여 줘야 한다고 외우자.</div>`]]},
+
+{id:'d4',sj:1,n:4,t:'보조기억장치',s:'HDD, SSD, 광디스크',cat:['컴퓨터 일반','하드웨어'],
+intro:'전원을 꺼도 데이터를 보관하는 저장장치. 하드디스크, SSD, CD·DVD·블루레이, USB 메모리 등이 있다.',
+sec:[
+['하드디스크 (HDD)',`<p>자성 원판(플래터)을 빠르게 돌리며 헤드로 읽고 쓴다.[*최초의 하드디스크는 1956년 IBM 350으로, 냉장고 두 대만 한 크기에 용량은 약 5MB였다. 지금 스마트폰 사진 한 장 정도다.]</p>
+<ul><li><b>트랙</b>: 동심원 / <b>섹터</b>: 트랙을 나눈 조각 / <b>실린더</b>: 같은 위치 트랙들의 모임 / <b>클러스터</b>: 여러 섹터를 묶은 입출력 단위</li>
+<li><b>접근 시간</b> = 탐색 시간(헤드 이동) + 회전 지연 시간 + 전송 시간</li>
+<li>연결 방식: 예전 <b>PATA</b>(병렬, 넓은 리본 케이블) → 지금 <b>SATA</b>(직렬, 얇은 케이블)</li></ul>`],
+['SSD',`<p>반도체(플래시 메모리)로 만든 저장장치. 움직이는 부품이 없어서 <b>빠르고 조용하고 충격에 강하다</b>. 대신 같은 용량이면 HDD보다 비싸다.[*SSD는 쓰기 횟수에 수명이 있어서, Windows는 SSD에 [[d14|조각 모음]] 대신 TRIM이라는 최적화를 한다.]</p>`],
+['광디스크',`<p>레이저로 읽는다. 용량은 꼭 외워 두자.</p>
+<div class="tw"><table><tr><th>종류</th><th>용량</th></tr>
+<tr><td>CD</td><td>약 650~700MB</td></tr>
+<tr><td>DVD</td><td>4.7~17GB</td></tr>
+<tr><td>블루레이</td><td>25~50GB</td></tr></table></div>
+<p>CD-R은 한 번 기록, CD-RW는 약 1000번 다시 기록할 수 있다. 블루레이라는 이름은 파란(청자색) 레이저를 쓴다는 데서 왔다.[*철자가 Blue-ray가 아니라 Blu-ray인데, 흔한 단어인 blue로는 상표 등록이 어려워 e를 뺐다는 이야기가 널리 알려져 있다.]</p>
+<div class="trap">"DVD 용량은 650MB" ✗(그건 CD). 숫자 바꿔치기가 주된 함정이다.</div>`]]},
+
+{id:'d5',sj:1,n:5,t:'기타 메모리',s:'캐시, 가상, 연관, 플래시, 버퍼',cat:['컴퓨터 일반','하드웨어'],
+intro:'주기억장치와 보조기억장치만으로는 부족한 부분을 채워 주는 메모리들. 이름과 역할을 짝지어 외우는 게 전부인데, 이름이 다 비슷해서 헷갈린다.',
+sec:[
+['한눈에 보기',`<div class="tw"><table><tr><th>이름</th><th>한 줄 정의</th><th>키워드</th></tr>
+<tr><td><b>캐시</b></td><td>CPU와 주기억장치 사이의 속도 차이를 줄이는 고속 메모리</td><td>SRAM, 속도</td></tr>
+<tr><td><b>가상 메모리</b></td><td>보조기억장치 일부를 주기억장치처럼 사용</td><td>용량</td></tr>
+<tr><td><b>연관 메모리</b></td><td>주소가 아닌 <b>내용</b>으로 데이터를 찾음</td><td>CAM</td></tr>
+<tr><td><b>플래시 메모리</b></td><td>전원이 꺼져도 남고 전기로 지우고 쓸 수 있음</td><td>EEPROM, USB·SSD</td></tr>
+<tr><td><b>버퍼</b></td><td>속도가 다른 두 장치 사이에서 데이터를 잠시 보관</td><td>임시</td></tr></table></div>
+<div class="trap">"가상 메모리는 처리 속도를 높인다" ✗. 가상 메모리는 <b>용량</b>을 늘리는 것이고, 속도를 높이는 건 캐시다.</div>`],
+['캐시 메모리',`<p>CPU는 너무 빠르고 RAM은 상대적으로 느려서, 자주 쓰는 데이터를 CPU 바로 옆에 미리 갖다 두는 것이다. 편의점이 집 앞에 있는 것과 비슷하다.[*요즘 CPU는 캐시를 L1, L2, L3로 여러 층 둔다. 숫자가 작을수록 CPU에 가깝고 빠르지만 작다.]</p>`],
+['가상 메모리',`<p>RAM이 부족하면 하드디스크의 일부를 RAM처럼 빌려 쓴다. Windows에서는 이걸 <b>페이징 파일</b>이라고 부른다.[*C 드라이브 맨 위에 숨겨진 pagefile.sys가 그 정체다. 용량이 수 GB씩 되는데 지우면 안 된다.]</p>`],
+['플래시 메모리',`<p>USB 메모리, SD 카드, SSD의 재료. 도시바에서 개발했고, 데이터를 한꺼번에 지우는 모습이 카메라 플래시 같다고 해서 이런 이름이 붙었다고 한다.</p>`]]},
+
+{id:'d6',sj:1,n:6,t:'메인보드와 기타 장치',s:'버스, 포트, CMOS, 인터럽트',cat:['컴퓨터 일반','하드웨어'],
+intro:'모든 부품이 꽂히는 큰 기판이 **메인보드**(마더보드)다. 부품끼리 데이터를 주고받는 길(버스), 외부 장치를 꽂는 구멍(포트), 기본 설정을 저장하는 CMOS가 여기 있다.',
+sec:[
+['버스',`<p>데이터가 다니는 통로. CPU 내부를 잇는 <b>내부 버스</b>와, CPU와 주변장치를 잇는 <b>외부 버스</b>가 있다. 외부 버스는 다시 <b>주소 버스, 데이터 버스, 제어 버스</b>로 나뉜다.</p>`],
+['포트',`<ul><li><b>직렬 포트</b>: 한 번에 1비트씩 (마우스, 모뎀) / <b>병렬 포트</b>: 여러 비트를 동시에 (옛날 프린터)</li>
+<li><b>PS/2</b>: 키보드·마우스 전용 동그란 포트</li>
+<li><b>USB</b>: 직렬 방식, 최대 127개 장치, <b>핫 플러그</b>(켠 상태로 꽂고 뽑기) 지원[*USB 1.0은 1996년에 나왔다. 그 전에는 장치마다 포트가 달라서 PC 뒷면이 구멍 박물관이었다.]</li>
+<li><b>HDMI</b>: 영상과 음성을 한 선으로 / <b>DisplayPort</b>: 고해상도 영상</li></ul>`],
+['CMOS 셋업',`<p>메인보드의 CMOS에는 날짜·시간, 부팅 순서, 하드디스크 타입, 시스템 암호 같은 기본 설정이 저장된다. 메인보드의 작은 동전형 배터리가 이 정보를 유지한다.[*그 배터리가 다 닳으면 컴퓨터를 켤 때마다 날짜가 이상하게 초기화된다. 오래된 PC에서 흔한 증상이다.]</p>
+<div class="trap">CMOS에서 "Windows 로그인 암호 변경", "페이징 파일 크기 설정" ✗. 둘 다 Windows 안에서 하는 일이다.</div>`],
+['인터럽트, IRQ, DMA, 채널',`<ul><li><b>인터럽트</b>: 실행 중에 급한 일이 생기면 잠시 멈추고 그 일을 먼저 처리한 뒤 돌아오는 것</li>
+<li><b>IRQ</b>: 주변장치가 CPU에 "나 좀 봐 줘" 하고 보내는 신호 번호</li>
+<li><b>DMA</b>: CPU를 거치지 않고 주변장치와 메모리가 직접 데이터를 주고받음</li>
+<li><b>채널</b>: 입출력만 전담하는 작은 프로세서</li>
+<li><b>PnP</b>: 장치를 꽂으면 운영체제가 알아서 인식하고 설정</li></ul>`]]},
+
+{id:'d7',sj:1,n:7,t:'컴퓨터 단위와 문자 코드',s:'처리 속도, 기억 용량, ASCII',cat:['컴퓨터 일반','자료 표현'],
+intro:'속도 단위, 용량 단위, 자료 구성 단위, 문자 코드. 숫자와 순서를 외우는 문서다. 외울 건 많지만 한 번 외우면 점수가 확실하다.',
+sec:[
+['처리 속도 단위',`<p>느린 것부터 <b>ms → μs → ns → ps → fs → as</b>. 1000분의 1씩 작아진다.</p>
+<div class="tw"><table><tr><th>ms</th><th>μs</th><th>ns</th><th>ps</th><th>fs</th><th>as</th></tr>
+<tr><td>10⁻³</td><td>10⁻⁶</td><td>10⁻⁹</td><td>10⁻¹²</td><td>10⁻¹⁵</td><td>10⁻¹⁸</td></tr></table></div>
+<div class="trap">"ns = 10⁻⁶초" ✗(그건 μs). 표를 그대로 머릿속에 넣자.</div>`],
+['기억 용량 단위',`<p>bit → nibble(4bit) → byte(8bit) → KB → MB → GB → TB → PB → EB. KB부터는 2¹⁰ = 1024배씩 커진다.[*하드디스크 회사는 1TB를 10¹²바이트로 계산하고 Windows는 2⁴⁰바이트로 계산한다. 그래서 1TB 하드를 사면 Windows에는 약 931GB로 보인다. 사기는 아니다.]</p>
+<p><b>비트</b>는 binary digit을 줄인 말이다.[*통계학자 존 튜키가 만든 말로 알려져 있고, 클로드 섀넌의 정보 이론 논문으로 널리 퍼졌다.]</p>`],
+['자료 구성 단위',`<p><b>Bit → Nibble → Byte → Word → Field → Record → File → DB</b></p>
+<ul><li>1Byte = 숫자·영문·공백 한 글자 / 2Byte = 한글·한자 한 글자</li>
+<li><b>Word</b>: CPU가 한 번에 처리하는 명령 단위</li>
+<li><b>Field</b>: 파일 구성의 최소 단위 / <b>Record</b>: 자료 처리의 기본 단위</li></ul>
+<div class="trap">"1바이트는 명령 처리의 기본 단위" ✗(Word), "5비트가 모여 1바이트" ✗(8비트).</div>`],
+['문자 코드',`<div class="tw"><table><tr><th>코드</th><th>크기</th><th>특징</th></tr>
+<tr><td>BCD</td><td>6bit (64자)</td><td>Zone 2 + Digit 4</td></tr>
+<tr><td>ASCII</td><td>7bit (128자)</td><td><b>정보 통신용</b>, 확장 ASCII는 8bit(256자)</td></tr>
+<tr><td>EBCDIC</td><td>8bit (256자)</td><td><b>대형 컴퓨터</b>용</td></tr>
+<tr><td>UNICODE</td><td>16bit (65,536자)</td><td>전 세계 문자를 하나로</td></tr></table></div>
+<p>유니코드 덕분에 한글, 아랍어, 이모지까지 한 문서에 섞어 쓸 수 있다.[*이모지도 유니코드에 등록된 정식 문자다. 새 이모지가 나오면 유니코드 컨소시엄이 승인한다.]</p>
+<p>오류는 <b>패리티 비트</b>로 검출하고, <b>해밍 코드</b>로 검출과 교정까지 한다.[*해밍 코드는 벨 연구소의 리처드 해밍이 1950년에 발표했다. 주말마다 기계가 오류로 멈추는 게 짜증 나서 만들었다는 일화가 있다.]</p>`]]},
+
+{id:'d8',sj:1,n:8,t:'운영체제와 소프트웨어',s:'운영체제 목적, 소프트웨어 분류',cat:['컴퓨터 일반','소프트웨어'],
+intro:'**운영체제**(OS)는 하드웨어와 소프트웨어를 관리하고 사용자가 컴퓨터를 편하게 쓰게 해 주는 시스템 소프트웨어다. Windows, macOS, UNIX, LINUX, DOS가 대표적이다. 실행되는 동안에는 **주기억장치**에 있다.',
+sec:[
+['운영체제의 목적 (성능 평가 기준)',`<div class="tw"><table><tr><th>기준</th><th>뜻</th><th>방향</th></tr>
+<tr><td>처리 능력</td><td>일정 시간 안에 처리하는 일의 양</td><td>높을수록 좋음</td></tr>
+<tr><td>응답 시간 (반환 시간)</td><td>요청부터 결과까지 걸리는 시간</td><td>짧을수록 좋음</td></tr>
+<tr><td>신뢰도</td><td>정확하게 처리하는 정도</td><td>높을수록 좋음</td></tr>
+<tr><td>사용 가능도</td><td>필요할 때 즉시 쓸 수 있는 정도</td><td>높을수록 좋음</td></tr></table></div>
+<div class="trap">사용 가능도를 "CPU 사용 정도"로 설명하면 ✗. 운영체제가 "하드디스크에 위치하여 실행된다" ✗.</div>`],
+['시스템 소프트웨어',`<p>컴퓨터와 사용자 사이의 <b>중계자</b>. 운영체제의 구성은 두 갈래다.</p>
+<ul><li><b>제어 프로그램</b>: 감시, 작업 관리, <b>데이터 관리</b></li>
+<li><b>처리 프로그램</b>: <b>서비스</b>, 문제 처리, 언어 번역</li></ul>
+<div class="trap">제어 쪽에 "서비스", 처리 쪽에 "데이터 관리"를 넣는 바꿔치기가 단골이다.</div>`],
+['사용 권한에 따른 분류',`<div class="tw"><table><tr><th>이름</th><th>특징</th></tr>
+<tr><td>프리웨어</td><td>무료로 사용·배포</td></tr>
+<tr><td>오픈소스</td><td>소스 코드까지 공개, 수정·배포 가능[*리눅스가 대표적이다. 핀란드 대학생 리누스 토르발스가 1991년에 취미로 시작했고, 안드로이드도 리눅스 커널을 바탕으로 한다.]</td></tr>
+<tr><td>셰어웨어</td><td>일정 기간 무료, 구입 유도</td></tr>
+<tr><td>데모</td><td>일부 기능만 체험</td></tr>
+<tr><td>알파 / 베타</td><td>개발자 테스트 / 일반인 테스트</td></tr>
+<tr><td>패치</td><td>오류 수정, 성능 향상</td></tr>
+<tr><td>번들</td><td>제품에 끼워 주는 소프트웨어</td></tr>
+<tr><td>유틸리티</td><td>필수는 아니지만 편리 (메모장, 그림판)</td></tr></table></div>`]]},
+
+{id:'d9',sj:1,n:9,t:'운영 방식과 세대별 특징',s:'일괄 처리부터 분산 처리까지',cat:['컴퓨터 일반','역사'],
+intro:'컴퓨터가 일을 처리하는 방식은 **일괄 → 실시간 → 다중 프로그래밍 → 시분할 → 다중 처리 → 분산 처리** 순서로 발전했다. 하드웨어 세대와 함께 외우면 이야기처럼 이어진다.',
+sec:[
+['운영 방식',`<div class="tw"><table><tr><th>방식</th><th>뜻</th></tr>
+<tr><td>일괄 처리</td><td>모았다가 한꺼번에 (급여 계산)</td></tr>
+<tr><td>실시간 처리</td><td>생기면 즉시 (은행, 예약)</td></tr>
+<tr><td>다중 프로그래밍</td><td><b>CPU 1개</b>로 여러 프로그램</td></tr>
+<tr><td>시분할</td><td>시간을 쪼개 여러 사용자가 번갈아</td></tr>
+<tr><td>다중 처리</td><td><b>CPU 여러 개</b>로 연산 능력 향상</td></tr>
+<tr><td>분산 처리</td><td>네트워크로 작업을 나눔</td></tr></table></div>
+<details class="fold"><summary>듀얼 vs 듀플렉스</summary><div><p><b>듀얼</b>: 2개의 CPU가 같은 일을 동시에 하며 결과를 서로 확인한다. <b>듀플렉스</b>: 한쪽 CPU는 쉬다가 다른 쪽이 고장 나면 넘겨받는다. 비행기 조종사 두 명이 같이 조종하는 것과, 부조종사가 대기하는 것의 차이로 생각하면 된다.</p></div></details>`],
+['세대별 특징',`<div class="tw"><table><tr><th>세대</th><th>소자</th><th>특징</th></tr>
+<tr><td>1세대</td><td>진공관</td><td>일괄 처리, 하드웨어 중심</td></tr>
+<tr><td>2세대</td><td>트랜지스터</td><td>실시간 처리, 고급 언어</td></tr>
+<tr><td>3세대</td><td>집적회로(IC)</td><td>다중 프로그래밍, 시분할, 운영체제</td></tr>
+<tr><td>4세대</td><td>LSI</td><td>다중·분산 처리, 개인용 컴퓨터</td></tr>
+<tr><td>5세대</td><td>VLSI</td><td>인공지능, 퍼지, 전문가 시스템</td></tr></table></div>
+<p>트랜지스터는 1947년 벨 연구소에서 발명됐고, 발명자 세 명은 1956년 노벨 물리학상을 받았다.[*진공관은 전구처럼 뜨겁고 자주 타 버렸다. 트랜지스터는 작고 차갑고 튼튼해서 컴퓨터 크기를 확 줄였다.] 칩 하나에 들어가는 트랜지스터 수가 약 2년마다 두 배가 된다는 <b>무어의 법칙</b>도 이 흐름에서 나왔다.[*인텔 공동 창업자 고든 무어가 1965년에 처음 제시했다. 처음엔 1년마다 두 배라고 했다가 나중에 2년으로 고쳤다.]</p>
+<div class="trap">"3세대 = 자기드럼" ✗(IC). 일괄 처리는 1세대 특징이라 "3세대 이후의 특징"에 들어가면 ✗.</div>`]]},
+
+{id:'d10',sj:1,n:10,t:'Windows 특징과 단축키',s:'GUI, OLE, NTFS, 바로 가기 키',cat:['Windows','단축키'],
+intro:'컴활 2급 1과목의 Windows 문제는 **Windows 10** 기준이다.[*Microsoft는 2025년 10월 14일에 Windows 10의 일반 지원을 끝냈다. 그래도 시험은 출제 기준이 바뀌기 전까지 Windows 10으로 나온다.] 특징 몇 개와 단축키가 이 문서의 전부다.',
+sec:[
+['특징',`<ul><li><b>GUI</b>: 아이콘과 마우스로 조작하는 그래픽 화면</li>
+<li><b>선점형 멀티태스킹</b>: 운영체제가 작업을 통제해서, 응답 없는 프로그램을 강제로 끝낼 수 있다</li>
+<li><b>OLE</b>: 다른 프로그램의 개체(그림, 표)를 연결·포함. 원본을 고치면 연결된 문서도 바뀐다</li>
+<li><b>PnP</b>: 장치를 꽂으면 자동 인식</li>
+<li><b>NTFS</b>: FAT32보다 안정적이고 보안(액세스 제어)을 지원. 파일 16TB, 볼륨 256TB 제한</li></ul>
+<div class="trap">NTFS는 "파티션 크기 제한 없음" ✗.</div>`],
+['마우스 + 키 조합',`<div class="tw"><table><tr><th>동작</th><th>결과</th></tr>
+<tr><td>같은 드라이브로 드래그</td><td>이동</td></tr>
+<tr><td>다른 드라이브로 드래그</td><td>복사</td></tr>
+<tr><td>Ctrl + 드래그</td><td>항상 복사</td></tr>
+<tr><td>Shift + 드래그</td><td>항상 이동</td></tr>
+<tr><td>Alt + 드래그</td><td>바로 가기 만들기</td></tr></table></div>`],
+['자주 나오는 바로 가기 키',`<div class="tw"><table><tr><th>키</th><th>기능</th><th>키</th><th>기능</th></tr>
+<tr><td>F2</td><td>이름 바꾸기</td><td>Alt+Enter</td><td>속성</td></tr>
+<tr><td>F3</td><td>검색</td><td>Alt+Space</td><td>창 조절 메뉴</td></tr>
+<tr><td>F5</td><td>새로 고침</td><td>Alt+PrtSc</td><td>활성 창만 캡처</td></tr>
+<tr><td>Ctrl+Esc</td><td>시작 메뉴</td><td>Shift+F10</td><td>바로 가기 메뉴</td></tr>
+<tr><td>Win+D</td><td>바탕 화면</td><td>Win+E</td><td>파일 탐색기</td></tr>
+<tr><td>Win+R</td><td>실행</td><td>Win+L</td><td>잠금</td></tr>
+<tr><td>Shift+Delete</td><td>휴지통 거치지 않고 삭제</td><td>Ctrl+Shift+Esc</td><td>[[d13|작업 관리자]]</td></tr></table></div>
+<p>Ctrl+Alt+Del은 IBM 엔지니어 데이비드 브래들리가 만들었다.[*개발자들이 컴퓨터를 빨리 재시작하려고 만든 조합이었다. 그는 "내가 발명했지만 유명하게 만든 건 빌 게이츠"라는 농담을 남겼다. 블루스크린 덕분이라는 뜻이다.]</p>`]]},
+
+{id:'d11',sj:1,n:11,t:'Windows 설정 1',s:'디스플레이, 개인 설정, 작업 표시줄, 접근성',cat:['Windows','설정'],
+intro:'바탕 화면을 우클릭하면 나오는 메뉴들과 작업 표시줄, 접근성 설정. "어느 메뉴에서 무엇을 설정하는가"를 묻는다.',
+sec:[
+['디스플레이와 개인 설정',`<ul><li><b>디스플레이</b>: 여러 디스플레이, 야간 모드, <b>해상도</b>(가로 픽셀 × 세로 픽셀), 배율</li>
+<li><b>개인 설정</b>: 배경, 색, 잠금 화면, <b>테마</b>(배경·색·소리·커서를 한 번에)</li></ul>
+<div class="trap">개인 설정에서 "시계·날씨 가젯 추가" ✗. 가젯은 Windows 7 시절 기능이다.[*바탕 화면 가젯은 보안 문제로 Windows 8부터 사라졌다.]</div>`],
+['작업 표시줄',`<p>화면 위치(상하좌우) 변경, 화면의 50%까지 크기 조절, 자동 숨기기, 잠금, 작은 아이콘, <b>점프 목록</b>을 쓸 수 있다. 오른쪽 끝의 얇은 막대는 <b>바탕 화면 보기</b> 단추다.</p>
+<p>점프 목록은 작업 표시줄 아이콘을 우클릭하면 나오는 최근 항목 목록이다. 압정으로 고정하고, 지울 때는 우클릭 후 "이 목록에서 제거".</p>`],
+['접근성',`<p>장애가 있거나 불편한 사용자를 위한 기능. 내레이터(화면 읽기), 돋보기(Win + 더하기), 고대비, 화상 키보드, <b>고정 키</b>(Shift를 다섯 번), 필터 키, 토글 키, <b>마우스 키</b>(숫자 키패드로 포인터 이동).</p>
+<div class="trap">"마우스 키"는 마우스 속성에서 설정 ✗. 접근성에서 설정한다.</div>`]]},
+
+{id:'d12',sj:1,n:12,t:'Windows 설정 2',s:'글꼴, 백업·복원, 계정, 장치 관리자',cat:['Windows','설정'],
+intro:'제어판 깊숙한 곳의 메뉴들이다. 실제로 열어 볼 일은 드물지만 시험에는 매번 나온다.',
+sec:[
+['글꼴',`<p>위치는 <b>C:\\Windows\\Fonts</b>. TrueType(.ttf, .ttc)과 OpenType(.otf)을 지원한다.</p><div class="trap">글꼴 확장자가 ".rtf, .inf" ✗.</div>`],
+['백업과 시스템 복원',`<p>시스템 복원은 컴퓨터를 예전 <b>복원 지점</b>으로 되돌린다. 복원 지점은 자동으로도, 직접도 만들 수 있다. <mark>시스템 파일과 업데이트는 되돌아가지만 개인 파일은 건드리지 않는다.</mark></p>`],
+['사용자 계정',`<ul><li><b>관리자</b>: 거의 모든 작업 가능, 다른 계정의 사용 시간·게임 제한</li><li><b>표준</b>: 프로그램 설치처럼 시스템에 영향 주는 작업은 불가, 자기 암호는 변경 가능</li></ul>`],
+['시스템과 장치 관리자',`<p><b>시스템</b>(Win+Pause): Windows 버전, CPU, RAM, 컴퓨터 이름, 정품 인증을 확인한다.</p>
+<p><b>장치 관리자</b>: 하드웨어 목록. <mark>느낌표(!)는 충돌, 물음표(?)는 드라이버 미설치</mark>. 드라이버는 하드웨어 정보를 담은 소프트웨어다.</p>`],
+['인터넷 옵션',`<p>[일반] 탭: 홈페이지, 시작 옵션, 임시 파일·열어본 페이지(History)·쿠키 삭제, 색·언어·글꼴·접근성. 기본 브라우저 설정은 [프로그램] 탭이다.[*쿠키라는 이름은 프로그래머들이 쓰던 "매직 쿠키"라는 말에서 왔다. 포춘 쿠키처럼 안에 작은 정보가 들어 있다는 느낌이다.]</p>`]]},
+
+{id:'d13',sj:1,n:13,t:'Windows 설정 3',s:'프린터, 폴더 옵션, 작업 관리자, 레지스트리',cat:['Windows','설정'],
+intro:'프린터, 폴더 옵션, 프로그램 및 기능, 작업 관리자, 레지스트리. 1과목 Windows 파트의 마지막 설정 문서다.',
+sec:[
+['프린터',`<ul><li><b>기본 프린터</b>는 한 대만, 체크 표시. 기본 프린터도 삭제할 수 있다</li>
+<li>같은 프린터를 다른 이름으로 여러 번 설치할 수 있다</li>
+<li><b>스풀</b>: 인쇄할 내용을 하드디스크에 잠시 저장해 두고 출력하는 것. CPU가 프린터를 기다리지 않고 다른 일을 할 수 있다(<b>병행 처리</b>)[*SPOOL은 Simultaneous Peripheral Operations On-Line의 약자다. 실을 감는 실패(spool)처럼 데이터를 감아 두는 모습과도 맞아떨어진다.]</li>
+<li>인쇄 대기 중인 문서는 일시 중지·취소는 되지만 <b>내용 편집은 안 된다</b></li>
+<li>인쇄 단위: CPS(초당 문자), LPM(분당 줄), PPM(분당 쪽), DPI(인치당 점, 품질)</li></ul>
+<div class="trap">"스풀을 쓰면 인쇄 속도가 빨라진다" ✗. 프린터는 그대로고 컴퓨터가 덜 기다릴 뿐이다.</div>`],
+['폴더 옵션',`<p>[일반] 창 여는 방법·클릭 방법, [보기] 숨김 파일·확장자 표시, [검색] 색인 설정. 탐색 창·미리 보기 창 표시는 파일 탐색기 리본 메뉴에서 한다.</p>`],
+['프로그램 및 기능',`<p>프로그램 제거·변경·복구, 설치된 업데이트 보기(제거만 가능), Windows 기능 켜기/끄기.</p>`],
+['작업 관리자',`<p><b>Ctrl+Shift+Esc</b>. 실행 중인 프로그램·프로세스·서비스 확인과 종료, CPU·메모리·디스크·네트워크 사용량 확인, 다른 사용자에게 메시지 보내기·로그오프. 응답 없는 프로그램을 끌 때 쓴다.</p><div class="trap">"실행 중인 프로그램의 실행 순서 변경" ✗.</div>`],
+['레지스트리',`<p>하드웨어와 소프트웨어 설정을 담은 <b>계층형 데이터베이스</b>. 실행 창에 <b>regedit</b>을 입력해 연다. 잘못 고치면 부팅이 안 될 수 있으니 시험 공부할 때 만지지 말자.[*인터넷에 돌아다니는 "레지스트리 한 줄로 컴퓨터 빨라지는 법"은 대부분 효과가 없거나 위험하다.]</p><div class="trap">레지스트리 편집기가 "reg.exe" ✗(regedit.exe).</div>`]]},
+
+{id:'d14',sj:1,n:14,t:'Windows 도구',s:'디스크 정리, 조각 모음, 휴지통, 바로 가기',cat:['Windows','유틸리티'],
+intro:'디스크 관리 도구, 휴지통, 확장자와 연결 프로그램, 메모장, 바로 가기 아이콘. 컴퓨터를 쓰면서 이미 아는 것들이라 쉬워 보이지만 함정이 촘촘하다.',
+sec:[
+['디스크 도구',`<div class="tw"><table><tr><th>도구</th><th>목적</th></tr>
+<tr><td>디스크 정리</td><td>불필요한 파일 삭제 → <b>공간 확보</b></td></tr>
+<tr><td>오류 검사</td><td>물리적·논리적 오류 검사</td></tr>
+<tr><td>드라이브 최적화(조각 모음)</td><td>흩어진 파일을 모음 → <b>속도 향상</b></td></tr></table></div>
+<p>조각 모음은 CD-ROM, 네트워크 드라이브, Windows가 지원하지 않는 형식에는 할 수 없다.</p>
+<div class="trap">"조각 모음으로 디스크 공간을 늘린다" ✗. 공간은 디스크 정리. 디스크 정리 대상에 "사용하지 않는 글꼴" ✗.</div>`],
+['휴지통',`<p>위치는 <b>C:\\$Recycle.Bin</b>. 드라이브마다 따로 있고, 용량이 차면 <b>오래된 파일부터</b> 지운다. 휴지통 안의 파일은 실행할 수 없다.[*휴지통(Recycle Bin)은 Windows 95에서 처음 등장했다. 그 전에는 지우면 정말 끝이었다.]</p>
+<p>휴지통을 거치지 않는 경우: USB·네트워크 드라이브에서 삭제, 명령 프롬프트의 del, <b>Shift+Delete</b>, 휴지통 속성에서 바로 삭제하도록 설정.</p>`],
+['메모장',`<p>확장자 .txt. 서식을 거의 지원하지 않고, <b>OLE 개체를 넣을 수 없다</b>. F5를 누르면 현재 날짜·시간이 들어간다.</p>
+<details class="fold"><summary>.LOG 일기장 트릭</summary><div><p>메모장 문서 첫 줄에 대문자로 <code>.LOG</code>라고 쓰고 저장하면, 열 때마다 맨 끝에 날짜와 시간이 자동으로 붙는다. 공부 일지로 쓰기 좋다.</p></div></details>`],
+['확장자와 바로 가기',`<p>확장자는 파일 이름 마침표 뒤에 붙어 종류를 알려 준다. 확장자가 달라도 같은 프로그램에 연결할 수 있다.</p>
+<p><b>바로 가기</b>(.LNK)는 원본의 위치만 기억한다. 지워도 원본은 무사하고, 폴더·드라이브·프린터 등 모든 항목에 만들 수 있다.</p>`]]},
+
+{id:'d15',sj:1,n:15,t:'멀티미디어',s:'그래픽 기법, 멀티미디어 용어',cat:['멀티미디어'],
+intro:'**멀티미디어**는 Multi(여럿) + Media(매체). 문자, 소리, 그림, 영상을 디지털로 합친 것이다. 특징은 **통합성, 대용량성, 양방향성, 디지털성, 비선형성**.',
+sec:[
+['그래픽 기법',`<div class="tw"><table><tr><th>기법</th><th>뜻</th></tr>
+<tr><td>디더링</td><td>제한된 색을 섞어 새로운 색처럼 보이게</td></tr>
+<tr><td>모델링</td><td>물체의 형상을 3차원으로 표현</td></tr>
+<tr><td>렌더링</td><td>명암과 색을 입혀 사실감을 더함</td></tr>
+<tr><td>안티앨리어싱</td><td>계단 현상을 없애 경계를 부드럽게</td></tr>
+<tr><td>모핑</td><td>한 이미지가 다른 이미지로 서서히 변함</td></tr>
+<tr><td>인터레이싱</td><td>흐릿하게 먼저 보여 주고 점점 선명하게</td></tr>
+<tr><td>메조틴트</td><td>점과 선으로 판화처럼 표현</td></tr></table></div>
+<p>모핑은 영화 컴퓨터 그래픽에서 자주 쓰였다.[*1991년 마이클 잭슨의 뮤직비디오 "Black or White"에서 사람 얼굴이 연달아 바뀌는 장면이 모핑의 대표 사례로 꼽힌다.] 3D 게임은 모델링으로 뼈대를 만들고 렌더링으로 색을 입히는 순서다.</p>`],
+['멀티미디어 용어',`<div class="tw"><table><tr><th>용어</th><th>뜻</th></tr>
+<tr><td>VR / AR</td><td>가상현실 / 증강현실[*포켓몬 GO처럼 현실 화면 위에 그림을 얹는 것이 AR, 헤드셋을 쓰고 완전히 다른 세계에 들어가는 것이 VR이다.]</td></tr>
+<tr><td>VOD</td><td>주문형 비디오</td></tr>
+<tr><td>CAI</td><td>컴퓨터 보조 교육</td></tr>
+<tr><td>PACS</td><td>의료 영상 저장·전송 시스템</td></tr>
+<tr><td>LBS</td><td>위치 기반 서비스</td></tr>
+<tr><td>VCS</td><td>화상 회의</td></tr>
+<tr><td>키오스크</td><td>무인 안내 시스템</td></tr>
+<tr><td>텔레매틱스</td><td>자동차 정보 통신</td></tr></table></div>
+<p>PACS는 병원에서 X선, CT, MRI 사진을 필름 없이 화면으로 보는 시스템이다. 간호사나 의사가 매일 쓰는 바로 그것이다.</p>
+<div class="trap">"압축을 반복하면 파일 크기를 계속 줄일 수 있다" ✗. LBS를 "방송 서비스"로 설명하면 ✗.</div>`]]},
+
+{id:'d16',sj:1,n:16,t:'멀티미디어 데이터',s:'이미지, 오디오, 동영상 형식',cat:['멀티미디어','파일 형식'],
+intro:'이미지·오디오·동영상 파일 형식을 다룬다. 확장자와 특징을 짝짓는 문제가 나온다.',
+sec:[
+['비트맵 vs 벡터',`<div class="tw"><table><tr><th></th><th>비트맵(래스터)</th><th>벡터</th></tr>
+<tr><td>표현</td><td>픽셀(점)</td><td>선과 곡선(수식)</td></tr>
+<tr><td>확대하면</td><td>계단 현상 발생</td><td>깨지지 않음</td></tr>
+<tr><td>용도</td><td>사진</td><td>로고, 도면</td></tr>
+<tr><td>형식</td><td>BMP, JPG, GIF, PNG</td><td>AI, WMF</td></tr></table></div>`],
+['이미지 형식',`<ul><li><b>JPEG</b>: 손실 압축, 압축률 조절 가능, 사진에 적합[*Joint Photographic Experts Group, 이 형식을 만든 위원회 이름이 그대로 확장자가 됐다.]</li>
+<li><b>GIF</b>: 무손실, 256색, 간단한 애니메이션, 투명 배경[*만든 사람 스티브 윌하이트는 "지프"로 읽는다고 했다. 대다수는 "기프"로 읽는다. 이 논쟁은 아직 끝나지 않았다.]</li>
+<li><b>PNG</b>: 무손실, 알파 채널로 부드러운 투명 표현</li></ul>
+<div class="trap">"GIF는 벡터 방식" ✗. "JPEG는 알파 채널로 투명 표현" ✗(PNG).</div>`],
+['오디오',`<p><b>샘플링</b>은 아날로그 소리를 디지털로 바꾸는 작업이다. 샘플링 레이트(Hz)가 높을수록 원음에 가깝다.</p>
+<p>파일 크기 = 샘플링 레이트 × (비트 수 ÷ 8) × 채널 수 × 시간(초)</p>
+<details class="fold"><summary>직접 계산해 보기: CD 음질 1분</summary><div><p>CD는 44,100Hz, 16비트, 스테레오다. 44,100 × 2 × 2 × 60 = 10,584,000바이트, 약 10MB. MP3가 왜 혁명이었는지 알 수 있다. MP3는 같은 노래를 보통 1MB 남짓으로 줄인다.</p></div></details>
+<ul><li><b>WAV</b>: 무압축, 크기가 큼 / <b>MP3</b>: MPEG-1 압축 / <b>FLAC</b>: 무손실 압축</li>
+<li><b>MIDI</b>: 소리가 아니라 연주 정보(음 높이, 길이, 세기)를 저장. 그래서 아주 작다[*MIDI 규격은 1983년에 나왔고, 지금도 거의 그대로 쓰인다. 40년 넘게 살아남은 드문 디지털 표준이다.]</li></ul>
+<div class="trap">"샘플링은 디지털을 아날로그로" ✗. "MIDI는 동영상 압축 기술" ✗. "WAV에 음악 기호가 정의돼 있다" ✗(MIDI).</div>`],
+['동영상',`<ul><li><b>스트리밍</b>: 다 받기 전에 받으면서 재생</li>
+<li><b>AVI</b>: Windows 표준 / <b>MOV</b>: 애플 퀵타임 / <b>ASF, WMV</b>: 스트리밍용</li>
+<li><b>MPEG</b>: 국제 표준 동영상 압축. MPEG-1(CD), MPEG-2(DVD, HDTV), MPEG-4(전송), MPEG-7(검색), MPEG-21(유통)</li></ul>
+<div class="trap">"MPEG은 인텔이 개발" ✗. 국제 표준화 단체가 만들었다.</div>`]]},
+
+{id:'d17',sj:1,n:17,t:'정보통신 기초',s:'전송 방식, 망 구성, 통신망 종류',cat:['정보통신'],
+intro:'데이터가 어떤 방향으로, 어떤 모양으로, 얼마나 넓게 오가는지를 다룬다.',
+sec:[
+['전송 방향',`<div class="tw"><table><tr><th>방식</th><th>뜻</th><th>예</th></tr>
+<tr><td>단방향</td><td>한쪽으로만</td><td>TV, 라디오</td></tr>
+<tr><td>반이중</td><td>양쪽 가능, 동시엔 불가</td><td>무전기[*무전기에서 말을 끝낼 때 "오버"라고 하는 이유가 반이중이기 때문이다. 상대에게 이제 네 차례라고 알려 주는 것이다.]</td></tr>
+<tr><td>전이중</td><td>동시에 양쪽</td><td>전화기</td></tr></table></div>`],
+['망 구성 형태',`<div class="tw"><table><tr><th>형태</th><th>특징</th></tr>
+<tr><td>스타(성)형</td><td>중앙에 1:1 연결, 유지 보수 쉬움, 중앙이 고장 나면 전체 마비</td></tr>
+<tr><td>버스형</td><td>한 회선에 여러 대, 하나 고장 나도 괜찮음, 기밀성 낮음</td></tr>
+<tr><td>링형</td><td>원형 연결, 하나 고장 나면 전체 영향</td></tr>
+<tr><td>트리형</td><td>나뭇가지처럼 계층 연결, 분산 처리</td></tr>
+<tr><td>망(메시)형</td><td>모두 서로 연결, 장애에 강함, 비용 큼</td></tr></table></div>
+<div class="trap">"버스형은 기밀 보장이 우수하고 회선 길이 제한이 없다" ✗.</div>`],
+['통신망 종류',`<ul><li><b>LAN</b> 근거리(건물) → <b>MAN</b> 도시 → <b>WAN</b> 국가·대륙</li>
+<li><b>VAN</b>: 회선을 빌려 부가 기능을 붙여 되파는 망 / <b>ISDN</b>: 종합 디지털 통신망</li>
+<li><b>인트라넷</b>: 회사 안 / <b>엑스트라넷</b>: 협력 업체까지 확장</li>
+<li><b>WLAN</b>: 무선 랜. 무선 랜카드, AP, 안테나로 구성</li></ul>
+<p>한국은 1982년 서울대와 구미의 연구소 사이를 연결하며 인터넷을 시작했다.[*미국 다음으로 이른 편이었고, 이 일을 이끈 전길남 박사는 "한국 인터넷의 아버지"로 불린다.]</p>
+<div class="trap">"LAN은 반이중 방식" ✗(전이중). 무선 랜 구성 요소에 "리피터" ✗.</div>`]]},
+
+{id:'d18',sj:1,n:18,t:'통신장비와 프로토콜',s:'허브, 라우터, TCP/IP, 이메일',cat:['정보통신','네트워크 장비'],
+intro:'통신 장비 여섯 개와 프로토콜 몇 개. 장비는 이름으로 역할을 떠올리면 쉽다.',
+sec:[
+['통신 장비',`<div class="tw"><table><tr><th>장비</th><th>역할</th><th>이름으로 외우기</th></tr>
+<tr><td>허브</td><td>여러 컴퓨터를 연결</td><td>중심(hub)</td></tr>
+<tr><td>리피터</td><td>약해진 신호를 증폭</td><td>반복(repeat)</td></tr>
+<tr><td>브리지</td><td>같은 프로토콜의 두 망 연결</td><td>다리</td></tr>
+<tr><td>라우터</td><td>최적의 경로를 찾아 전송</td><td>길(route)</td></tr>
+<tr><td>게이트웨이</td><td>서로 다른 망을 연결</td><td>출입구</td></tr>
+<tr><td>모뎀</td><td>디지털 ↔ 아날로그 변환</td><td>변조(MOdulation) + 복조(DEModulation)</td></tr></table></div>`],
+['프로토콜',`<p>통신할 때 지키는 약속(구문, 의미, 순서). 기능은 <b>흐름 제어, 동기화, 오류 제어</b>.</p>
+<ul><li><b>TCP</b>: 데이터를 패킷으로 나누고 오류를 검사 / <b>IP</b>: 패킷의 주소를 보고 경로를 정함[*TCP/IP는 빈트 서프와 밥 칸이 1970년대에 설계했다. 둘 다 "인터넷의 아버지"로 불린다.]</li>
+<li><b>FTP</b>: 파일 전송. 서버의 프로그램을 실행할 수는 없다. 익명 FTP는 계정 없이 접속</li>
+<li><b>HTTP</b>: 웹 문서 전송 / <b>TELNET</b>: 원격 접속</li></ul>`],
+['전자우편 프로토콜',`<ul><li><b>SMTP</b>: 보내기 / <b>POP3</b>: 서버에서 내 컴퓨터로 받아오기 / <b>IMAP</b>: 서버에 둔 채로 보기</li>
+<li><b>MIME</b>: 사진, 첨부 파일 같은 멀티미디어 메일</li>
+<li>전자우편은 <b>ASCII</b> 코드로 전송</li></ul>
+<p>이메일 주소의 @는 1971년 레이 톰린슨이 처음 썼다.[*사람 이름에 들어갈 일이 없는 기호를 찾다가 키보드에서 골랐다. "누구 at 어느 컴퓨터"라는 뜻으로 딱 맞았다.]</p>
+<div class="trap">"전자우편은 8비트 EBCDIC 코드" ✗.</div>`]]},
+
+{id:'d19',sj:1,n:19,t:'IP와 도메인',s:'IPv4, IPv6, DNS, URL',cat:['정보통신','인터넷'],
+intro:'인터넷의 주소 체계. 컴퓨터는 숫자(IP)로, 사람은 이름(도메인)으로 찾는다. 둘을 이어 주는 것이 **DNS**다.',
+sec:[
+['IPv4 vs IPv6',`<div class="tw"><table><tr><th></th><th>IPv4</th><th>IPv6</th></tr>
+<tr><td>크기</td><td><b>32비트</b> (8비트 × 4)</td><td><b>128비트</b> (16비트 × 8)</td></tr>
+<tr><td>표기</td><td>10진수, 점(.)</td><td>16진수, 콜론(:)</td></tr>
+<tr><td>분류</td><td>A~E 클래스</td><td>유니·애니·멀티캐스트</td></tr></table></div>
+<p>IPv4로 만들 수 있는 주소는 약 43억 개다. 세계 인구보다 적다.[*새 IPv4 주소를 나눠 주는 최상위 기관 IANA의 주소 풀은 2011년에 바닥났다. 그래서 IPv6로 옮겨 가는 중이다.] A 클래스는 대규모 네트워크용이다.</p>
+<div class="trap">"IPv6는 64비트" ✗. "A 클래스는 소규모" ✗.</div>`],
+['IP 설정',`<p>자동으로 받으면 <b>DHCP</b>. 직접 넣을 때는 IP 주소, 서브넷 마스크, 기본 게이트웨이, DNS 서버를 입력한다.</p>`],
+['도메인과 URL',`<p>도메인은 IP를 사람이 읽기 쉬운 문자로 바꾼 것이다. 순서는 <b>호스트.기관명.기관 종류.국가</b>(www.예시.co.kr).</p>
+<p>URL 형식: <code>프로토콜://호스트주소[:포트번호][/파일경로]</code>. 기본 포트는 HTTP 80, FTP 21, TELNET 23.</p>
+<p>국제 관리는 <b>ICANN</b>, 한국은 <b>KISA</b>(한국인터넷진흥원)가 맡는다.[*.kr 같은 국가 도메인은 ISO 국가 코드 두 글자를 그대로 쓴다. 투발루의 .tv는 TV 방송 회사들에 인기가 많아서 나라의 큰 수입원이 됐다.]</p>
+<div class="trap">계정이 있는 FTP 주소를 "http://사용자@서버"로 쓰면 ✗(ftp://).</div>`]]},
+
+{id:'d20',sj:1,n:20,t:'정보통신 용어',s:'OSI 7계층, 명령어, 최신 기술',cat:['정보통신'],
+intro:'OSI 7계층, 명령 프롬프트 명령어, 사물인터넷 같은 기술 용어를 모았다.',
+sec:[
+['OSI 7계층',`<p>국제표준화기구(ISO)가 통신 과정을 7단계로 나눠 정한 표준이다. 아래부터 <b>물–데–네–전–세–표–응</b>.</p>
+<div class="tw"><table><tr><th>계층</th><th>기능</th><th>장비</th></tr>
+<tr><td>7 응용</td><td>사용자 접근</td><td></td></tr>
+<tr><td>6 표현</td><td>코드 변환, 암호화, 압축</td><td></td></tr>
+<tr><td>5 세션</td><td>송수신 관계 유지</td><td></td></tr>
+<tr><td>4 전송</td><td>종단 간 전송</td><td>게이트웨이, TCP</td></tr>
+<tr><td>3 네트워크</td><td>경로 설정</td><td>라우터, IP</td></tr>
+<tr><td>2 데이터 링크</td><td>흐름·오류 제어, 동기화</td><td>브리지, 스위치, 랜카드</td></tr>
+<tr><td>1 물리</td><td>전기적·기계적 특성</td><td>허브, 리피터</td></tr></table></div>`],
+['명령어 (명령 프롬프트)',`<div class="tw"><table><tr><th>명령어</th><th>기능</th></tr>
+<tr><td>ipconfig</td><td>내 IP, 게이트웨이, 서브넷 확인</td></tr>
+<tr><td>ping</td><td>상대와 연결되는지 확인</td></tr>
+<tr><td>tracert</td><td>거쳐 가는 경로 추적</td></tr>
+<tr><td>nslookup</td><td>도메인의 실제 IP 확인</td></tr>
+<tr><td>netstat</td><td>연결 상태와 포트 확인</td></tr>
+<tr><td>finger</td><td>사용자 정보 확인</td></tr></table></div>
+<p>ping은 잠수함 음파 탐지기 소리에서 따온 이름이다.[*신호를 보내고 메아리가 돌아오는 시간을 재는 원리가 똑같다. 게임에서 "핑이 높다"고 하는 그 핑이다.]</p>`],
+['정보통신 기술',`<ul><li><b>VoIP</b>: 인터넷 전화 / <b>와이브로</b>: 이동 중 초고속 무선 인터넷</li>
+<li><b>블루투스</b>: 근거리 무선 연결[*10세기 덴마크 왕 하랄 블라톤(Bluetooth)의 별명에서 따왔다. 여러 부족을 하나로 통합한 왕처럼 여러 기기를 하나로 잇자는 뜻이다. 로고도 그의 이니셜을 룬 문자로 합친 것이다.]</li>
+<li><b>테더링</b>: 스마트폰을 공유기처럼 / <b>RFID</b>: 전자태그(교통카드, 출입증)</li>
+<li><b>유비쿼터스</b>: 언제 어디서나 컴퓨팅 / <b>USN</b>: 센서로 환경 정보 수집</li>
+<li><b>IoT</b>: 모든 사물을 인터넷으로 연결</li></ul>`]]},
+
+{id:'d21',sj:1,n:21,t:'정보통신 보안',s:'해킹 유형, 방화벽, 암호화',cat:['정보통신','보안'],
+intro:'공격 유형, 보안 위협, 방화벽, 암호화. 이름이 재미있는 것들이 많아서 이야기로 외우기 좋다.',
+sec:[
+['공격 유형',`<div class="tw"><table><tr><th>이름</th><th>뜻</th></tr>
+<tr><td>웜</td><td>스스로 복제하며 퍼져 부하를 일으킴[*1988년 모리스 웜이 당시 인터넷에 연결된 컴퓨터의 약 10%를 마비시켰다. 만든 대학원생은 미국 컴퓨터 범죄법으로 처음 유죄 판결을 받은 사람이 됐다.]</td></tr>
+<tr><td>트로이 목마</td><td>정상 프로그램인 척 숨어 있음, 자기 복제 없음[*그리스 신화에서 병사를 숨긴 거대한 목마를 선물인 척 성 안에 들인 이야기에서 왔다.]</td></tr>
+<tr><td>백도어</td><td>보안을 우회하는 비밀 통로</td></tr>
+<tr><td>스니핑</td><td>네트워크 패킷을 몰래 엿봄 (sniff = 킁킁 냄새 맡기)</td></tr>
+<tr><td>스푸핑</td><td>진짜인 척 속여 접속 (spoof = 속이다)</td></tr>
+<tr><td>피싱</td><td>가짜 사이트로 유인해 정보를 빼냄[*개인 정보(private data)와 낚시(fishing)를 합친 말이라는 설이 유명하다. 철자가 ph인 건 옛 해커 문화의 말장난이다.]</td></tr>
+<tr><td>키로거</td><td>키보드 입력을 가로챔</td></tr>
+<tr><td>DDoS</td><td>여러 장비로 한 서버에 트래픽을 몰아 마비</td></tr></table></div>`],
+['보안 위협 4가지',`<div class="tw"><table><tr><th>위협</th><th>뜻</th><th>침해되는 것</th></tr>
+<tr><td>가로막기</td><td>전달을 막음</td><td>가용성</td></tr>
+<tr><td>가로채기</td><td>몰래 엿봄</td><td>기밀성</td></tr>
+<tr><td>변조</td><td>내용을 바꿈</td><td>무결성</td></tr>
+<tr><td>위조</td><td>다른 사람이 보낸 척</td><td>무결성</td></tr></table></div>`],
+['방화벽과 프록시',`<p><b>방화벽</b>: 외부의 불필요한 접근을 막고 통로를 하나로 관리한다. 로그로 침입을 역추적할 수 있다. 하지만 <mark>내부에서 생긴 위험이나 첨부 파일 속 바이러스는 못 막는다.</mark></p>
+<p><b>프록시 서버</b>: 방화벽 기능과 <b>캐시</b> 기능(자주 찾는 데이터를 저장해 빨리 보내 줌)을 한다.</p>`],
+['암호화',`<div class="tw"><table><tr><th></th><th>비밀키 (대칭키)</th><th>공개키 (비대칭키)</th></tr>
+<tr><td>키</td><td>암호화·복호화에 같은 키 1개</td><td>공개키와 개인키 2개</td></tr>
+<tr><td>속도</td><td>빠름</td><td>느림</td></tr>
+<tr><td>키 관리</td><td>사용자가 늘면 키가 많아짐</td><td>관리할 키가 적고 배포 쉬움</td></tr>
+<tr><td>대표</td><td><b>DES</b></td><td><b>RSA</b>[*RSA는 만든 세 사람 리베스트, 샤미르, 애들먼의 성 첫 글자다.]</td></tr></table></div>
+<div class="trap">"비밀키는 서로 다른 키로 암호화·복호화" ✗. 방화벽을 "자주 요청되는 데이터를 저장해 빨리 전송"으로 설명하면 ✗(캐시).</div>`]]},
+
+{id:'d22',sj:1,n:22,t:'프로그래밍 언어',s:'컴파일러, 객체 지향, 웹 언어',cat:['프로그래밍'],
+intro:'사람이 쓴 코드를 컴퓨터가 알아듣게 바꾸는 과정과 언어의 종류. 1과목의 마지막 문서다.',
+sec:[
+['번역 과정',`<p>원시 프로그램 → (번역) → 목적 프로그램 → (<b>링커</b>) → 로드 모듈 → (<b>로더</b>) → 실행</p>
+<div class="tw"><table><tr><th></th><th>컴파일러</th><th>인터프리터</th></tr>
+<tr><td>번역</td><td>전체를 한 번에</td><td>한 줄씩</td></tr>
+<tr><td>목적 프로그램</td><td>만듦</td><td>안 만듦</td></tr>
+<tr><td>실행 속도</td><td><b>빠름</b></td><td>느림</td></tr>
+<tr><td>번역 속도</td><td>느림</td><td><b>빠름</b></td></tr>
+<tr><td>언어</td><td>C, COBOL, FORTRAN</td><td>BASIC, LISP</td></tr></table></div>
+<p>책 한 권을 통째로 번역해서 주는 번역가가 컴파일러, 옆에서 한 문장씩 통역해 주는 사람이 인터프리터다. <b>어셈블러</b>는 어셈블리어를 기계어로 바꾼다.[*최초의 컴파일러는 그레이스 호퍼가 1952년에 만들었다. 그녀의 팀은 컴퓨터에 낀 나방을 떼어 내 일지에 붙이고 "실제 버그 발견"이라고 적은 것으로도 유명하다.]</p>
+<div class="trap">"컴파일러는 번역이 빠르다" ✗.</div>`],
+['객체 지향 언어',`<p>복잡한 프로그램을 부품(객체) 단위로 만들어 재사용한다. 특징은 <b>추상화, 캡슐화, 상속성, 다형성</b>. C++, Java, Smalltalk.[*Java의 원래 이름은 Oak(참나무)였다. 상표 문제로 바꾸면서 개발자들이 즐겨 마시던 커피 산지 자바섬에서 이름을 따왔다. 그래서 로고가 커피잔이다.]</p>
+<div class="trap">"순차적 처리를 중시한다"는 절차형 언어 설명이다. 객체 지향에 붙으면 ✗.</div>`],
+['클라이언트/서버',`<p>정보를 주는 서버와 받는 클라이언트가 <b>둘 다 처리 능력</b>을 갖고, 분산 처리에 적합하며 <b>양방향</b>으로 통신한다. 모든 컴퓨터가 동등하면 P2P, 중앙 컴퓨터가 다 처리하면 중앙 집중식이다.</p>`],
+['웹 프로그래밍 언어',`<div class="tw"><table><tr><th>언어</th><th>특징</th></tr>
+<tr><td>HTML</td><td>하이퍼텍스트 문서 작성[*팀 버너스리가 1989년 CERN에서 웹을 제안하며 HTML과 HTTP를 함께 만들었다. 이 페이지도 HTML로 쓰였다.]</td></tr>
+<tr><td>XML</td><td>HTML의 단점을 보완, 구조화된 문서</td></tr>
+<tr><td>HTML5</td><td>플러그인(ActiveX) 없이 멀티미디어</td></tr>
+<tr><td>VRML</td><td>가상현실 모델링</td></tr>
+<tr><td>ASP</td><td>서버 측, Windows 전용</td></tr>
+<tr><td>PHP</td><td>서버 측, Linux·Unix·Windows</td></tr>
+<tr><td>JSP</td><td>서버 측, 자바 기반, 다양한 OS</td></tr></table></div>
+<div class="trap">"PHP는 클라이언트 측에서 동작" ✗. ASP·PHP·JSP는 모두 서버 측이다.</div>
+<p>1과목은 이 문서로 끝난다. 2과목은 [[e1|데이터 입력]] 문서부터 이어진다.</p>`]]},
+{id:'e1',sj:2,n:1,t:'데이터 입력',s:'문자·숫자·날짜, 자동 채우기, 메모',cat:['스프레드시트','입력'],
+intro:'엑셀 셀에 들어가는 값은 **문자**, **숫자**, **날짜·시간**, **수식** 네 가지다. 엑셀은 입력한 값을 보고 종류를 스스로 판단하는데, 이 판단 규칙이 시험에 그대로 나온다.[*최초의 전자 스프레드시트는 1979년 댄 브리클린과 밥 프랭스턴이 만든 비지캘크(VisiCalc)다. 엑셀은 1985년 매킨토시용으로 처음 나왔다.]',
+sec:[
+['데이터 종류와 정렬',`<div class="tw"><table><tr><th>종류</th><th>기본 정렬</th><th>특징</th></tr>
+<tr><td>문자</td><td>왼쪽</td><td>숫자 앞에 작은따옴표(<code>'</code>)를 붙이면 문자로 입력된다 (<code>'010</code>)</td></tr>
+<tr><td>숫자</td><td>오른쪽</td><td>셀보다 길면 지수형(1.2E+11)이나 <code>####</code>로 표시</td></tr>
+<tr><td>날짜·시간</td><td>오른쪽</td><td>날짜는 일련번호(1900-01-01 = 1), 시간은 소수(12:00 = 0.5)</td></tr></table></div>
+<p>분수는 앞에 0과 공백을 넣는다(<code>0 1/2</code>). 그냥 <code>1/2</code>을 치면 1월 2일이 된다. 연·월만 입력하면(2026-10) 일은 1일로 채워진다.</p>
+<p>엑셀은 1900년을 윤년으로 잘못 계산한다.[*1900년 2월 29일은 실제로 없는 날인데 엑셀에는 있다. 당시 시장을 장악하던 로터스 1-2-3과 날짜 계산을 맞추려고 일부러 버그를 그대로 가져왔다.] 날짜가 숫자라는 성질 때문에 생긴 사고도 있다. 엑셀이 SEPT1, MARCH1 같은 유전자 이름을 날짜로 바꿔 버리는 일이 너무 잦아서, 2020년에 인간 유전자 명명 위원회가 유전자 이름 수십 개를 아예 새로 정했다.[*SEPT1은 SEPTIN1, MARCH1은 MARCHF1로 바뀌었다. 과학자들이 엑셀 설정을 고치는 대신 유전자 이름을 바꾼 셈이다.]</p>`],
+['입력 바로 가기 키',`<div class="tw"><table><tr><th>키</th><th>기능</th></tr>
+<tr><td>Ctrl+;</td><td>오늘 날짜</td></tr>
+<tr><td>Ctrl+Shift+;</td><td>현재 시간</td></tr>
+<tr><td>Alt+Enter</td><td>셀 안에서 줄 바꿈</td></tr>
+<tr><td>Ctrl+Enter</td><td>선택한 여러 셀에 같은 값 입력</td></tr>
+<tr><td>Alt+↓</td><td>같은 열에 입력된 문자 목록 표시</td></tr>
+<tr><td>Shift+F2</td><td>메모 삽입</td></tr>
+<tr><td>Ctrl+~</td><td>수식 보기 전환</td></tr>
+<tr><td>Esc</td><td>입력 취소</td></tr></table></div>
+<p>범위를 선택한 뒤 Enter를 누르면 그 범위 안에서만 셀 포인터가 움직인다. 자동 완성은 문자 데이터에만 작동한다.</p>`],
+['자동 채우기',`<p>셀 오른쪽 아래 작은 사각형(채우기 핸들)을 끌면 값이 채워진다. 숫자 하나는 그냥 끌면 복사, Ctrl을 누르고 끌면 1씩 증가한다. 나머지는 반대로 생각하면 된다.</p>
+<div class="tw"><table><tr><th>데이터</th><th>그냥 드래그</th><th>Ctrl+드래그</th></tr>
+<tr><td>숫자 1개</td><td>복사</td><td>1씩 증가</td></tr>
+<tr><td>숫자 2개 선택</td><td>차이만큼 증가</td><td>복사</td></tr>
+<tr><td>문자</td><td>복사</td><td>복사</td></tr>
+<tr><td>문자+숫자</td><td>마지막 숫자 1씩 증가</td><td>복사</td></tr>
+<tr><td>날짜</td><td>1일씩 증가</td><td>복사</td></tr></table></div>
+<p>예를 들어 <code>2024-Excel-2016</code>을 끌면 맨 오른쪽 숫자만 늘어 2024-Excel-2017, 2018이 된다. 월~일, 甲乙丙 같은 사용자 지정 목록도 채울 수 있다.</p>
+<div class="trap">숫자 두 개를 선택하고 그냥 끌면 "복사" ✗. 차이만큼 늘어난다.</div>`],
+['메모, 윗주, 찾기, 유효성 검사',`<ul><li><b>메모(노트)</b>: Delete로 셀 내용을 지워도 메모는 남는다. 전부 지우려면 [홈] → [지우기] → [모두 지우기]</li>
+<li><b>윗주</b>: 문자 데이터 위에 다는 작은 글씨. 셀 내용을 지우면 같이 지워진다</li>
+<li><b>찾기</b>: <code>*</code>는 여러 글자, <code>?</code>는 한 글자, <code>~*</code>는 별표 기호 자체. Shift를 누르고 [다음 찾기]를 누르면 거꾸로 찾는다</li>
+<li><b>데이터 유효성 검사</b>: 목록, 정수, 날짜, 텍스트 길이 등으로 입력을 제한하고 설명·오류 메시지를 띄운다</li></ul>
+<div class="trap">"윗주는 숫자에도 달 수 있다" ✗. "Delete를 누르면 메모도 지워진다" ✗.</div>`]]},
+
+{id:'e2',sj:2,n:2,t:'셀 이동과 편집',s:'이동 키, 선택하여 붙여넣기',cat:['스프레드시트','편집'],
+intro:'셀 포인터를 옮기는 키와 셀을 옮기고 붙이는 방법을 다룬다. 엑셀 2007부터 워크시트 하나는 **1,048,576행 × 16,384열(XFD)**이다.[*엑셀 2003까지는 65,536행 × 256열이었다. 행 수가 2의 16제곱에서 2의 20제곱으로 늘어난 것이다.]',
+sec:[
+['이동 키',`<div class="tw"><table><tr><th>키</th><th>이동</th></tr>
+<tr><td>Ctrl+Home / Ctrl+End</td><td>A1 / 데이터가 있는 마지막 셀</td></tr>
+<tr><td>Home</td><td>현재 행의 맨 앞</td></tr>
+<tr><td>Ctrl+방향키</td><td>데이터 범위의 끝</td></tr>
+<tr><td>PgUp / PgDn</td><td>한 화면 위 / 아래</td></tr>
+<tr><td>Alt+PgUp / Alt+PgDn</td><td>한 화면 왼쪽 / 오른쪽</td></tr>
+<tr><td>Ctrl+PgUp / Ctrl+PgDn</td><td>이전 / 다음 시트</td></tr>
+<tr><td>F5 (Ctrl+G)</td><td>이동 대화상자</td></tr></table></div>`],
+['그 밖의 자주 쓰는 키',`<div class="tw"><table><tr><th>키</th><th>기능</th></tr>
+<tr><td>Ctrl+1</td><td>셀 서식</td></tr>
+<tr><td>F4</td><td>참조 방식 전환, 마지막 작업 반복</td></tr>
+<tr><td>F9</td><td>다시 계산</td></tr>
+<tr><td>Shift+F11</td><td>새 시트 (현재 시트 왼쪽에)</td></tr>
+<tr><td>Alt+F1 / F11</td><td>기본 차트를 같은 시트에 / 새 차트 시트에</td></tr></table></div>`],
+['셀 옮기기와 붙여넣기',`<ul><li>셀 테두리를 끌면 <b>이동</b>, Ctrl을 누르고 끌면 <b>복사</b>, Shift를 누르고 끌면 <b>삽입하여 이동</b></li>
+<li><b>선택하여 붙여넣기</b>(Ctrl+Alt+V): 값, 수식, 서식, 메모, 유효성 검사만 골라 붙이기 / 더하기·곱하기 같은 연산 / <b>행/열 바꿈</b> / 내용 있는 셀만 / 연결하여 붙여넣기</li></ul>
+<details class="fold"><summary>연산 붙여넣기는 어디에 쓰나</summary><div><p>가격표 전체를 10% 올리고 싶을 때, 빈 셀에 1.1을 적고 복사한 뒤 가격 범위를 선택해 "곱하기"로 붙이면 수식 없이 한 번에 바뀐다.</p></div></details>
+<div class="trap">"Shift+드래그 = 복사" ✗. 복사는 Ctrl, Shift는 삽입하여 이동이다.</div>`]]},
+
+{id:'e3',sj:2,n:3,t:'워크시트와 통합 문서',s:'시트 관리, 틀 고정, 보호, 파일 형식',cat:['스프레드시트','편집'],
+intro:'엑셀 파일 하나가 **통합 문서**, 그 안의 각 장이 **워크시트**다. 시트 관리와 보호, 저장 형식이 이 문서의 내용이다.',
+sec:[
+['시트 다루기',`<ul><li>시트 이름은 최대 <b>31자</b>, <code>\\ / ? * [ ] :</code>는 쓸 수 없다. 같은 통합 문서 안에 같은 이름도 안 된다</li>
+<li>시트 탭을 더블클릭하면 이름 변경, Ctrl을 누르고 끌면 복사("Sheet1 (2)"). 복사 위치는 지정할 수 있다</li>
+<li>연속한 시트는 Shift, 떨어진 시트는 Ctrl로 선택. 여러 시트를 고르면 제목 표시줄에 <b>[그룹]</b>이 뜨고 한 번에 같은 작업을 한다</li>
+<li>시트 삽입·삭제·이름 변경은 실행 취소(Ctrl+Z)가 안 된다</li>
+<li>시트를 숨길 때 최소 한 장은 보여야 한다</li></ul>
+<div class="trap">"시트를 복사하면 항상 맨 끝에 붙는다" ✗.</div>`],
+['틀 고정과 창 나누기',`<p><b>틀 고정</b>은 셀 포인터의 위쪽 행과 왼쪽 열을 고정한다. 취소할 때는 셀 위치와 상관없다. <b>창 나누기</b>는 최대 4개로 나누고, 인쇄에는 영향이 없다.</p>
+<div class="trap">"틀 고정을 취소하려면 고정할 때와 같은 셀을 선택해야 한다" ✗.</div>`],
+['보호',`<p><b>시트 보호</b>는 셀이 "잠금" 상태일 때만 효과가 있다. 기본값이 잠금이라, 입력을 허용할 셀만 잠금을 풀고 보호를 거는 식으로 쓴다. <b>통합 문서 보호</b>는 시트 삽입·삭제·이름 변경을 막는다.</p>`],
+['옵션과 저장',`<ul><li>[파일] → [옵션] → [일반]: 새 통합 문서의 기본 글꼴·크기, 포함할 시트 수</li>
+<li>[고급]: Enter 후 이동 방향, <b>소수점 자동 삽입</b>(위치 2면 입력값 ÷ 100), 눈금선 색</li>
+<li>저장 옵션: 백업 파일 항상 만들기, 열기 암호, 쓰기 암호, 읽기 전용 권장. 암호는 대소문자를 구분한다</li>
+<li>쓰기 암호를 몰라도 읽기 전용으로 열어 다른 이름으로 저장할 수 있다</li></ul>`],
+['파일 형식',`<div class="tw"><table><tr><th>확장자</th><th>뜻</th></tr>
+<tr><td>.xlsx</td><td>기본 통합 문서</td></tr>
+<tr><td>.xlsm</td><td>매크로 포함</td></tr>
+<tr><td>.xltx / .xltm</td><td>서식 파일 / 매크로 포함 서식 파일</td></tr>
+<tr><td>.xlsb</td><td>바이너리</td></tr>
+<tr><td>.xls</td><td>엑셀 97~2003</td></tr>
+<tr><td>.csv / .txt / .prn</td><td>쉼표 / 탭 / 공백으로 구분한 텍스트</td></tr></table></div>
+<p>xlsx의 x는 XML을 뜻한다.[*.xlsx 파일은 사실 압축 파일이다. 확장자를 .zip으로 바꾸고 열어 보면 XML 파일 여러 개가 들어 있다.]</p>`]]},
+
+{id:'e4',sj:2,n:4,t:'셀 서식과 사용자 지정 표시 형식',s:'#, 0, @, 날짜 코드, 조건부 서식',cat:['스프레드시트','서식'],
+intro:'셀 서식은 값은 그대로 두고 **보이는 모습만** 바꾼다. 2과목에서 가장 자주 나오는 계산형 문제가 사용자 지정 표시 형식이다.',
+sec:[
+['숫자 코드',`<div class="tw"><table><tr><th>코드</th><th>뜻</th><th>예 (입력 → 결과)</th></tr>
+<tr><td>#</td><td>유효한 숫자만 표시, 빈 자리를 채우지 않음</td><td>0.5에 #.# → .5</td></tr>
+<tr><td>0</td><td>빈 자리를 0으로 채움</td><td>5에 000 → 005</td></tr>
+<tr><td>?</td><td>빈 자리를 공백으로 (소수점 정렬)</td><td></td></tr>
+<tr><td>,</td><td>천 단위 구분, 맨 끝에 쓰면 천 단위 생략</td><td>1234567에 #,##0, → 1,235</td></tr>
+<tr><td>%</td><td>100을 곱하고 % 표시</td><td>0.25에 0% → 25%</td></tr>
+<tr><td>@</td><td>입력한 문자 자리</td><td>홍길동에 @"님" → 홍길동님</td></tr>
+<tr><td>"텍스트"</td><td>글자를 그대로 붙임</td><td>1500에 #,##0"원" → 1,500원</td></tr>
+<tr><td>[빨강]</td><td>글자 색</td><td></td></tr>
+<tr><td>[>=100]</td><td>조건</td><td>[>=100]"합격";"불합격"</td></tr></table></div>
+<p>세미콜론(;)으로 <b>양수;음수;0;텍스트</b> 네 구역을 나눈다. -5에 <code>0;(0)</code>을 적용하면 (5)가 된다. 반올림해서 보여 주므로 -1234.5678에 <code>#,##0.00</code>은 -1,234.57이다.</p>
+<div class="trap">"? 는 빈 자리를 0으로 채운다" ✗(0이 그 역할). 끝의 쉼표는 천 단위를 생략하면서 반올림해서 보여 준다(1234567 → 1,235).</div>`],
+['날짜·시간 코드',`<p>2026-10-18(일요일) 기준.</p>
+<div class="tw"><table><tr><th>코드</th><th>결과</th></tr>
+<tr><td>yy / yyyy</td><td>26 / 2026</td></tr>
+<tr><td>m / mm / mmm / mmmm</td><td>10 / 10 / Oct / October</td></tr>
+<tr><td>d / dd / ddd / dddd</td><td>18 / 18 / Sun / Sunday</td></tr>
+<tr><td>aaa / aaaa</td><td>일 / 일요일</td></tr>
+<tr><td>h:mm AM/PM</td><td>2:30 PM</td></tr>
+<tr><td>[h]:mm</td><td>24시간을 넘는 누적 시간</td></tr></table></div>
+<p>[h]는 근무 시간 합계처럼 24시간이 넘는 값을 셀 때 쓴다. 대괄호가 없으면 25시간이 1:00으로 보인다.[*간호사 근무표처럼 한 달 근무 시간을 더할 때 자주 걸리는 함정이다. 합계가 이상하게 작으면 [h]를 의심하자.]</p>`],
+['맞춤과 조건부 서식',`<ul><li><b>맞춤</b> 탭: 셀 병합, 텍스트 줄 바꿈, 셀에 맞춤(글자 축소), 방향(-90°~90°), 균등 분할</li>
+<li><b>조건부 서식</b>: 규칙에 맞는 셀에만 서식. 행 전체를 칠하려면 수식에서 열만 고정한다(<code>=$C2&gt;=80</code>)</li>
+<li>규칙이 여러 개면 나중에 만든 규칙이 위에 오고 우선한다</li></ul>
+<div class="trap">조건부 서식 수식을 <code>=C2&gt;=80</code>이나 <code>=$C$2&gt;=80</code>로 쓰면 행 전체가 제대로 칠해지지 않는다.</div>`]]},
+
+{id:'e5',sj:2,n:5,t:'수식과 참조',s:'연산자, 상대·절대 참조, 오류값',cat:['스프레드시트','수식'],
+intro:'수식은 등호(=)로 시작한다. 이 문서에서는 연산자 순서, 참조 방식, 오류값을 다룬다. 셀 범위를 잘못 잡는 실수는 시험 밖에서도 크다.[*2013년, 국가 부채와 경제 성장의 관계를 다룬 유명 경제학 논문에서 엑셀 평균 범위에 국가 다섯 개가 빠져 있었다는 사실이 대학원생의 검증으로 밝혀졌다. 라인하트·로고프 논문 사건으로 불린다.]',
+sec:[
+['연산자 우선순위',`<p>참조(<code>:</code> <code>,</code> 공백) → 음수(-) → % → ^ → * / → + - → &amp; → 비교(= &lt; &gt;)</p>
+<ul><li><code>:</code> 범위(A1:B3), <code>,</code> 합집합, 공백은 교집합. 겹치지 않으면 #NULL!</li>
+<li><code>&amp;</code>는 문자 연결: <code>="컴활"&amp;2&amp;"급"</code> → 컴활2급</li></ul>`],
+['참조 방식',`<div class="tw"><table><tr><th>형태</th><th>이름</th><th>복사하면</th></tr>
+<tr><td>A1</td><td>상대 참조</td><td>행·열 모두 바뀜</td></tr>
+<tr><td>$A$1</td><td>절대 참조</td><td>고정</td></tr>
+<tr><td>$A1</td><td>혼합 참조</td><td>열 고정, 행만 바뀜</td></tr>
+<tr><td>A$1</td><td>혼합 참조</td><td>행 고정, 열만 바뀜</td></tr></table></div>
+<p>F4를 누를 때마다 A1 → $A$1 → A$1 → $A1 → A1 순으로 바뀐다. 예를 들어 C1의 <code>=B1/$E$1</code>을 C3에 복사하면 <code>=B3/$E$1</code>이 된다.</p>
+<ul><li>다른 시트: <code>Sheet2!A1</code>, 시트 이름에 공백이 있으면 <code>'1분기 실적'!A1</code></li>
+<li>다른 통합 문서: <code>[판매.xlsx]Sheet1!A1</code></li>
+<li>3차원 참조: <code>=SUM(Sheet1:Sheet3!B2)</code>. 배열 수식에는 쓸 수 없다</li></ul>`],
+['이름 정의, 순환 참조, 배열 수식',`<ul><li><b>이름 정의</b>: 첫 글자는 문자·밑줄(_)·역슬래시(\\), 공백 불가, A1처럼 셀 주소 모양 불가, 대소문자 구분 안 함, 기본은 절대 참조</li>
+<li><b>순환 참조</b>: 수식이 자기 셀을 참조하면 경고가 뜬다</li>
+<li><b>배열 수식</b>: Ctrl+Shift+Enter로 입력하면 중괄호 { }가 붙는다</li></ul>`],
+['오류값',`<div class="tw"><table><tr><th>오류</th><th>원인</th></tr>
+<tr><td>#####</td><td>셀 너비가 좁음, 음수 날짜·시간</td></tr>
+<tr><td>#DIV/0!</td><td>0으로 나눔</td></tr>
+<tr><td>#N/A</td><td>찾는 값이 없음 (VLOOKUP 등)</td></tr>
+<tr><td>#NAME?</td><td>함수 이름 오타, 정의 안 된 이름, 따옴표 없는 문자</td></tr>
+<tr><td>#NULL!</td><td>교차하지 않는 두 범위의 교집합</td></tr>
+<tr><td>#NUM!</td><td>숫자가 너무 크거나 인수가 잘못됨</td></tr>
+<tr><td>#REF!</td><td>참조하던 셀이 삭제됨</td></tr>
+<tr><td>#VALUE!</td><td>인수나 피연산자의 형식이 틀림 (문자+숫자 등)</td></tr></table></div>
+<div class="trap">"#NULL!은 0으로 나눴을 때" ✗(#DIV/0!). C1에 <code>=A1*B1</code>이 있을 때 B열을 지우면 #REF!가 맞다.</div>`]]},
+
+{id:'e6',sj:2,n:6,t:'함수 1: 통계와 수학',s:'COUNT, SUMIF, RANK, ROUND, INT',cat:['스프레드시트','함수'],
+intro:'함수는 2과목 배점의 중심이다. 이 문서는 개수·합계·평균 같은 **통계 함수**와 반올림·나머지 같은 **수학 함수**를 다룬다. 텍스트·날짜·찾기 함수는 [[e7|함수 2]] 문서에 있다.',
+sec:[
+['개수와 순위',`<div class="tw"><table><tr><th>함수</th><th>뜻</th></tr>
+<tr><td>COUNT</td><td>숫자가 든 셀 개수</td></tr>
+<tr><td>COUNTA</td><td>비어 있지 않은 셀 개수</td></tr>
+<tr><td>COUNTBLANK</td><td>빈 셀 개수</td></tr>
+<tr><td>COUNTIF(범위, 조건) / COUNTIFS</td><td>조건에 맞는 개수 / 여러 조건</td></tr>
+<tr><td>AVERAGEA, MAXA, MINA</td><td>논리값·문자도 포함 (TRUE=1, 문자·FALSE=0)</td></tr>
+<tr><td>LARGE(범위, k) / SMALL</td><td>k번째로 큰 / 작은 값</td></tr>
+<tr><td>RANK.EQ(수, 범위, [0/1])</td><td>순위. 0이나 생략하면 큰 값이 1등</td></tr>
+<tr><td>MEDIAN / MODE.SNGL</td><td>중간값 / 최빈값</td></tr>
+<tr><td>STDEV.S / VAR.S</td><td>표준편차 / 분산</td></tr></table></div>`],
+['조건 합계와 평균',`<p>인수 순서가 함수마다 다르다는 점이 단골 함정이다. <mark>IF 하나면 조건 범위가 먼저, IFS면 합계(평균) 범위가 먼저</mark>로 외운다.</p>
+<ul><li><code>SUMIF(조건범위, 조건, 합계범위)</code></li>
+<li><code>SUMIFS(합계범위, 조건범위1, 조건1, …)</code></li>
+<li><code>AVERAGEIF(조건범위, 조건, 평균범위)</code></li>
+<li><code>AVERAGEIFS(평균범위, 조건범위1, 조건1, …)</code></li></ul>
+<p>조건은 따옴표로 쓴다: <code>"&gt;=80"</code>, <code>"김*"</code>, 셀 값과 합칠 때는 <code>"&gt;"&amp;A1</code>.</p>`],
+['수학 함수',`<div class="tw"><table><tr><th>함수</th><th>뜻</th></tr>
+<tr><td>ROUND / ROUNDUP / ROUNDDOWN</td><td>반올림 / 올림 / 내림</td></tr>
+<tr><td>INT(수)</td><td>작은 쪽 정수로 내림. INT(-3.7) = -4</td></tr>
+<tr><td>TRUNC(수, [자릿수])</td><td>그냥 버림. TRUNC(-3.7) = -3</td></tr>
+<tr><td>MOD(수, 나눌 수)</td><td>나머지 (부호는 나눌 수를 따름)</td></tr>
+<tr><td>ABS / SQRT / POWER</td><td>절댓값 / 제곱근 / 거듭제곱</td></tr>
+<tr><td>FACT / PI / EXP</td><td>계승(n!) / π / e의 거듭제곱</td></tr>
+<tr><td>RAND / RANDBETWEEN(a, b)</td><td>0~1 난수 / a~b 사이 정수 난수</td></tr>
+<tr><td>SUMPRODUCT</td><td>대응하는 값끼리 곱해서 합</td></tr></table></div>
+<p>ROUND의 자릿수는 1234.567 기준으로 2 → 1234.57, 0 → 1235, -1 → 1230, -2 → 1200. 양수는 소수점 아래, 음수는 일·십·백의 자리에서 처리한다.</p>
+<div class="trap">INT와 TRUNC는 양수에서는 같고 음수에서 다르다. <code>=ROUNDDOWN(20/3,2)</code>는 6.66.</div>`]]},
+
+{id:'e7',sj:2,n:7,t:'함수 2: 텍스트, 날짜, 논리, 찾기',s:'MID, WEEKDAY, IF, VLOOKUP, D 함수',cat:['스프레드시트','함수'],
+intro:'글자를 자르고, 날짜를 계산하고, 조건에 따라 값을 고르고, 표에서 값을 찾아오는 함수들이다. 통계·수학 함수는 [[e6|함수 1]] 문서에 있다.',
+sec:[
+['텍스트 함수',`<div class="tw"><table><tr><th>함수</th><th>뜻</th></tr>
+<tr><td>LEFT / RIGHT(텍스트, 개수)</td><td>왼쪽 / 오른쪽에서 꺼내기</td></tr>
+<tr><td>MID(텍스트, 시작, 개수)</td><td>가운데에서 꺼내기</td></tr>
+<tr><td>LEN</td><td>글자 수 (공백 포함)</td></tr>
+<tr><td>UPPER / LOWER / PROPER</td><td>대문자 / 소문자 / 첫 글자만 대문자</td></tr>
+<tr><td>TRIM</td><td>단어 사이 한 칸만 남기고 공백 제거</td></tr>
+<tr><td>REPT(텍스트, 횟수)</td><td>반복 (★로 막대그래프 만들 때)</td></tr>
+<tr><td>FIND / SEARCH</td><td>위치 찾기. FIND는 대소문자 구분·와일드카드 불가, SEARCH는 그 반대</td></tr>
+<tr><td>CONCAT, &amp;</td><td>문자 연결</td></tr></table></div>`],
+['날짜·시간 함수',`<div class="tw"><table><tr><th>함수</th><th>뜻</th></tr>
+<tr><td>TODAY() / NOW()</td><td>오늘 / 지금(날짜+시간)</td></tr>
+<tr><td>DATE(년,월,일) / TIME(시,분,초)</td><td>일련번호 만들기</td></tr>
+<tr><td>YEAR, MONTH, DAY, HOUR, MINUTE, SECOND</td><td>각 부분 꺼내기</td></tr>
+<tr><td>WEEKDAY(날짜, [유형])</td><td>요일 번호. 유형 1·생략은 일=1~토=7, 2는 월=1~일=7, 3은 월=0~일=6</td></tr>
+<tr><td>DAYS(끝, 시작)</td><td>두 날짜 사이 일수. 끝 날짜가 먼저</td></tr>
+<tr><td>EDATE(시작, 개월) / EOMONTH</td><td>몇 개월 뒤 날짜 / 그 달의 마지막 날</td></tr>
+<tr><td>WORKDAY(시작, 일수, [휴일])</td><td>주말·휴일을 빼고 n작업일 뒤</td></tr></table></div>`],
+['논리 함수',`<ul><li><code>IF(조건, 참, 거짓)</code>: 여러 번 겹쳐 쓸 수 있다</li>
+<li><code>AND</code> 모두 참 / <code>OR</code> 하나라도 참 / <code>NOT</code> 반대</li>
+<li><code>IFS(조건1, 값1, 조건2, 값2, …, TRUE, 나머지)</code></li>
+<li><code>SWITCH(식, 값1, 결과1, …, [기본값])</code></li>
+<li><code>IFERROR(수식, 오류일 때 값)</code></li></ul>`],
+['찾기·참조 함수',`<ul><li><code>VLOOKUP(찾을 값, 범위, 열 번호, [방법])</code>: 범위의 <b>첫 열</b>에서 찾아 같은 행의 값을 가져온다</li>
+<li><code>HLOOKUP</code>: 범위의 <b>첫 행</b>에서 찾는다</li>
+<li>방법: FALSE(0)은 정확히 일치, TRUE(1)·생략은 근사값(첫 열이 오름차순이어야 함)</li>
+<li><code>INDEX(범위, 행, 열)</code>: 위치의 값. <code>=INDEX(A1:E3,2,3)</code>은 C2</li>
+<li><code>MATCH(값, 범위, [유형])</code>: 위치 번호. 1은 작거나 같은 최댓값, 0은 정확히, -1은 크거나 같은 최솟값</li>
+<li><code>CHOOSE(번호, 값1, 값2, …)</code>: 번호째 값</li></ul>
+<p>V는 Vertical(세로), H는 Horizontal(가로)이다. 엑셀 2021에는 이 둘을 합친 XLOOKUP도 들어 있지만 2급 필기에는 VLOOKUP·HLOOKUP이 나온다.[*VLOOKUP은 찾을 열이 반드시 범위의 맨 왼쪽에 있어야 하는 불편함 때문에 오래 불평을 들었다. XLOOKUP은 그 제한을 없앤 함수다.]</p>`],
+['데이터베이스(D) 함수',`<p><code>DSUM(전체 범위, 열, 조건 범위)</code>. DAVERAGE, DCOUNT, DCOUNTA, DMAX, DMIN도 같은 형태다.</p>
+<div class="trap">조건 범위에는 반드시 <b>필드명(열 제목)</b>까지 포함해야 한다. <code>=DAVERAGE(A1:D8,D1,A1:A2)</code>는 맞고, 조건을 A2 한 칸만 주면 틀리다.</div>`]]},
+
+{id:'e8',sj:2,n:8,t:'차트',s:'차트 종류와 용도, 추세선',cat:['스프레드시트','차트'],
+intro:'차트는 숫자를 그림으로 바꾼다. 원본 데이터를 바꾸면 차트도 자동으로 바뀐다. 막대, 꺾은선, 원형 그래프는 18세기 스코틀랜드의 윌리엄 플레이페어가 처음 그렸다.[*막대와 꺾은선은 1786년, 원형은 1801년이다.]',
+sec:[
+['만들기와 구성 요소',`<ul><li>F11 = 새 차트 시트 / Alt+F1 = 현재 시트에 기본 차트</li>
+<li>Alt를 누르고 크기를 조절하면 셀 눈금선에 맞춰진다</li>
+<li>차트 서식 파일 확장자는 .crtx</li>
+<li>숨긴 행·열의 데이터는 기본적으로 차트에 나오지 않는다</li>
+<li><b>차트 영역</b>(전체)과 <b>그림 영역</b>(축과 계열이 그려지는 안쪽)은 다르다</li></ul>`],
+['종류별 용도',`<div class="tw"><table><tr><th>종류</th><th>용도와 특징</th></tr>
+<tr><td>세로·가로 막대형</td><td>항목 값 비교. 간격 너비 0~500%, 계열 겹치기 -100~100%</td></tr>
+<tr><td>꺾은선형</td><td>시간에 따른 추세</td></tr>
+<tr><td>원형</td><td>전체에 대한 비율. <b>계열 1개만</b>, 축 없음, 첫째 조각 각도 0~360°</td></tr>
+<tr><td>도넛형</td><td>비율, 계열 여러 개 가능</td></tr>
+<tr><td>분산형(XY)</td><td>두 값의 관계, 과학·공학 데이터 (가로축도 값)</td></tr>
+<tr><td>영역형</td><td>시간에 따른 변화의 크기</td></tr>
+<tr><td>방사형</td><td>중심점 기준으로 여러 계열 비교</td></tr>
+<tr><td>주식형</td><td>고가-저가-종가 (열 순서 중요)</td></tr>
+<tr><td>거품형</td><td>값 3개 (X, Y, 거품 크기)</td></tr>
+<tr><td>표면형</td><td>두 데이터의 최적 조합</td></tr>
+<tr><td>콤보</td><td>두 종류 차트 + 보조 축</td></tr>
+<tr><td>트리맵, 선버스트</td><td>계층 구조의 비율</td></tr>
+<tr><td>히스토그램, 상자 수염</td><td>분포</td></tr></table></div>
+<p>간호의 역사와도 이어진다. 플로렌스 나이팅게일은 크림 전쟁에서 병사들이 전투보다 위생 문제로 더 많이 죽는다는 사실을 원형 그래프를 변형한 장미 도표로 보여 줘서 병원 개혁을 끌어냈다.[*나이팅게일은 이 업적으로 1859년 영국 왕립통계학회 최초의 여성 회원이 됐다.]</p>`],
+['추세선',`<p>데이터의 흐름을 직선이나 곡선으로 보여 준다.</p>
+<div class="trap">추세선을 추가할 수 <b>없는</b> 차트: 3차원, 누적형, 원형, 도넛형, 방사형, 표면형.</div>`]]},
+
+{id:'e9',sj:2,n:9,t:'정렬과 필터',s:'정렬 순서, 자동 필터, 고급 필터',cat:['스프레드시트','데이터 관리'],
+intro:'많은 데이터를 순서대로 늘어놓는 **정렬**과 원하는 행만 골라 보는 **필터**를 다룬다.',
+sec:[
+['정렬',`<ul><li>기준은 최대 <b>64개</b>. 셀 색, 글꼴 색, 조건부 서식 아이콘으로도 정렬할 수 있다</li>
+<li>오름차순: 숫자 → 기호 → 영문 → 한글 → 논리값(FALSE → TRUE) → 오류값 → 빈 셀</li>
+<li>내림차순이어도 <b>빈 셀은 항상 맨 끝</b></li>
+<li>기본은 대소문자를 구분하지 않는다. 옵션에서 구분하면 오름차순에서 소문자가 먼저다</li>
+<li>숨긴 행·열은 정렬 대상에서 빠진다. 방향은 위→아래 또는 왼쪽→오른쪽</li></ul>`],
+['자동 필터',`<ul><li>여러 열에 필터를 걸면 <b>AND</b>로 묶인다</li>
+<li>결과는 원래 자리에만 보이고, 조건에 안 맞는 행은 숨겨진다 (다른 곳에 복사 불가)</li>
+<li>상위 10: 항목 수나 백분율로, 위·아래 기준</li></ul>`],
+['고급 필터',`<p>조건을 시트에 따로 적는다. <mark>같은 행은 AND, 다른 행은 OR</mark>.</p>
+<div class="tw"><table><tr><th>주소</th><th>성별</th></tr><tr><td>서울</td><td>여</td></tr><tr><td>경기</td><td>남</td></tr></table></div>
+<p>위 조건은 (서울 AND 여) OR (경기 AND 남)이다. 결과를 다른 위치에 복사할 수 있고 중복을 뺄 수 있다. 수식으로 조건을 쓰면 조건의 필드명은 원본과 다르게 하거나 비워 둔다.</p>
+<div class="trap">"자동 필터 결과를 다른 위치에 복사할 수 있다" ✗(고급 필터만 가능).</div>`],
+['텍스트 나누기와 기타',`<ul><li><b>텍스트 나누기</b>: 한 열을 여러 열로. 구분 기호 방식과 너비 일정 방식이 있고, 구분 기호는 여러 개를 동시에 고를 수 있다</li>
+<li><b>중복된 항목 제거</b>, <b>빠른 채우기</b>(Ctrl+E)</li>
+<li><b>외부 데이터 가져오기</b>: 텍스트, Access, 웹, SQL 등</li></ul>`]]},
+
+{id:'e10',sj:2,n:10,t:'부분합과 데이터 분석',s:'부분합, 피벗 테이블, 가상 분석, 통합',cat:['스프레드시트','데이터 관리'],
+intro:'데이터를 그룹별로 요약하고, 조건을 바꿔 가며 결과를 미리 보는 기능들이다. 가상 분석 세 가지(목표값 찾기, 시나리오, 데이터 표)를 구분하는 문제가 매번 나온다.',
+sec:[
+['부분합',`<ul><li><mark>먼저 기준 필드로 정렬</mark>해야 한다</li>
+<li>함수: 합계, 개수, 평균, 최대, 최소, 곱, 숫자 개수, 표준편차, 분산</li>
+<li>"새로운 값으로 대치"를 끄면 부분합을 여러 개 겹칠 수 있다</li>
+<li>[모두 제거]로 원래대로 돌아가고, 윤곽 기호(1 2 3)로 요약만 볼 수 있다</li></ul>
+<div class="trap">"부분합은 정렬하지 않아도 정확히 계산된다" ✗.</div>`],
+['피벗 테이블',`<ul><li>필터, 행, 열, 값 영역에 필드를 끌어다 놓는다. 값 필드는 숫자면 합계, 문자면 개수가 기본</li>
+<li>원본이 바뀌어도 자동으로 바뀌지 않는다. <b>[새로 고침]</b>을 눌러야 한다</li>
+<li>기본 위치는 새 워크시트. 피벗 차트를 함께 만들 수 있다</li>
+<li>피벗 차트를 지워도 피벗 테이블은 남고, 피벗 테이블을 지우면 피벗 차트는 일반 차트가 된다</li></ul>
+<p>피벗 테이블은 1993년 엑셀 5.0에 처음 들어갔다.[*"pivot"은 축을 중심으로 돈다는 뜻이다. 행과 열을 끌어 옮겨 같은 데이터를 다른 각도에서 보는 모습에서 이름이 왔다.]</p>`],
+['가상 분석',`<div class="tw"><table><tr><th>기능</th><th>언제 쓰나</th></tr>
+<tr><td>목표값 찾기</td><td>원하는 <b>결과</b>를 알 때, 필요한 입력값 <b>하나</b>를 찾는다 (수식 셀, 찾는 값, 값을 바꿀 셀)</td></tr>
+<tr><td>시나리오</td><td>여러 입력값 조합별 결과를 비교해 요약 보고서로. 변경 셀 최대 32개</td></tr>
+<tr><td>데이터 표</td><td>입력값 1~2개가 바뀔 때의 결과표. 결과는 {=TABLE()} 배열이라 일부만 고칠 수 없다</td></tr></table></div>
+<details class="fold"><summary>예시로 구분하기</summary><div><p>"평균 70점이 되려면 실기 점수가 몇 점이어야 하나" → 목표값 찾기. "낙관·보통·비관 세 경우의 이익 비교" → 시나리오. "금리 1~5%, 기간 1~5년별 이자표" → 데이터 표.</p></div></details>`],
+['데이터 통합',`<p>여러 범위를 합계·평균 등으로 하나로 모은다. "원본 데이터에 연결"을 켜면 원본이 바뀔 때 반영된다. 첫 행, 왼쪽 열을 레이블로 쓸 수 있다.</p>`]]},
+
+{id:'e11',sj:2,n:11,t:'인쇄와 화면',s:'페이지 설정, 페이지 나누기',cat:['스프레드시트','인쇄'],
+intro:'인쇄 관련 설정은 대부분 [페이지 설정] 대화상자에 모여 있다. 탭은 **페이지, 여백, 머리글/바닥글, 시트** 네 개다.[*A4 용지는 210×297mm로, 가로세로 비율이 1:√2다. 반으로 접어도 같은 비율이 유지돼서 A3를 반으로 자르면 A4, A4를 자르면 A5가 된다.]',
+sec:[
+['페이지 설정',`<div class="tw"><table><tr><th>탭</th><th>설정</th></tr>
+<tr><td>페이지</td><td>용지 방향, 확대/축소 10~400%, 자동 맞춤(용지 너비·높이), 용지 크기, 인쇄 품질, 시작 페이지 번호</td></tr>
+<tr><td>여백</td><td>상하좌우, 머리글/바닥글 여백, 페이지 가운데 맞춤(가로·세로)</td></tr>
+<tr><td>머리글/바닥글</td><td>첫 페이지 다르게, 짝수/홀수 다르게. &amp;[페이지 번호], &amp;[전체 페이지 수], &amp;[날짜], &amp;[파일], &amp;[탭]</td></tr>
+<tr><td>시트</td><td>인쇄 영역, <b>인쇄 제목</b>(반복할 행/열), 눈금선, 흑백, 간단하게 인쇄, 행/열 머리글, 메모, 셀 오류 표시</td></tr></table></div>
+<div class="trap">"[인쇄] 탭에서 반복할 행을 지정한다" ✗. [인쇄] 탭은 없고 [시트] 탭이다. 머리글/바닥글에 표는 넣을 수 없다.</div>`],
+['미리 보기와 페이지 나누기',`<ul><li><b>인쇄 미리 보기</b>(Ctrl+F2): 여백을 표시해 끌어서 조절할 수 있다</li>
+<li><b>페이지 나누기 미리 보기</b>: 페이지 번호가 보이고, 구분선을 끌어 조절하면 배율이 자동으로 바뀐다</li>
+<li>자동 구분선은 <b>점선</b>, 수동 구분선은 <b>실선</b>. 자동 구분선을 끌어 옮기면 수동(실선)이 된다</li>
+<li>[페이지 나누기 모두 원래대로]는 수동 구분선을 전부 지운다</li>
+<li>간단하게 인쇄는 그래픽과 셀 테두리를 빼고 인쇄한다</li>
+<li>차트를 선택하고 인쇄하면 차트만 나온다</li></ul>
+<div class="trap">"페이지 번호는 [기본] 보기에서도 표시된다" ✗.</div>`],
+['화면',`<p>화면 확대/축소(10~400%)는 인쇄에 영향을 주지 않는다. 보기 종류는 기본, 페이지 나누기 미리 보기, 페이지 레이아웃, 사용자 지정 보기.</p>`]]},
+
+{id:'e12',sj:2,n:12,t:'매크로',s:'기록, 이름 규칙, VBA, 보안',cat:['스프레드시트','매크로'],
+intro:'**매크로**는 반복 작업을 기록해 두었다가 한 번에 다시 실행하는 기능이다. 기록한 내용은 VBA(Visual Basic for Applications) 코드로 저장된다.[*VBA는 1993년 엑셀 5.0에 처음 들어갔다. 피벗 테이블과 같은 해다.]',
+sec:[
+['기록과 이름',`<ul><li>기록: [개발 도구] → [코드] → [매크로 기록], 또는 [보기] → [매크로]</li>
+<li>이름: 첫 글자는 문자, 공백·특수문자 불가(밑줄 _는 가능), 셀 주소 모양 불가</li>
+<li>바로 가기 키: Ctrl+영문자. 대문자로 넣으면 Ctrl+Shift+문자. 엑셀 기본 단축키보다 우선한다</li>
+<li>저장 위치: 현재 통합 문서 / 새 통합 문서 / <b>개인용 매크로 통합 문서</b>(PERSONAL.XLSB, 모든 문서에서 사용, XLSTART 폴더에 저장)</li>
+<li>매크로가 든 파일은 .xlsm으로 저장한다</li></ul>
+<div class="trap">"매크로 이름에 공백을 쓸 수 있다" ✗.</div>`],
+['실행과 편집',`<ul><li>Alt+F8: 매크로 대화상자 / Alt+F11: VBA 편집기</li>
+<li>VBA 편집기에서 F8은 한 단계씩, F5는 실행</li>
+<li>코드는 <code>Sub 이름()</code>으로 시작해 <code>End Sub</code>로 끝나고, 주석은 작은따옴표(')</li>
+<li>기본은 <b>절대 참조</b>로 기록된다. "상대 참조로 기록"을 켜면 위치 기준으로 기록된다</li>
+<li>마우스와 키보드 작업은 기록되지만 리본 메뉴를 둘러보기만 한 것은 기록되지 않는다</li>
+<li>도형·그림 같은 개체에는 매크로를 지정할 수 있지만 셀에는 안 된다</li></ul>`],
+['매크로 보안',`<p>기본값은 "알림이 포함된 모든 매크로 제외"다. 파일을 열면 경고가 뜨고 [콘텐츠 사용]을 눌러야 실행된다. 매크로는 문서 안에 숨어 퍼지는 악성 코드의 통로가 되기도 했다.[*1999년 멜리사 바이러스는 워드 문서의 매크로로 퍼지며 메일 주소록의 50명에게 자기 자신을 보냈다. 이 일을 계기로 오피스의 매크로 보안이 크게 강화됐다.]</p>
+<p>2과목은 이 문서로 끝난다. 다음은 실기 시험이다.</p>`]]}
+
+];
+const $=s=>document.querySelector(s), doc=$('#doc'), pop=$('#pop'), side=$('#side'), layout=$('#layout');
+const byId=id=>D.find(d=>d.id===id);
+const label=d=>d.sj===1?`${d.n}강 ${d.t}`:`2-${d.n} ${d.t}`;
+let FN=[], CUR=null;
+function inline(s,self){
+  s=s.replace(/\[\[([de]\d+)\|([^\]]+)\]\]/g,(m,id,t)=>id===self?t:`<a class="wl" data-go="${id}" href="#${id}">${t}</a>`);
+  s=s.replace(/\[\*([^\]]+)\]/g,(m,t)=>{FN.push(t);const k=FN.length;return `<sup class="fn"><a href="#f${k}" data-fn="${k}" id="r${k}" aria-label="각주 ${k}">[${k}]</a></sup>`});
+  return s.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+}
+const plainFn=t=>t.replace(/\[\[([de]\d+)\|([^\]]+)\]\]/g,'$2');
+function groupOf(d){return SUBJ[d.sj].groups.find(g=>d.n>=g[1]&&d.n<=g[2])}
+function navbox(cur){
+  const S=SUBJ[cur.sj];
+  return `<nav class="nav" aria-label="${S.name} 문서 목록"><div class="nh">컴퓨터활용능력 2급 ${S.name}</div>${S.groups.map(([g,a,b])=>`<div class="row"><b>${g}</b><div>${D.filter(d=>d.sj===cur.sj&&d.n>=a&&d.n<=b).map(d=>d.id===cur.id?`<span class="it cur">${d.n}. ${d.t}</span>`:`<span class="it"><a data-go="${d.id}" href="#${d.id}">${d.n}. ${d.t}</a></span>`).join('')}</div></div>`).join('')}</nav>`;
+}
+function renderDoc(d){
+  FN=[]; CUR=d;
+  const secs=[['개요',`<p>${inline(d.intro,d.id)}</p>`],...d.sec.map(([h,b])=>[h,inline(b,d.id)])];
+  const body=secs.map(([h,b],i)=>`<h2 id="s${i+1}"><span class="sn">${i+1}.</span>${h}</h2>${b}`).join('');
+  const list=D.filter(x=>x.sj===d.sj), idx=list.indexOf(d), prev=list[idx-1], next=list[idx+1];
+  const nextSubj=!next&&d.sj===1?byId('e1'):null, prevSubj=!prev&&d.sj===2?byId('d22'):null;
+  const g=groupOf(d), S=SUBJ[d.sj];
+  const tocItems=secs.map(([h],i)=>`<li><a data-sec="s${i+1}" href="#s${i+1}"><span class="sn">${i+1}.</span>${h}</a></li>`).join('');
+  doc.innerHTML=`<div class="cats"><b>분류:</b>${['컴퓨터활용능력 2급',S.short,...d.cat].filter((c,i,a)=>a.indexOf(c)===i).map(c=>`<a data-cat="${c}" href="#main">${c}</a>`).join('')}</div>
+  <h1>${label(d)}</h1>
+  <div class="meta"><span>${S.name} · ${g[0]}</span><span>문단 ${secs.length}개 · 각주 ${FN.length}개</span><span>최근 수정 시각: 2026-10-23</span></div>
+  <div class="notice${d.sj===2?' s2':''}">이 문서는 ${d.sj===1?`<b>${d.n}강 강의 노트</b>`:'<b>2과목 핵심 정리</b>'}와 시나공 핵심 요약을 바탕으로 정리했다. 빨간 테두리 상자는 기출문제에 자주 나오는 오답 문장이다.</div>
+  <div class="toc"><b>목차</b><ol>${tocItems}</ol></div>
+  ${body}
+  ${FN.length?`<section class="fns" id="fns" aria-label="각주"><ol>${FN.map((t,i)=>`<li id="f${i+1}"><a data-back="${i+1}" href="#r${i+1}">[${i+1}]</a><span>${inline(t,d.id)}</span></li>`).join('')}</ol></section>`:''}
+  ${navbox(d)}
+  <div class="pn">${prev||prevSubj?`<a data-go="${(prev||prevSubj).id}" href="#${(prev||prevSubj).id}"><small>이전 문서</small>${label(prev||prevSubj)}</a>`:'<span></span>'}${next||nextSubj?`<a class="r" data-go="${(next||nextSubj).id}" href="#${(next||nextSubj).id}"><small>${nextSubj?'2과목으로':'다음 문서'}</small>${label(next||nextSubj)}</a>`:`<a class="r" data-go="main" href="#main"><small>끝</small>대문으로</a>`}</div>`;
+  side.innerHTML=`<b>목차</b><ol>${tocItems}</ol><div class="other"><b>${S.short} 문서</b><ol>${list.map(x=>`<li><a data-go="${x.id}" href="#${x.id}" class="${x.id===d.id?'on':''}"><span class="sn">${x.n}</span>${x.t}</a></li>`).join('')}</ol></div>`;
+  layout.classList.add('has-side');
+  document.title=`${d.t} - 컴활위키`;
+  spy();
+}
+let TAB=0;
+function renderMain(cat){
+  CUR=null; layout.classList.remove('has-side'); side.innerHTML='';
+  const fnCount=sj=>D.filter(d=>!sj||d.sj===sj).reduce((a,d)=>a+((d.intro+d.sec.map(s=>s[1]).join('')).match(/\[\*/g)||[]).length,0);
+  const card=d=>`<button class="card${d.sj===2?' s2':''}" type="button" data-go="${d.id}"><span class="n">${d.sj===1?d.n:'2-'+d.n}</span><span class="t">${d.t}<span class="s">${d.s}</span></span></button>`;
+  let body;
+  if(cat){const list=D.filter(d=>d.cat.includes(cat)||SUBJ[d.sj].short===cat||cat==='컴퓨터활용능력 2급');
+    body=`<h2 class="gh">분류: ${cat} <small>문서 ${list.length}개 · <a data-go="main" href="#main">대문으로</a></small></h2><div class="grid">${list.map(card).join('')}</div>`;}
+  else{const sjs=TAB?[TAB]:[1,2];
+    body=`<div class="tabs" role="group" aria-label="과목 고르기">${[[0,'전체'],[1,'1과목 컴퓨터 일반'],[2,'2과목 스프레드시트']].map(([v,t])=>`<button class="tab" type="button" data-tab="${v}" aria-pressed="${TAB===v}">${t}</button>`).join('')}</div>`+
+    sjs.map(sj=>`<h2 class="gh">${SUBJ[sj].name} <small>문서 ${D.filter(d=>d.sj===sj).length}개 · 각주 ${fnCount(sj)}개</small></h2>`+SUBJ[sj].groups.map(([g,a,b])=>`<div class="gh" style="font-size:15px;margin:12px 0 0">${g} <small>${sj===1?(a===b?a:a+'~'+b)+'강':''}</small></div><div class="grid">${D.filter(d=>d.sj===sj&&d.n>=a&&d.n<=b).map(card).join('')}</div>`).join('')).join('');}
+  doc.innerHTML=`<div class="hero"><p class="big">컴활<span>위키</span></p>
+  <p style="margin:8px 0 0;max-width:64ch">컴퓨터활용능력 2급 필기 1과목 22개, 2과목 12개 문서를 위키 형식으로 풀어 썼다. 파란 점선은 다른 문서로 가는 링크, 작은 [숫자]는 누르면 뜨는 각주다.</p>
+  <div class="stats"><span>문서 <b>${D.length}</b>개</span><span>각주 <b>${fnCount()}</b>개</span><span>시험: 필기 40분 · 과목당 20문항 · 과목당 40점, 평균 60점 이상 합격</span></div></div>${body}
+  <div class="notice" style="margin-top:12px">처음이라면 <a class="wl" data-go="d1" href="#d1">1강 컴퓨터의 기본 개념</a>부터 읽으면 된다. 시험 직전에는 각 문서의 기출 함정 상자만 훑어도 된다.</div>`;
+  document.title='컴활위키';
+}
+function go(id,opts={}){
+  hidePop();
+  const d=byId(id||'');
+  if(d) renderDoc(d); else renderMain(opts.cat);
+  try{history.replaceState(null,'','#'+(d?id:'main'))}catch(e){}
+  if(!opts.keep) window.scrollTo(0,0);
+  try{localStorage.setItem('kw-last',d?id:'main')}catch(e){}
+}
+function hidePop(){pop.hidden=true}
+function showPop(a){
+  const k=+a.dataset.fn, t=FN[k-1]; if(!t) return;
+  pop.innerHTML=`<div class="h"><span>각주 [${k}]</span><button class="x" type="button" aria-label="닫기">×</button></div>${inline(t,CUR&&CUR.id)}`; pop.hidden=false;
+  if(innerWidth>700){const r=a.getBoundingClientRect(), w=pop.offsetWidth, h=pop.offsetHeight;
+    let x=Math.min(Math.max(16,r.left-w/2),innerWidth-w-16), y=r.bottom+8; if(y+h>innerHeight-16) y=Math.max(16,r.top-h-8);
+    pop.style.left=x+'px'; pop.style.top=y+'px';} else {pop.style.left='';pop.style.top='';}
+}
+function spy(){
+  if(!CUR) return;
+  const hs=[...doc.querySelectorAll('h2[id]')]; let on=hs[0]?.id;
+  for(const h of hs){ if(h.getBoundingClientRect().top<120) on=h.id; }
+  side.querySelectorAll('a[data-sec]').forEach(a=>a.classList.toggle('on',a.dataset.sec===on));
+}
+document.addEventListener('click',e=>{
+  if(e.target.closest('.pop .x')){hidePop();return}
+  const a=e.target.closest('[data-go],[data-fn],[data-sec],[data-back],[data-cat],[data-tab]');
+  if(!a){ if(!e.target.closest('#pop')) hidePop(); if(!e.target.closest('.srch')) $('#res').hidden=true; return; }
+  e.preventDefault();
+  if(a.dataset.fn){ showPop(a); doc.querySelectorAll('.fns li.hl').forEach(x=>x.classList.remove('hl')); document.getElementById('f'+a.dataset.fn)?.classList.add('hl'); return; }
+  if(a.dataset.sec){ document.getElementById(a.dataset.sec)?.scrollIntoView({behavior:'smooth',block:'start'}); return; }
+  if(a.dataset.back){ document.getElementById('r'+a.dataset.back)?.scrollIntoView({behavior:'smooth',block:'center'}); return; }
+  if(a.dataset.tab!==undefined){ TAB=+a.dataset.tab; try{localStorage.setItem('kw-tab',TAB)}catch(e){} go('main',{keep:true}); return; }
+  if(a.dataset.cat){ go('main',{cat:a.dataset.cat}); return; }
+  go(a.dataset.go); $('#res').hidden=true; $('#q').value='';
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){hidePop();$('#res').hidden=true}});
+addEventListener('scroll',()=>{ if(innerWidth>700) hidePop(); spy(); },{passive:true});
+$('#rnd').onclick=()=>go(D[Math.floor(Math.random()*D.length)].id);
+$('#home').onclick=()=>go('main');
+const strip=s=>s.replace(/<[^>]+>/g,' ').replace(/\[\[[de]\d+\|([^\]]+)\]\]/g,'$1').replace(/\[\*([^\]]+)\]/g,' $1 ').replace(/\*\*/g,'');
+const IDX=D.map(d=>({d,ti:(d.t+' '+d.s).toLowerCase(),tx:strip(d.intro+' '+d.sec.map(s=>s[0]+' '+s[1]).join(' ')).toLowerCase()}));
+let sel=0;
+$('#q').addEventListener('input',()=>{
+  const q=$('#q').value.trim().toLowerCase(), box=$('#res');
+  if(!q){box.hidden=true;return}
+  const hits=IDX.map(x=>({d:x.d,s:(x.ti.includes(q)?2:0)+(x.tx.includes(q)?1:0)})).filter(x=>x.s).sort((a,b)=>b.s-a.s||a.d.sj-b.d.sj||a.d.n-b.d.n).slice(0,10);
+  sel=0;
+  box.innerHTML=hits.length?hits.map((h,i)=>`<button type="button" data-go="${h.d.id}" class="${i?'':'on'}">${label(h.d)} <small>· ${SUBJ[h.d.sj].short} · ${h.s>=2?'제목':'본문'}</small></button>`).join(''):'<button type="button" disabled>찾는 문서가 없어요. 다른 낱말로 검색해 보세요.</button>';
+  box.hidden=false;
+});
+$('#q').addEventListener('keydown',e=>{
+  const bs=[...document.querySelectorAll('#res button[data-go]')]; if(!bs.length) return;
+  if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();sel=(sel+(e.key==='ArrowDown'?1:-1)+bs.length)%bs.length;bs.forEach((b,i)=>b.classList.toggle('on',i===sel))}
+  if(e.key==='Enter'){e.preventDefault();go(bs[sel].dataset.go);$('#res').hidden=true;$('#q').value='';$('#q').blur()}
+});
+try{TAB=+(localStorage.getItem('kw-tab')||0)}catch(e){}
+let start=(location.hash||'').slice(1);
+if(!start){try{start=localStorage.getItem('kw-last')||''}catch(e){}}
+go(start||'main',{keep:true});
+addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(/^([de]\d+|main)$/.test(h))go(h)});
+</script>
+
+</body></html>
