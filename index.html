@@ -1,115 +1,152 @@
 <!doctype html>
-<html lang="ko"><head><meta charset="utf-8">
+<html lang="ko" data-accent="ikb"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>컴활 METRO</title>
-<meta name="theme-color" content="#1f2a3c">
+<meta name="theme-color" content="#fafaf8">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="컴활 METRO">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=Noto+Sans+KR:wght@200;300;400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
 
 <style>
-/* 레이아웃: 역명판 머리 + 노선별 역(카드) 목록. 넓은 화면은 노선 2열, 휴대폰은 1열 */
+/* Swiss International (guizang-social-card-skill) · IKB Blue
+   레이아웃: 12열 격자. 왼쪽 3열은 구역 번호·이름, 오른쪽 9열은 머리선(hairline)으로 나눈 목록.
+   한 가지 강조색만, 둥근 모서리·그림자·그라데이션 없음, 큰 글씨일수록 가늘게. 의도적으로 밝은 단일 테마 */
 :root{
-  --bg:#f4f5ef; --paper:#ffffff; --ink:#1c2230; --sub:#5c6474; --line:#dcdfd6; --sign:#1f2a3c; --sign-ink:#ffffff;
-  --l1:#0052a4; --l2:#00a84d; --l3:#ef7c1c; --l4:#00a5de; --l5:#996cac; --l8:#e6186c;
-  --a1:#0052a4; --a2:#007a3d; --a3:#b85000; --a4:#00739b; --a5:#6b4a8f; --a8:#b8104f; --lock:#8a8f99;
-  --f-body:"IBM Plex Sans KR","Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",sans-serif;
-  --f-disp:"Do Hyeon","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  --paper:#fafaf8; --ink:#0a0a0a; --grey-1:#f0f0ee; --grey-2:#d4d4d2; --grey-3:#6b6b6b;
+  --accent:#002FA7; --accent-on:#ffffff;
+  --sans:"Inter","Helvetica Neue",Helvetica,"Noto Sans KR","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Consolas,monospace;
   color-scheme:light;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#14171d; --paper:#1c2028; --ink:#e9ebef; --sub:#a0a7b4; --line:#2e333d; --sign:#0d1016; --sign-ink:#eef0f4;
-  --l1:#4b8fe0; --l2:#2fc673; --l3:#ff9a45; --l4:#3cc4f0; --l5:#b88fd0; --l8:#ff5a95;
-  --a1:#7fb0f0; --a2:#5fd896; --a3:#ffb070; --a4:#6fd4f5; --a5:#c9a6e0; --a8:#ff86b0; --lock:#6d7380; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#14171d; --paper:#1c2028; --ink:#e9ebef; --sub:#a0a7b4; --line:#2e333d; --sign:#0d1016; --sign-ink:#eef0f4;
-  --l1:#4b8fe0; --l2:#2fc673; --l3:#ff9a45; --l4:#3cc4f0; --l5:#b88fd0; --l8:#ff5a95;
-  --a1:#7fb0f0; --a2:#5fd896; --a3:#ffb070; --a4:#6fd4f5; --a5:#c9a6e0; --a8:#ff86b0; --lock:#6d7380; color-scheme:dark}
 *{box-sizing:border-box}
-html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--sign)}
-a{color:inherit}
-a:focus-visible{outline:3px solid var(--l4);outline-offset:3px}
-.gut{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.sign{background:var(--sign);color:var(--sign-ink)}
-.sign .in{max-width:1180px;margin:0 auto;padding-block:22px 18px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 16px;align-items:center}
-.mark{grid-row:span 2;width:56px;height:56px;border-radius:50%;border:6px solid var(--l2);display:grid;place-items:center;font-family:var(--f-disp);font-size:24px;background:var(--sign);color:var(--sign-ink)}
-.sign h1{margin:0;font-family:var(--f-disp);font-weight:400;font-size:clamp(28px,5vw,40px);line-height:1.05;letter-spacing:.5px}
-.sign p{margin:0;font-size:13.5px;opacity:.82}
-.stripe{height:8px;background:linear-gradient(90deg,var(--l2) 0 25%,var(--l3) 25% 45%,var(--l1) 45% 65%,var(--l5) 65% 82%,var(--l8) 82%)}
-.wrap{max-width:1180px;margin:0 auto;padding-block:20px 40px;display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
-@media (min-width:900px){.wrap{grid-template-columns:repeat(2,minmax(0,1fr))}.line.wide{grid-column:1/-1}}
-.line{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 16px 10px;min-width:0}
-.lh{display:flex;align-items:center;gap:10px;margin:0 0 6px}
-.lh .no{width:30px;height:30px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font-family:var(--f-disp);font-size:16px;flex:none}
-.lh h2{margin:0;font-size:18px;font-family:var(--f-disp);font-weight:400;letter-spacing:.3px}
-.lh small{color:var(--sub);font-size:12.5px;margin-left:auto;text-align:right}
-.stops{list-style:none;margin:0;padding:4px 0 4px 14px;position:relative}
-.stops::before{content:"";position:absolute;left:14px;top:22px;bottom:22px;width:6px;border-radius:3px;background:var(--c);transform:translateX(-50%)}
-.wide .stops{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));column-gap:18px}
-.wide .stops::before{display:none}
-.stop a,.stop .lk{display:flex;align-items:center;gap:14px;padding:10px 10px 10px 0;min-height:60px;text-decoration:none;border-radius:10px}
-.stop a:hover .t{text-decoration:underline;text-decoration-color:var(--c);text-decoration-thickness:2px;text-underline-offset:3px}
-.dot{width:22px;height:22px;border-radius:50%;background:var(--paper);border:5px solid var(--c);flex:none;position:relative;z-index:1;margin-left:-11px}
-.wide .dot{margin-left:0}
-.stop .t{display:block;font-weight:700;font-size:15.5px;line-height:1.35}
-.stop .s{display:block;font-size:12.5px;color:var(--sub);line-height:1.45}
-.stop .go{margin-left:auto;font-size:12px;font-weight:700;color:var(--ac);border:1.5px solid var(--ac);border-radius:20px;padding:1px 9px;white-space:nowrap;flex:none}
-.stop.last .go{background:var(--ac);color:var(--paper)}
-.stop .lk{cursor:default;opacity:.75}
-.stop .lk .dot{border-color:var(--lock);border-style:dashed}
-.stop .lk .go{color:var(--lock);border-color:var(--lock)}
-.c2{--c:var(--l2);--ac:var(--a2)} .c3{--c:var(--l3);--ac:var(--a3)} .c1{--c:var(--l1);--ac:var(--a1)} .c5{--c:var(--l5);--ac:var(--a5)} .c8{--c:var(--l8);--ac:var(--a8)} .c4{--c:var(--l4);--ac:var(--a4)}
-.foot{max-width:1180px;margin:0 auto;padding-block:0 30px;color:var(--sub);font-size:12.5px}
-.foot p{margin:4px 0}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--paper)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;word-break:keep-all;overflow-wrap:anywhere;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+a{color:inherit;text-decoration:none}
+a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.gut{padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.page{max-width:1240px;margin:0 auto}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px}
+.t-meta{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:500;color:var(--grey-3)}
+.rule{border:0;border-top:1px solid var(--ink);margin:0}
+.rule.thin{border-top-color:var(--grey-2)}
+
+/* 머리 */
+.top{padding-block:28px 0}
+.top .meta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-bottom:14px}
+.hero{padding-block:40px 36px;align-items:end;row-gap:24px}
+.hero h1{grid-column:1/9;margin:0;font-weight:200;font-size:clamp(64px,13vw,168px);line-height:.92;letter-spacing:-.04em}
+.hero h1 .ac{color:var(--accent)}
+.hero .lead{grid-column:9/13;margin:0;font-size:19px;line-height:1.5;font-weight:400}
+.hero .lead b{font-weight:600}
+.sq{display:inline-block;width:14px;height:14px;background:var(--accent);margin-right:10px;vertical-align:1px}
+
+/* 숫자 탑 */
+.kpi{border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+.kpi .cell{grid-column:span 3;padding:18px 0 16px;border-left:1px solid var(--grey-2);padding-left:16px}
+.kpi .cell:first-child{border-left:0;padding-left:0}
+.kpi .num{font-weight:200;font-size:clamp(40px,6vw,72px);line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.kpi .cell.ac .num{color:var(--accent)}
+.kpi .lab{margin-top:8px}
+
+/* 구역 */
+.sec{padding-block:36px 8px}
+.sec+.sec{border-top:1px solid var(--ink)}
+.sec .side{grid-column:1/4}
+.sec .no{font-weight:200;font-size:56px;line-height:1;letter-spacing:-.03em;color:var(--accent);font-variant-numeric:tabular-nums}
+.sec h2{margin:10px 0 6px;font-size:26px;font-weight:300;letter-spacing:-.01em}
+.sec .why{margin:0;color:var(--grey-3);font-size:14.5px;max-width:28ch}
+.rows{grid-column:4/13;list-style:none;margin:0;padding:0}
+.rows li{border-top:1px solid var(--grey-2)}
+.rows li:first-child{border-top:1px solid var(--ink)}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 20px;align-items:center;padding:16px 0 16px 0;min-height:72px;position:relative}
+a.row::before{content:"";position:absolute;left:-20px;top:-1px;bottom:0;width:6px;background:var(--accent);transform:scaleY(0);transform-origin:top;transition:transform .18s}
+a.row:hover::before,a.row:focus-visible::before{transform:scaleY(1)}
+a.row:hover .tt{color:var(--accent)}
+.tt{font-size:21px;font-weight:400;letter-spacing:-.01em;line-height:1.3}
+.ds{grid-column:1;color:var(--grey-3);font-size:14.5px;line-height:1.45}
+.go{grid-row:1/3;grid-column:2;font-family:var(--mono);font-size:12px;letter-spacing:.08em;font-weight:600;text-transform:uppercase;border:1px solid var(--ink);padding:6px 10px;white-space:nowrap}
+a.row:hover .go{background:var(--accent);border-color:var(--accent);color:var(--accent-on)}
+.recent .go{background:var(--ink);color:var(--paper)}
+.lk .tt{color:var(--grey-3)}
+.lk .go{border-style:dashed;color:var(--grey-3);border-color:var(--grey-3)}
+
+.foot{padding-block:28px 40px;border-top:1px solid var(--ink);margin-top:28px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.foot p{margin:0;max-width:70ch;font-size:13.5px;color:var(--grey-3)}
+
+@media (max-width:860px){
+  .hero h1,.hero .lead{grid-column:1/-1}
+  .kpi .cell{grid-column:span 6;border-left:0;padding-left:0;border-top:1px solid var(--grey-2)}
+  .kpi .cell:nth-child(-n+2){border-top:0}
+  .kpi .cell:nth-child(even){border-left:1px solid var(--grey-2);padding-left:16px}
+  .sec .side,.rows{grid-column:1/-1}
+  .sec .side{display:flex;align-items:baseline;gap:14px;margin-bottom:14px}
+  .sec .no{font-size:40px}.sec h2{margin:0}.sec .why{display:none}
+  .tt{font-size:18.5px}
+  a.row::before{left:-14px;width:4px}
+}
+@media (prefers-reduced-motion:reduce){a.row::before{transition:none}}
 </style>
 </head><body>
-<header class="sign"><div class="in gut"><div class="mark">컴</div><h1>컴활 METRO</h1><p>컴퓨터활용능력 2급 필기 · 어디로 갈지 골라 타세요</p></div><div class="stripe"></div></header>
-<main class="wrap gut" id="map"></main>
-<footer class="foot gut" id="foot"></footer>
+<div class="page gut">
+ <header class="top">
+  <div class="meta"><span class="t-meta">Computer Specialist Lv.2 · Written Test</span><span class="t-meta" id="today"></span></div>
+  <hr class="rule">
+  <div class="grid hero">
+   <h1>컴활<br><span class="ac">2급</span></h1>
+   <p class="lead"><span class="sq" aria-hidden="true"></span>필기 합격까지 필요한 것을 <b>한 화면</b>에 모았다. 외우고, 읽고, 인쇄하고, 실제 시험처럼 풀어 본다.</p>
+  </div>
+ </header>
+ <section class="grid kpi" id="kpi" aria-label="자료 규모"></section>
+ <main id="map"></main>
+ <footer class="foot"><p id="foot"></p><span class="t-meta">컴활 METRO</span></footer>
+</div>
 <script>
 const MODE=/*MODE*/'online';
 const CBT_URL='https://claude.ai/artifact/42LB1ckXhFySfqMuHxAjV4';
-const LINES=[
- {c:'c2',no:'2',name:'학습선',sub:'컴활 METRO 앱',stops:[
-   {id:'study',t:'학습 카드',s:'강의별 용어 카드 넘기며 외우기 · 강의 복습',href:'metro.html#study'},
-   {id:'practice',t:'응용 연습',s:'단축키 직접 눌러 보기 · 수식 계산기 · 표시 형식 실험',href:'metro.html#practice'},
-   {id:'exam',t:'시험선',s:'강의 복습 문제 · 오늘 공부 복습 · 오답 다시 풀기',href:'metro.html#exam'}]},
- {c:'c3',no:'3',name:'CBT선',sub:'실제 시험처럼 40문항 40분',stops:[
-   {id:'cbt',t:'컴활 2급 필기 CBT',s:'2025~2026 기출 9회 · 무작위 모의고사 · 유형별 연습 150문항',href:MODE==='offline'?'cbt.html':CBT_URL,ext:MODE!=='offline',note:MODE==='offline'?'':'Claude 로그인 필요 · 본인만 열림'}]},
- {c:'c5',no:'5',name:'위키선',sub:'각주 달린 읽을거리',stops:[
-   {id:'wiki',t:'컴활위키 대문',s:'1과목 22개 · 2과목 12개 문서, 검색과 랜덤 문서',href:'wiki.html#main'},
+const SECS=[
+ {name:'외우기',why:'카드로 용어를 익히고 단축키·수식을 직접 해 본다',rows:[
+   {id:'study',t:'학습 카드',s:'강의별 용어 카드 넘기며 외우기, 강의 복습',href:'metro.html#study'},
+   {id:'practice',t:'응용 연습',s:'단축키 직접 눌러 보기, 미니 엑셀 수식, 표시 형식 실험실',href:'metro.html#practice'},
+   {id:'exam',t:'강의 복습 문제',s:'강의별 확인 문제, 오늘 공부 복습, 오답 다시 풀기',href:'metro.html#exam'}]},
+ {name:'읽기',why:'헷갈리는 개념을 그림과 각주로 이해한다',rows:[
+   {id:'wiki',t:'컴활위키',s:'1과목 22개 · 2과목 12개 문서, 그림 14개, 검색과 랜덤 문서',href:'wiki.html#main'},
    {id:'wiki1',t:'1과목 컴퓨터 일반',s:'1강 컴퓨터의 기본 개념부터',href:'wiki.html#d1'},
    {id:'wiki2',t:'2과목 스프레드시트',s:'2-1 데이터 입력부터',href:'wiki.html#e1'}]},
- {c:'c1',no:'1',name:'노트선',sub:'PDF · 흑백 인쇄용',wide:true,stops:[
-   {id:'p-pass',t:'합격 노트 (컬러)',s:'시험 정보 · 강의 노트 · 1·2과목 핵심 · 계산 연습 · OX',href:'pdf/합격노트_컬러.pdf'},
-   {id:'p-mono',t:'합격 노트 (흑백)',s:'흑백 프린터용',href:'pdf/합격노트_흑백.pdf'},
+ {name:'인쇄하기',why:'흑백 프린터로 뽑아 들고 다니는 노트',pdf:true,rows:[
+   {id:'p-pass',t:'합격 노트',s:'시험 정보, 강의 노트, 1·2과목 핵심, 계산 연습, OX · 컬러',href:'pdf/합격노트_컬러.pdf'},
+   {id:'p-mono',t:'합격 노트 흑백',s:'흑백 프린터용',href:'pdf/합격노트_흑백.pdf'},
    {id:'p-2up',t:'합격 노트 2쪽 모아',s:'A4 한 장에 두 쪽',href:'pdf/합격노트_2쪽모아.pdf'},
-   {id:'p-s1',t:'1과목 총정리',s:'강의 1~22강 노트 + 확인 문제 139',href:'pdf/1과목_총정리.pdf'},
-   {id:'p-d1',t:'공부 노트 10/18',s:'1~8강 지하철 노트',href:'pdf/공부노트_2026-10-18.pdf'},
+   {id:'p-s1',t:'1과목 총정리',s:'강의 1~22강 노트와 확인 문제 139',href:'pdf/1과목_총정리.pdf'},
    {id:'p-d2',t:'공부 노트 10/19',s:'9~22강 지하철 노트',href:'pdf/공부노트_2026-10-19.pdf'},
-   {id:'p-c1',t:'1과목 완성 노트',s:'핵심 요약 001~082 원문 + 강의 노트 + OX',href:'pdf/1과목_완성노트.pdf',off:true},
-   {id:'p-c2',t:'2과목 완성 노트',s:'핵심 요약 083~134 원문 + 함수 연습 + 실기',href:'pdf/2과목_완성노트.pdf',off:true},
-   {id:'p-sum',t:'핵심 요약 재디자인',s:'시나공 핵심 요약 134항목',href:'pdf/핵심요약_재디자인.pdf',off:true}]}
+   {id:'p-d1',t:'공부 노트 10/18',s:'1~8강 지하철 노트',href:'pdf/공부노트_2026-10-18.pdf'},
+   {id:'p-c1',t:'1과목 완성 노트',s:'핵심 요약 001~082와 강의 노트, OX, 확인 문제',href:'pdf/1과목_완성노트.pdf',off:true},
+   {id:'p-c2',t:'2과목 완성 노트',s:'핵심 요약 083~134와 함수 연습, 실기 미리보기',href:'pdf/2과목_완성노트.pdf',off:true},
+   {id:'p-sum',t:'핵심 요약 재디자인',s:'핵심 요약 134항목',href:'pdf/핵심요약_재디자인.pdf',off:true}]},
+ {name:'시험 보기',why:'실제 시험과 같은 40문항 40분',rows:[
+   {id:'cbt',t:'컴활 2급 필기 CBT',s:'2025~2026 기출 9회, 무작위 모의고사, 유형별 연습 150문항, 자동 채점',href:MODE==='offline'?'cbt.html':CBT_URL,ext:MODE!=='offline',note:MODE==='offline'?'':'Claude 로그인 후 본인만 열림'}]}
 ];
-let last='';try{last=localStorage.getItem('launcher-last')||''}catch(e){}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-document.getElementById('map').innerHTML=LINES.map(L=>`<section class="line ${L.c}${L.wide?' wide':''}" aria-labelledby="h-${L.no}">
- <div class="lh"><span class="no">${L.no}</span><h2 id="h-${L.no}">${L.name}</h2><small>${L.sub}</small></div>
- <ol class="stops">${L.stops.map(s=>{
-   const locked=s.off&&MODE!=='offline';
-   if(locked) return `<li class="stop"><div class="lk"><span class="dot"></span><span><span class="t">${esc(s.t)}</span><span class="s">USB 오프라인 묶음에만 있음 · 시나공 원문이라 공개 사이트에는 올리지 않음</span></span><span class="go">잠김</span></div></li>`;
-   const ext=s.ext?' target="_blank" rel="noopener"':'';
-   return `<li class="stop${s.id===last?' last':''}"><a href="${esc(s.href)}" data-id="${s.id}"${ext}><span class="dot"></span><span><span class="t">${esc(s.t)}</span><span class="s">${esc(s.s)}${s.note?' · '+esc(s.note):''}</span></span><span class="go">${s.id===last?'최근':s.href.endsWith('.pdf')?'PDF':'타기'}</span></a></li>`}).join('')}</ol></section>`).join('');
+let last='';try{last=localStorage.getItem('launcher-last')||''}catch(e){}
+const open=r=>!(r.off&&MODE!=='offline');
+const pdfN=SECS.find(s=>s.pdf).rows.filter(open).length;
+document.getElementById('kpi').innerHTML=[['22','강의 노트'],['34','위키 문서'],['510','CBT 문항',1],[String(pdfN),'PDF 노트']]
+ .map(([n,l,a])=>`<div class="cell${a?' ac':''}"><div class="num">${n}</div><div class="lab t-meta">${l}</div></div>`).join('');
+document.getElementById('map').innerHTML=SECS.map((S,i)=>`<section class="grid sec" aria-labelledby="h${i}">
+ <div class="side"><div class="no">${String(i+1).padStart(2,'0')}</div><h2 id="h${i}">${S.name}</h2><p class="why">${S.why}</p></div>
+ <ul class="rows">${S.rows.map(r=>{
+   if(!open(r)) return `<li class="lk"><div class="row"><span class="tt">${esc(r.t)}</span><span class="ds">USB 오프라인 묶음에만 있음 · 시나공 원문 기반</span><span class="go">Private</span></div></li>`;
+   const ext=r.ext?' target="_blank" rel="noopener"':'';
+   const tag=r.id===last?'최근':r.href.endsWith('.pdf')?'PDF':r.ext?'Open ↗':'Open →';
+   return `<li class="${r.id===last?'recent':''}"><a class="row" href="${esc(r.href)}" data-id="${r.id}"${ext}><span class="tt">${esc(r.t)}</span><span class="ds">${esc(r.s)}${r.note?' · '+esc(r.note):''}</span><span class="go">${tag}</span></a></li>`}).join('')}</ul></section>`).join('');
 document.getElementById('map').addEventListener('click',e=>{const a=e.target.closest('a[data-id]');if(a){try{localStorage.setItem('launcher-last',a.dataset.id)}catch(err){}}});
-document.getElementById('foot').innerHTML=MODE==='offline'
- ?'<p>오프라인 묶음: 인터넷 없이 모든 역이 열립니다. 기록은 이 컴퓨터 브라우저에만 저장됩니다.</p>'
- :'<p>예전 주소나 홈 화면 아이콘으로 들어와도 이 첫 화면이 열립니다. 학습 기록은 그대로 남아 있어요.</p>';
-/* 예전 앱 주소(#study, #sync=…)로 들어오면 METRO로 넘겨 줌 */
+const d=new Date();document.getElementById('today').textContent=`${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+document.getElementById('foot').textContent=MODE==='offline'
+ ?'오프라인 묶음: 인터넷 없이 모든 항목이 열린다. 기록은 이 컴퓨터의 브라우저에만 저장된다. 각 화면 왼쪽 위 ‹ 로 돌아온다.'
+ :'각 화면 왼쪽 위 ‹ 로 이 첫 화면에 돌아온다. 예전 주소나 홈 화면 아이콘으로 들어와도 학습 기록은 그대로 남아 있다.';
 function fwd(){if(/^#(study|practice|exam|sync=)/.test(location.hash)) location.replace('metro.html'+location.hash)}
 fwd(); addEventListener('hashchange',fwd);
 </script>
