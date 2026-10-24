@@ -148,9 +148,9 @@ kbd{font-family:var(--f-mono);font-size:.85em;background:var(--panel2);border:1p
 .ta-q{font-size:22px;font-weight:600;text-align:center;padding:24px 10px;min-height:110px;display:grid;place-items:center}
 .ta-input{width:100%;font-size:24px;padding:14px 18px;border-radius:12px;border:2px solid var(--line);background:var(--panel);text-align:center;font-family:var(--f-body)}
 .ta-input:focus{border-color:var(--acc);outline:none}
-.shake{animation:shake .3s}
-@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-.flashok{animation:okp .35s}
+.shake{animation:badp 240ms ease-out}
+@keyframes badp{30%{border-color:var(--bad);background:var(--badbg)}}
+.flashok{animation:okp 240ms ease-out}
 @keyframes okp{50%{border-color:var(--ok);background:var(--okbg)}}
 .miniline{display:flex;align-items:center;gap:0;padding:4px 6px;overflow:hidden}
 .miniline i{flex:1;height:6px;background:var(--line)}
@@ -255,7 +255,7 @@ details.more{border-top:1px solid var(--line);padding-top:10px}
 details.more summary{cursor:pointer;font-weight:600;color:var(--sub);font-size:14px;min-height:36px;display:flex;align-items:center;gap:6px}
 details.more[open] summary{margin-bottom:8px}
 details.more summary::-webkit-details-marker{display:none}
-details.more summary::before{content:"▸";display:inline-block;transition:transform .15s}
+details.more summary::before{content:"▸";display:inline-block;transition:transform 160ms var(--ease-out)}
 details.more[open] summary::before{transform:rotate(90deg)}
 @media (pointer:coarse){
   .btn.sm,.seg button,.mods button,.vkeys button,.chips button,details.more summary{min-height:44px}
@@ -316,9 +316,9 @@ button,summary,[role=button],.tile,.set,.opt,.op,.cell,.card,.tab,.tbtn,.btn,.cs
   .ov .sheet{transition:transform 320ms var(--ease-drawer)}
   .calc{transform-origin:right bottom;transition:transform 180ms var(--ease-out),opacity 180ms var(--ease-out)}
   .toast{transition:transform 260ms var(--ease-out),opacity 260ms var(--ease-out)}
-  .pop:not([hidden]){transform-origin:top center;transition:transform 160ms var(--ease-out),opacity 160ms var(--ease-out)}
-  .qz .ex,.exp{transition:transform 200ms var(--ease-out),opacity 200ms var(--ease-out)}
-  @starting-style{.cs-ov,.modal,.ov:not([hidden]),.sheetwrap:not([hidden]){opacity:0}.cs-dlg,.dlg,.sheetwrap .sheet{opacity:0;transform:scale(.96)}.ov .sheet{transform:translateY(100%)}.calc{opacity:0;transform:scale(.95)}.toast{opacity:0;transform:translate(-50%,-8px)}.pop:not([hidden]){opacity:0;transform:scale(.97)}.qz .ex,.exp{opacity:0;transform:translateY(4px)}}
+  .pop:not([hidden]){transition:transform 160ms var(--ease-out),opacity 160ms var(--ease-out)}
+  .qz .ex{transition:transform 200ms var(--ease-out),opacity 200ms var(--ease-out)}
+  @starting-style{.cs-ov,.modal,.ov:not([hidden]),.sheetwrap:not([hidden]){opacity:0}.cs-dlg,.dlg,.sheetwrap .sheet{opacity:0;transform:scale(.96)}.ov .sheet{transform:translateY(100%)}.calc{opacity:0;transform:scale(.95)}.toast{opacity:0;transform:translate(-50%,-8px)}.pop:not([hidden]){opacity:0;transform:scale(.97)}.qz .ex{opacity:0;transform:translateY(4px)}}
 }
 @media (prefers-reduced-motion:no-preference) and (min-width:900px){
   .ov .sheet{transition:transform 220ms var(--ease-out),opacity 220ms var(--ease-out)}
@@ -333,6 +333,7 @@ button,summary,[role=button],.tile,.set,.opt,.op,.cell,.card,.tab,.tbtn,.btn,.cs
   @starting-style{.sheetwrap .sheet{transform:translateY(100%);opacity:1}}
 }
 
+.toast.out{opacity:0;transition:opacity 150ms ease!important}
 /* 움직임 줄이기 설정: 위치·크기 변화는 빼고 색과 투명도만 */
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important}

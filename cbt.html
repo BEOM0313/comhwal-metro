@@ -156,8 +156,8 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 @media (max-width:860px){
   .ebody{grid-template-columns:minmax(0,1fr)}
   .qgrid.two{grid-template-columns:minmax(0,1fr)}
-  .omr{position:fixed;left:0;right:0;bottom:0;z-index:25;max-height:72vh;border-left:0;border-top:1px solid var(--line);border-radius:16px 16px 0 0;box-shadow:0 -10px 30px rgba(0,0,0,.25);padding-bottom:env(safe-area-inset-bottom,0px);transform:translateY(105%);transition:transform 320ms var(--ease-drawer)}
-  .omr.open{transform:none}
+  .omr{position:fixed;left:0;right:0;bottom:0;z-index:25;max-height:72vh;border-left:0;border-top:1px solid var(--line);border-radius:16px 16px 0 0;box-shadow:0 -10px 30px rgba(0,0,0,.25);padding-bottom:env(safe-area-inset-bottom,0px);transform:translateY(105%);transition:transform 200ms var(--ease-out)}
+  .omr.open{transform:none;transition:transform 320ms var(--ease-drawer)}
   .omrbtn{display:inline-flex;align-items:center}
   .ehead .who{display:none}
   .lay{display:none}
@@ -225,9 +225,9 @@ button,summary,[role=button],.tile,.set,.opt,.op,.cell,.card,.tab,.tbtn,.btn,.cs
   .ov .sheet{transition:transform 320ms var(--ease-drawer)}
   .calc{transform-origin:right bottom;transition:transform 180ms var(--ease-out),opacity 180ms var(--ease-out)}
   .toast{transition:transform 260ms var(--ease-out),opacity 260ms var(--ease-out)}
-  .pop:not([hidden]){transform-origin:top center;transition:transform 160ms var(--ease-out),opacity 160ms var(--ease-out)}
-  .qz .ex,.exp{transition:transform 200ms var(--ease-out),opacity 200ms var(--ease-out)}
-  @starting-style{.cs-ov,.modal,.ov:not([hidden]),.sheetwrap:not([hidden]){opacity:0}.cs-dlg,.dlg,.sheetwrap .sheet{opacity:0;transform:scale(.96)}.ov .sheet{transform:translateY(100%)}.calc{opacity:0;transform:scale(.95)}.toast{opacity:0;transform:translate(-50%,-8px)}.pop:not([hidden]){opacity:0;transform:scale(.97)}.qz .ex,.exp{opacity:0;transform:translateY(4px)}}
+  .pop:not([hidden]){transition:transform 160ms var(--ease-out),opacity 160ms var(--ease-out)}
+  .qz .ex{transition:transform 200ms var(--ease-out),opacity 200ms var(--ease-out)}
+  @starting-style{.cs-ov,.modal,.ov:not([hidden]),.sheetwrap:not([hidden]){opacity:0}.cs-dlg,.dlg,.sheetwrap .sheet{opacity:0;transform:scale(.96)}.ov .sheet{transform:translateY(100%)}.calc{opacity:0;transform:scale(.95)}.toast{opacity:0;transform:translate(-50%,-8px)}.pop:not([hidden]){opacity:0;transform:scale(.97)}.qz .ex{opacity:0;transform:translateY(4px)}}
 }
 @media (prefers-reduced-motion:no-preference) and (min-width:900px){
   .ov .sheet{transition:transform 220ms var(--ease-out),opacity 220ms var(--ease-out)}
@@ -242,6 +242,7 @@ button,summary,[role=button],.tile,.set,.opt,.op,.cell,.card,.tab,.tbtn,.btn,.cs
   @starting-style{.sheetwrap .sheet{transform:translateY(100%);opacity:1}}
 }
 
+.toast.out{opacity:0;transition:opacity 150ms ease!important}
 /* 움직임 줄이기 설정: 위치·크기 변화는 빼고 색과 투명도만 */
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important}
@@ -384,7 +385,7 @@ function timerTick(){
   for(const m of [10,5]) if(left<=m*60&&!X.warned[m]&&X.total>m*60){X.warned[m]=1;toast(`시험 종료 ${m}분 전입니다.`)}
   if(left<=0){X.timeout=true;submit(true)}
 }
-function toast(msg){const d=document.createElement('div');d.className='toast';d.setAttribute('role','alert');d.textContent=msg;document.body.appendChild(d);setTimeout(()=>d.remove(),3500)}
+function toast(msg){const d=document.createElement('div');d.className='toast';d.setAttribute('role','alert');d.textContent=msg;document.body.appendChild(d);setTimeout(()=>{d.classList.add('out');setTimeout(()=>d.remove(),160)},3500)}
 function per(){return S.lay===2&&innerWidth>860?2:1}
 function renderExam(){
   const n=X.qs.length, un=X.ans.filter(a=>a<0).length;

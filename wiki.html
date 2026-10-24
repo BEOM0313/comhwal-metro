@@ -35,7 +35,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bar);color:var(--bar-ink)}
 .top .in{max-width:1640px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding-block:9px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .homeback{color:var(--bar-ink);text-decoration:none;font-size:28px;line-height:1;display:grid;place-items:center;width:32px;height:40px;margin-right:-6px;border-radius:8px}
-.homeback:hover{background:rgba(255,255,255,.12)}
+@media (hover:hover) and (pointer:fine){.homeback:hover{background:rgba(255,255,255,.12)}}
 .logo{font-family:var(--f-disp);font-size:22px;color:var(--bar-ink);text-decoration:none;white-space:nowrap;line-height:1}
 .logo span{color:var(--acc)}
 .srch{flex:1;min-width:0;position:relative}
@@ -290,9 +290,9 @@ button,summary,[role=button],.tile,.set,.opt,.op,.cell,.card,.tab,.tbtn,.btn,.cs
   .ov .sheet{transition:transform 320ms var(--ease-drawer)}
   .calc{transform-origin:right bottom;transition:transform 180ms var(--ease-out),opacity 180ms var(--ease-out)}
   .toast{transition:transform 260ms var(--ease-out),opacity 260ms var(--ease-out)}
-  .pop:not([hidden]){transform-origin:top center;transition:transform 160ms var(--ease-out),opacity 160ms var(--ease-out)}
-  .qz .ex,.exp{transition:transform 200ms var(--ease-out),opacity 200ms var(--ease-out)}
-  @starting-style{.cs-ov,.modal,.ov:not([hidden]),.sheetwrap:not([hidden]){opacity:0}.cs-dlg,.dlg,.sheetwrap .sheet{opacity:0;transform:scale(.96)}.ov .sheet{transform:translateY(100%)}.calc{opacity:0;transform:scale(.95)}.toast{opacity:0;transform:translate(-50%,-8px)}.pop:not([hidden]){opacity:0;transform:scale(.97)}.qz .ex,.exp{opacity:0;transform:translateY(4px)}}
+  .pop:not([hidden]){transition:transform 160ms var(--ease-out),opacity 160ms var(--ease-out)}
+  .qz .ex{transition:transform 200ms var(--ease-out),opacity 200ms var(--ease-out)}
+  @starting-style{.cs-ov,.modal,.ov:not([hidden]),.sheetwrap:not([hidden]){opacity:0}.cs-dlg,.dlg,.sheetwrap .sheet{opacity:0;transform:scale(.96)}.ov .sheet{transform:translateY(100%)}.calc{opacity:0;transform:scale(.95)}.toast{opacity:0;transform:translate(-50%,-8px)}.pop:not([hidden]){opacity:0;transform:scale(.97)}.qz .ex{opacity:0;transform:translateY(4px)}}
 }
 @media (prefers-reduced-motion:no-preference) and (min-width:900px){
   .ov .sheet{transition:transform 220ms var(--ease-out),opacity 220ms var(--ease-out)}
@@ -307,6 +307,7 @@ button,summary,[role=button],.tile,.set,.opt,.op,.cell,.card,.tab,.tbtn,.btn,.cs
   @starting-style{.sheetwrap .sheet{transform:translateY(100%);opacity:1}}
 }
 
+.toast.out{opacity:0;transition:opacity 150ms ease!important}
 /* 움직임 줄이기 설정: 위치·크기 변화는 빼고 색과 투명도만 */
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important}
@@ -1246,6 +1247,7 @@ const $=s=>document.querySelector(s), doc=$('#doc'), pop=$('#pop'), side=$('#sid
 const byId=id=>D.find(d=>d.id===id);
 const label=d=>d.sj===1?`${d.n}강 ${d.t}`:`2-${d.n} ${d.t}`;
 let FN=[], CUR=null;
+const SMOOTH=()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}catch(e){return 'smooth'}};
 /* ---------- 문서별 문제 창: 강의 확인 문제 + METRO 문제 + CBT 기출 (맞히든 틀리든 바로 해설) */
 const Quiz=(()=>{
   const box=document.getElementById('qz'), M='①②③④', CS=window.CS||null;
@@ -1292,7 +1294,7 @@ const Quiz=(()=>{
     if(lockN) h+=`<div class="lock">CBT 기출문제는 비밀번호로 잠겨 있다. 풀면 이 문서 범위의 기출이 함께 나온다.<br><button class="lockb" type="button" data-lock>잠금 풀기</button></div>`;
     box.innerHTML=h;
   }
-  document.addEventListener('click',e=>{if(e.target.closest('[data-qjump]'))box.scrollIntoView({behavior:'smooth',block:'start'})});
+  document.addEventListener('click',e=>{if(e.target.closest('[data-qjump]'))box.scrollIntoView({behavior:SMOOTH(),block:'start'})});
   box.addEventListener('click',e=>{
     const b=e.target.closest('button'); if(!b) return;
     if(b.dataset.f){flt=b.dataset.f;i=0;picked=null;draw();return}
@@ -1302,7 +1304,7 @@ const Quiz=(()=>{
     if(b.dataset.o!=null&&picked==null){const q=list[i];picked=+b.dataset.o;
       const keep=flt==='wrong'; if(CS) CS.record(q.id,picked===q.a);
       if(keep){const id=q.id;draw();i=Math.max(0,list.findIndex(x=>x.id===id));if(i<0)i=0}
-      draw(); const ex=box.querySelector('.ex'); ex&&ex.scrollIntoView({block:'nearest',behavior:'smooth'})}
+      draw(); const ex=box.querySelector('.ex'); ex&&ex.scrollIntoView({block:'nearest',behavior:SMOOTH()})}
   });
   if(CS){
     CS.on(w=>{if(w==='unlock'){CS.loadCBT().then(d=>{CB=d;picked=null;draw()})} if(w==='data'&&picked==null)draw()});
@@ -1377,7 +1379,7 @@ function showPop(a){
   pop.innerHTML=`<div class="h"><span>각주 [${k}]</span><button class="x" type="button" aria-label="닫기">×</button></div>${inline(t,CUR&&CUR.id)}`; pop.hidden=false;
   if(innerWidth>700){const r=a.getBoundingClientRect(), w=pop.offsetWidth, h=pop.offsetHeight;
     let x=Math.min(Math.max(16,r.left-w/2),innerWidth-w-16), y=r.bottom+8; if(y+h>innerHeight-16) y=Math.max(16,r.top-h-8);
-    pop.style.left=x+'px'; pop.style.top=y+'px';} else {pop.style.left='';pop.style.top='';}
+    pop.style.left=x+'px'; pop.style.top=y+'px'; pop.style.transformOrigin=`${Math.round(r.left+r.width/2-x)}px ${y>r.top?0:h}px`;} else {pop.style.left='';pop.style.top='';pop.style.transformOrigin='';}
 }
 function spy(){
   if(!CUR) return;
@@ -1391,8 +1393,8 @@ document.addEventListener('click',e=>{
   if(!a){ if(!e.target.closest('#pop')) hidePop(); if(!e.target.closest('.srch')) $('#res').hidden=true; return; }
   e.preventDefault();
   if(a.dataset.fn){ showPop(a); doc.querySelectorAll('.fns li.hl').forEach(x=>x.classList.remove('hl')); document.getElementById('f'+a.dataset.fn)?.classList.add('hl'); return; }
-  if(a.dataset.sec){ document.getElementById(a.dataset.sec)?.scrollIntoView({behavior:'smooth',block:'start'}); return; }
-  if(a.dataset.back){ document.getElementById('r'+a.dataset.back)?.scrollIntoView({behavior:'smooth',block:'center'}); return; }
+  if(a.dataset.sec){ document.getElementById(a.dataset.sec)?.scrollIntoView({behavior:SMOOTH(),block:'start'}); return; }
+  if(a.dataset.back){ document.getElementById('r'+a.dataset.back)?.scrollIntoView({behavior:SMOOTH(),block:'center'}); return; }
   if(a.dataset.tab!==undefined){ TAB=+a.dataset.tab; try{localStorage.setItem('kw-tab',TAB)}catch(e){} go('main',{keep:true}); return; }
   if(a.dataset.cat){ go('main',{cat:a.dataset.cat}); return; }
   go(a.dataset.go); $('#res').hidden=true; $('#q').value='';
