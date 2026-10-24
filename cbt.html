@@ -74,9 +74,16 @@ function close(el,done){
   if(!el){done&&done();return}
   if(el.classList.contains('is-closing')) return;
   el.classList.add('is-closing');
-  setTimeout(function(){el.classList.remove('is-closing');done&&done()},190);
+  setTimeout(function(){el.classList.remove('is-closing');done&&done()},270);
 }
 window.UIX={close:close};
+/* 화면 이동 방향: 첫 화면으로 돌아갈 땐 'back'(왼쪽에서), 나머지는 'forward'(오른쪽에서) */
+function isHome(u){try{var p=new URL(u,location.href).pathname;return /\/$|\/index\.html$/.test(p)}catch(e){return false}}
+addEventListener('pagereveal',function(e){
+  if(!e.viewTransition) return;
+  try{var from=(window.navigation&&navigation.activation&&navigation.activation.from&&navigation.activation.from.url)||document.referrer||'';
+    e.viewTransition.types.add(isHome(location.href)&&from&&!isHome(from)?'back':'forward')}catch(err){}
+});
 window.Theme={mount:mount,get:eff,set:function(t){set(t,innerWidth-40,40)}};
 })();
 </script>
@@ -387,6 +394,77 @@ html.theme-vt::view-transition-new(root){z-index:2}
 /* 다크 모드 전환을 지원하지 않는 브라우저: 원 대신 색이 0.3초 동안 바뀜 */
 .theme-fade,.theme-fade *,.theme-fade *::before,.theme-fade *::after{transition:background-color 300ms ease,color 300ms ease,border-color 300ms ease,fill 300ms ease,stroke 300ms ease!important}
 @media (prefers-reduced-motion:reduce){.is-closing *{transform:none!important}}
+
+/* ===== 모션 강하게: 같은 자리의 움직임을 더 크고 분명하게, 화면 이동은 옆으로 미는 슬라이드 ===== */
+.btn:active:not(:disabled),.tbtn:active:not(:disabled),.cs-pill:active,.cs-dlg button:active,.op:active:not(:disabled),.qf button:active,.nv button:active:not(:disabled),.lockb:active,.chips button:active,.tychips button:active,.wall button:active,.tab:active,.res button:active,.homeback:active,.home-a:active,.keys button:active,.calc .x:active,.pop .x:active,.sheet .x:active,.qjump:active,.wrow .ac a:active,.orow .n:active,.cell:active,.th-btn:active{transform:scale(.93)}
+.set:active,.opt:active:not(:disabled),.card:active,.tile:active,.sheet li a:active,.pn a:active{transform:scale(.96)}
+@keyframes rise2{from{opacity:0;transform:translateY(30px) scale(.96)}}
+@keyframes choose{0%{transform:scale(.96)}45%{transform:scale(1.035)}100%{transform:none}}
+@keyframes bigpop{0%{opacity:0;transform:scale(.6)}60%{opacity:1;transform:scale(1.06)}100%{transform:none}}
+@keyframes vt-in-r{from{transform:translateX(100%)}}
+@keyframes vt-out-l{to{transform:translateX(-28%);opacity:.35}}
+@keyframes vt-out-r{to{transform:translateX(100%)}}
+@keyframes vt-in-l{from{transform:translateX(-28%);opacity:.35}}
+@media (prefers-reduced-motion:no-preference){
+  .cs-ov,.modal,.ov:not([hidden]),.sheetwrap:not([hidden]){transition:opacity 280ms ease}
+  .cs-dlg,.dlg,.sheetwrap .sheet{transition:transform 420ms var(--ease-out),opacity 300ms var(--ease-out)}
+  .ov .sheet{transition:transform 480ms var(--ease-drawer)}
+  .calc{transition:transform 340ms var(--ease-out),opacity 260ms ease}
+  .toast{transition:transform 460ms var(--ease-out),opacity 300ms ease}
+  .pop:not([hidden]){transition:transform 320ms var(--ease-out),opacity 240ms ease}
+  .qz .ex{transition:transform 420ms var(--ease-out),opacity 320ms ease}
+  .qcard.in-r,.qcard.in-l{transition:transform 420ms var(--ease-out),opacity 300ms ease}
+  .qz .op,.opt{transition:transform 160ms var(--ease-out),background-color 450ms ease,border-color 450ms ease,color 450ms ease}
+  .qz .op.ok,.qz .op.no{animation:choose 420ms var(--ease-out)}
+  .tile:hover{box-shadow:0 14px 30px -12px rgba(0,0,0,.28)}
+  @media (hover:hover) and (pointer:fine){.tile:hover{transform:translateY(-6px)}}
+  .intro .st,.intro .tile{animation:rise2 600ms var(--ease-out) backwards}
+  .intro .st:nth-child(2){animation-delay:70ms}.intro .st:nth-child(3){animation-delay:140ms}
+  .intro .tile:nth-child(1){animation-delay:120ms}.intro .tile:nth-child(2){animation-delay:190ms}.intro .tile:nth-child(3){animation-delay:260ms}
+  .intro .tile:nth-child(4){animation-delay:330ms}.intro .tile:nth-child(5){animation-delay:400ms}.intro .tile:nth-child(6){animation-delay:470ms}
+  .intro .meter i{animation:fillx 1100ms var(--ease-out) 400ms backwards}
+  #result .panel,#result .acts2{animation:rise2 560ms var(--ease-out) backwards}
+  #result .panel:nth-of-type(2){animation-delay:120ms}#result .panel:nth-of-type(3){animation-delay:220ms}#result .panel:nth-of-type(4){animation-delay:300ms}#result .acts2{animation-delay:360ms}
+  #result .big{animation:bigpop 640ms var(--ease-out) 120ms backwards}
+  .wbar i{animation:fillx 1000ms var(--ease-out) 200ms backwards}
+  details::details-content{transition:height 420ms var(--ease-out),content-visibility 420ms allow-discrete}
+  @starting-style{
+    .cs-ov,.modal,.ov:not([hidden]),.sheetwrap:not([hidden]){opacity:0}
+    .cs-dlg,.dlg,.sheetwrap .sheet{opacity:0;transform:translateY(28px) scale(.9)}
+    .ov .sheet{transform:translateY(100%)}
+    .calc{opacity:0;transform:translateY(16px) scale(.85)}
+    .toast{opacity:0;transform:translate(-50%,-32px) scale(.92)}
+    .pop:not([hidden]){opacity:0;transform:translateY(-6px) scale(.88)}
+    .qz .ex{opacity:0;transform:translateY(18px)}
+    .qcard.in-r{opacity:0;transform:translateX(64px)}
+    .qcard.in-l{opacity:0;transform:translateX(-64px)}
+  }
+  /* 화면 이동: 새 화면이 오른쪽에서 밀려 들어오고, 첫 화면으로 돌아갈 땐 반대로 */
+  ::view-transition-old(root){animation:440ms var(--ease-in-out) both vt-out-l}
+  ::view-transition-new(root){animation:440ms var(--ease-in-out) both vt-in-r}
+  html:active-view-transition-type(back)::view-transition-old(root){animation-name:vt-out-r;z-index:2}
+  html:active-view-transition-type(back)::view-transition-new(root){animation-name:vt-in-l;z-index:1}
+}
+@media (prefers-reduced-motion:no-preference) and (min-width:900px){
+  .ov .sheet{transition:transform 420ms var(--ease-out),opacity 300ms ease}
+  @starting-style{.ov .sheet{opacity:0;transform:translateY(28px) scale(.9)}}
+}
+@media (prefers-reduced-motion:no-preference) and (max-width:700px){
+  .pop:not([hidden]){transition:transform 440ms var(--ease-drawer)}
+  @starting-style{.pop:not([hidden]){transform:translateY(100%);opacity:1}}
+}
+@media (prefers-reduced-motion:no-preference) and (max-width:720px){
+  .sheetwrap .sheet{transition:transform 480ms var(--ease-drawer)}
+  @starting-style{.sheetwrap .sheet{transform:translateY(100%);opacity:1}}
+}
+/* 닫힘도 더 분명하게 (열 때보다는 짧게) */
+.is-closing{transition:opacity 240ms ease!important}
+.is-closing .sheet,.is-closing .cs-dlg,.is-closing .dlg{transform:translateY(20px) scale(.92);transition:transform 260ms var(--ease-out),opacity 240ms ease!important}
+.ov.is-closing .sheet{transform:translateY(100%);transition:transform 280ms var(--ease-out)!important}
+.pop.is-closing,.calc.is-closing{transform:scale(.9);transition:transform 240ms var(--ease-out),opacity 220ms ease!important}
+@media (min-width:900px){.ov.is-closing .sheet{transform:translateY(20px) scale(.92)}}
+@media (max-width:720px){.sheetwrap.is-closing .sheet{transform:translateY(100%);transition:transform 280ms var(--ease-out)!important}}
+@media (max-width:700px){.pop.is-closing{transform:translateY(100%);transition:transform 280ms var(--ease-out)!important}}
 </style>
 </head><body>
 
