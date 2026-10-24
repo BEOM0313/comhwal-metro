@@ -14,6 +14,74 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
 
+<script>/* 다크 모드 전환 (모든 화면 공통)
+   - 처음에는 기기 설정(라이트/다크)을 따르고, 단추를 누르면 그 선택을 기억한다 (localStorage cs_theme)
+   - <head>에서 바로 실행해 첫 화면부터 깜빡임 없이 적용
+   - 전환할 때 누른 단추에서 원이 퍼지며 바뀐다 (View Transitions, 지원 안 하는 브라우저는 즉시) */
+(function(){
+'use strict';
+var K='cs_theme', root=document.documentElement;
+function saved(){try{var v=JSON.parse(localStorage.getItem(K)||'""');return v==='light'||v==='dark'?v:''}catch(e){return ''}}
+function sys(){try{return matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}catch(e){return 'light'}}
+function eff(){return saved()||sys()}
+/* 상태 표시줄 색: 고른 테마의 색을 두 meta 모두에 넣는다 */
+function metas(t){
+  var ms=document.querySelectorAll('meta[name="theme-color"]');
+  for(var i=0;i<ms.length;i++){var m=ms[i];
+    if(!m.dataset.orig){m.dataset.orig=m.content;m.dataset.media=m.getAttribute('media')||''}
+    var dark=/dark/.test(m.dataset.media), light=/light/.test(m.dataset.media);
+    if(!dark&&!light) continue;
+    var pick=null; for(var j=0;j<ms.length;j++){var n=ms[j]; if(new RegExp(t).test(n.dataset.media||n.getAttribute('media')||'')) pick=n.dataset.orig||n.content}
+    m.content=saved()&&pick?pick:m.dataset.orig;
+  }
+}
+function apply(t){
+  if(t) root.setAttribute('data-theme',t); else root.removeAttribute('data-theme');
+  root.style.colorScheme=t||'';
+  metas(eff());
+  var bs=document.querySelectorAll('.th-btn'); for(var i=0;i<bs.length;i++) label(bs[i]);
+}
+apply(saved());
+document.addEventListener('DOMContentLoaded',function(){metas(eff())});
+try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',function(){if(!saved())apply('')})}catch(e){}
+addEventListener('storage',function(e){if(e.key===K)apply(saved())});
+
+function reduce(){try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return false}}
+function set(t,x,y){
+  var run=function(){try{localStorage.setItem(K,JSON.stringify(t))}catch(e){} apply(t)};
+  if(!document.startViewTransition||reduce()){run();return}
+  root.classList.add('theme-vt');
+  var vt=document.startViewTransition(run);
+  vt.ready.then(function(){
+    var r=Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y));
+    root.animate({clipPath:['circle(0px at '+x+'px '+y+'px)','circle('+r+'px at '+x+'px '+y+'px)']},
+      {duration:420,easing:'cubic-bezier(.77,0,.175,1)',pseudoElement:'::view-transition-new(root)'});
+  }).catch(function(){});
+  vt.finished.then(function(){root.classList.remove('theme-vt')},function(){root.classList.remove('theme-vt')});
+}
+var SUN='<svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="2"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></g></svg>';
+var MOON='<svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>';
+function label(b){var d=eff()==='dark'; b.dataset.mode=eff(); b.setAttribute('aria-label',d?'라이트 모드로 바꾸기':'다크 모드로 바꾸기'); b.title=d?'라이트 모드':'다크 모드'}
+var css=false;
+function injectCSS(){if(css)return;css=true;var s=document.createElement('style');s.textContent=
+'.th-btn{position:relative;display:inline-grid;place-items:center;width:38px;height:38px;flex:none;border-radius:50%;border:1px solid currentColor;background:none;color:inherit;cursor:pointer;padding:0;opacity:.92;touch-action:manipulation;-webkit-user-select:none;user-select:none;transition:transform 140ms cubic-bezier(.23,1,.32,1)}'+
+'.th-btn:active{transform:scale(.94)}'+
+'.th-btn svg{grid-area:1/1;transition:transform 260ms cubic-bezier(.23,1,.32,1),opacity 200ms ease,filter 200ms ease}'+
+'.th-btn[data-mode=light] .i-moon,.th-btn[data-mode=dark] .i-sun{opacity:0;transform:rotate(-90deg) scale(.6);filter:blur(2px)}'+
+'@media (prefers-reduced-motion:reduce){.th-btn svg{transition:opacity 150ms ease}.th-btn[data-mode] svg{transform:none!important;filter:none!important}}';
+document.head.appendChild(s)}
+function mount(el,opt){
+  if(!el) return null; injectCSS();
+  var b=document.createElement('button'); b.type='button'; b.className='th-btn'+(opt&&opt.cls?' '+opt.cls:''); b.innerHTML=SUN+MOON; label(b);
+  b.addEventListener('click',function(e){
+    var r=b.getBoundingClientRect(), x=e.clientX||r.left+r.width/2, y=e.clientY||r.top+r.height/2;
+    set(eff()==='dark'?'light':'dark',x,y)});
+  el.appendChild(b); return b;
+}
+window.Theme={mount:mount,get:eff,set:function(t){set(t,innerWidth-40,40)}};
+})();
+</script>
+
 <style>
 :root{
   --bg:#f4f5f7; --card:#ffffff; --ink:#15181f; --sub:#5d6575; --line:#e3e6ec; --soft:#eef0f4;
@@ -37,7 +105,8 @@ button{font:inherit;color:inherit}
   max-width:1360px;margin:0 auto}
 .hd{display:flex;align-items:center;gap:12px;min-width:0}
 .mark{width:40px;height:40px;border-radius:12px;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-weight:700;font-size:14px;letter-spacing:-.5px;flex:none}
-.hd h1{margin:0;font-size:19px;line-height:1.15;letter-spacing:-.4px;white-space:nowrap}
+.hd h1{margin:0;font-size:19px;line-height:1.15;letter-spacing:-.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:460px){.hd .cs-pill{width:38px;padding:0;justify-content:center;font-size:0;gap:0;min-height:38px}.hd .cs-pill i{width:10px;height:10px}}
 .hd p{margin:2px 0 0;font-size:12.5px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hd>div:nth-child(2){min-width:0}
 .hd .sp{margin-left:auto;color:var(--sub);flex:none}
@@ -148,6 +217,26 @@ button,summary,[role=button],.tile,.set,.opt,.op,.cell,.card,.tab,.tbtn,.btn,.cs
 }
 /* 안에서 스크롤되는 창은 끝에 닿아도 뒤 페이지가 따라 움직이지 않게 */
 .sheet,.cs-dlg,.omr .list,.res,.pop{overscroll-behavior:contain}
+
+/* 화면 사이 이동: 같은 사이트 안에서 페이지가 바뀔 때 220ms로 부드럽게 겹쳐 바뀜 (지원 브라우저만) */
+@view-transition{navigation:auto}
+::view-transition-old(root),::view-transition-new(root){animation-duration:220ms;animation-timing-function:cubic-bezier(.23,1,.32,1)}
+/* 다크 모드 전환: 누른 단추에서 원이 퍼짐 (theme.js) */
+html.theme-vt::view-transition-old(root),html.theme-vt::view-transition-new(root){animation:none;mix-blend-mode:normal}
+html.theme-vt::view-transition-old(root){z-index:1}
+html.theme-vt::view-transition-new(root){z-index:2}
+@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}
+
+/* 첫 화면: 그날 처음 열 때만 카드가 차례로 떠오르고 진도 막대가 채워짐 (30~40ms 간격, 누르는 데 방해 없음) */
+@keyframes rise{from{opacity:0;transform:translateY(10px)}}
+@keyframes fillx{from{transform:scaleX(0)}}
+@media (prefers-reduced-motion:no-preference){
+  .intro .st,.intro .tile{animation:rise 340ms cubic-bezier(.23,1,.32,1) backwards}
+  .intro .st:nth-child(2){animation-delay:40ms}.intro .st:nth-child(3){animation-delay:80ms}
+  .intro .tile:nth-child(1){animation-delay:60ms}.intro .tile:nth-child(2){animation-delay:95ms}.intro .tile:nth-child(3){animation-delay:130ms}
+  .intro .tile:nth-child(4){animation-delay:165ms}.intro .tile:nth-child(5){animation-delay:200ms}.intro .tile:nth-child(6){animation-delay:235ms}
+  .intro .meter i{transform-origin:left center;animation:fillx 700ms cubic-bezier(.23,1,.32,1) 250ms backwards}
+}
 </style>
 </head>
 <body>
@@ -155,7 +244,7 @@ button,summary,[role=button],.tile,.set,.opt,.op,.cell,.card,.tab,.tbtn,.btn,.cs
   <header class="hd">
     <div class="mark" aria-hidden="true">컴활</div>
     <div><h1>컴퓨터활용능력 2급</h1><p id="sub">필기 공부</p></div>
-    <div class="sp" id="sp"></div>
+    <div class="sp" id="sp" style="display:flex;gap:8px;align-items:center"></div>
   </header>
   <section class="prog" aria-label="공부 현황" id="prog"></section>
   <nav class="tiles" aria-label="공부 메뉴" id="tiles"></nav>
@@ -220,6 +309,8 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#ov').hidden)cl
 const d=new Date(); $('#today').textContent=`${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
 $('#sub').textContent=`필기 · 강의 22강 · 기출 ${CBT_N}문항`;
 $('#foot').textContent=MODE==='offline'?'오프라인 묶음 · 기록은 이 컴퓨터에 저장':'각 화면 왼쪽 위 ‹ 로 돌아온다';
+window.Theme&&Theme.mount($('#sp'));
+try{if(!sessionStorage.getItem('l-in')){document.querySelector('.app').classList.add('intro');sessionStorage.setItem('l-in','1')}}catch(e){}
 if(window.CS){CS.mountPill($('#sp'));CS.on(w=>{if(w==='data'||w==='unlock'||w==='lock'){prog();tiles()}})}
 tiles(); prog();
 addEventListener('pageshow',()=>{prog();tiles()});

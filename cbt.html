@@ -3,6 +3,73 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1f3a5f" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#13254a" media="(prefers-color-scheme: dark)">
+<script>/* 다크 모드 전환 (모든 화면 공통)
+   - 처음에는 기기 설정(라이트/다크)을 따르고, 단추를 누르면 그 선택을 기억한다 (localStorage cs_theme)
+   - <head>에서 바로 실행해 첫 화면부터 깜빡임 없이 적용
+   - 전환할 때 누른 단추에서 원이 퍼지며 바뀐다 (View Transitions, 지원 안 하는 브라우저는 즉시) */
+(function(){
+'use strict';
+var K='cs_theme', root=document.documentElement;
+function saved(){try{var v=JSON.parse(localStorage.getItem(K)||'""');return v==='light'||v==='dark'?v:''}catch(e){return ''}}
+function sys(){try{return matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}catch(e){return 'light'}}
+function eff(){return saved()||sys()}
+/* 상태 표시줄 색: 고른 테마의 색을 두 meta 모두에 넣는다 */
+function metas(t){
+  var ms=document.querySelectorAll('meta[name="theme-color"]');
+  for(var i=0;i<ms.length;i++){var m=ms[i];
+    if(!m.dataset.orig){m.dataset.orig=m.content;m.dataset.media=m.getAttribute('media')||''}
+    var dark=/dark/.test(m.dataset.media), light=/light/.test(m.dataset.media);
+    if(!dark&&!light) continue;
+    var pick=null; for(var j=0;j<ms.length;j++){var n=ms[j]; if(new RegExp(t).test(n.dataset.media||n.getAttribute('media')||'')) pick=n.dataset.orig||n.content}
+    m.content=saved()&&pick?pick:m.dataset.orig;
+  }
+}
+function apply(t){
+  if(t) root.setAttribute('data-theme',t); else root.removeAttribute('data-theme');
+  root.style.colorScheme=t||'';
+  metas(eff());
+  var bs=document.querySelectorAll('.th-btn'); for(var i=0;i<bs.length;i++) label(bs[i]);
+}
+apply(saved());
+document.addEventListener('DOMContentLoaded',function(){metas(eff())});
+try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',function(){if(!saved())apply('')})}catch(e){}
+addEventListener('storage',function(e){if(e.key===K)apply(saved())});
+
+function reduce(){try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return false}}
+function set(t,x,y){
+  var run=function(){try{localStorage.setItem(K,JSON.stringify(t))}catch(e){} apply(t)};
+  if(!document.startViewTransition||reduce()){run();return}
+  root.classList.add('theme-vt');
+  var vt=document.startViewTransition(run);
+  vt.ready.then(function(){
+    var r=Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y));
+    root.animate({clipPath:['circle(0px at '+x+'px '+y+'px)','circle('+r+'px at '+x+'px '+y+'px)']},
+      {duration:420,easing:'cubic-bezier(.77,0,.175,1)',pseudoElement:'::view-transition-new(root)'});
+  }).catch(function(){});
+  vt.finished.then(function(){root.classList.remove('theme-vt')},function(){root.classList.remove('theme-vt')});
+}
+var SUN='<svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="2"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></g></svg>';
+var MOON='<svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>';
+function label(b){var d=eff()==='dark'; b.dataset.mode=eff(); b.setAttribute('aria-label',d?'라이트 모드로 바꾸기':'다크 모드로 바꾸기'); b.title=d?'라이트 모드':'다크 모드'}
+var css=false;
+function injectCSS(){if(css)return;css=true;var s=document.createElement('style');s.textContent=
+'.th-btn{position:relative;display:inline-grid;place-items:center;width:38px;height:38px;flex:none;border-radius:50%;border:1px solid currentColor;background:none;color:inherit;cursor:pointer;padding:0;opacity:.92;touch-action:manipulation;-webkit-user-select:none;user-select:none;transition:transform 140ms cubic-bezier(.23,1,.32,1)}'+
+'.th-btn:active{transform:scale(.94)}'+
+'.th-btn svg{grid-area:1/1;transition:transform 260ms cubic-bezier(.23,1,.32,1),opacity 200ms ease,filter 200ms ease}'+
+'.th-btn[data-mode=light] .i-moon,.th-btn[data-mode=dark] .i-sun{opacity:0;transform:rotate(-90deg) scale(.6);filter:blur(2px)}'+
+'@media (prefers-reduced-motion:reduce){.th-btn svg{transition:opacity 150ms ease}.th-btn[data-mode] svg{transform:none!important;filter:none!important}}';
+document.head.appendChild(s)}
+function mount(el,opt){
+  if(!el) return null; injectCSS();
+  var b=document.createElement('button'); b.type='button'; b.className='th-btn'+(opt&&opt.cls?' '+opt.cls:''); b.innerHTML=SUN+MOON; label(b);
+  b.addEventListener('click',function(e){
+    var r=b.getBoundingClientRect(), x=e.clientX||r.left+r.width/2, y=e.clientY||r.top+r.height/2;
+    set(eff()==='dark'?'light':'dark',x,y)});
+  el.appendChild(b); return b;
+}
+window.Theme={mount:mount,get:eff,set:function(t){set(t,innerWidth-40,40)}};
+})();
+</script>
 <title>컴활 2급 필기 CBT</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap">
@@ -41,8 +108,9 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .hbar{background:var(--head);color:var(--head-ink)}
 .hbar .in{max-width:1180px;margin:0 auto;padding-block:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .hbar h1{font-size:20px;margin:0;font-weight:900;letter-spacing:-.3px}
-.hbar .home-a{color:inherit;text-decoration:none;font-size:28px;line-height:1;padding:0 4px 0 0}
+@media (max-width:640px){.hbar .home-a{color:inherit;text-decoration:none;font-size:28px;line-height:1;padding:0 4px 0 0}
 #csp{margin-left:auto}
+.hbar .tag{display:none}.hbar .cs-pill{width:38px;padding:0;justify-content:center;font-size:0;gap:0;min-height:38px}.hbar .cs-pill i{width:10px;height:10px}.hbar .in{flex-wrap:nowrap}.hbar h1{font-size:18px;min-width:0}}
 .hbar .tag{font-size:12.5px;opacity:.85;border:1px solid rgba(255,255,255,.35);border-radius:20px;padding:2px 10px}
 .home{max-width:1180px;margin:0 auto;padding-block:20px;display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
 @media (min-width:980px){.home{grid-template-columns:minmax(0,1fr) 340px;align-items:start}}
@@ -250,6 +318,26 @@ button,summary,[role=button],.tile,.set,.opt,.op,.cell,.card,.tab,.tbtn,.btn,.cs
 }
 /* 안에서 스크롤되는 창은 끝에 닿아도 뒤 페이지가 따라 움직이지 않게 */
 .sheet,.cs-dlg,.omr .list,.res,.pop{overscroll-behavior:contain}
+
+/* 화면 사이 이동: 같은 사이트 안에서 페이지가 바뀔 때 220ms로 부드럽게 겹쳐 바뀜 (지원 브라우저만) */
+@view-transition{navigation:auto}
+::view-transition-old(root),::view-transition-new(root){animation-duration:220ms;animation-timing-function:cubic-bezier(.23,1,.32,1)}
+/* 다크 모드 전환: 누른 단추에서 원이 퍼짐 (theme.js) */
+html.theme-vt::view-transition-old(root),html.theme-vt::view-transition-new(root){animation:none;mix-blend-mode:normal}
+html.theme-vt::view-transition-old(root){z-index:1}
+html.theme-vt::view-transition-new(root){z-index:2}
+@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}
+
+/* 첫 화면: 그날 처음 열 때만 카드가 차례로 떠오르고 진도 막대가 채워짐 (30~40ms 간격, 누르는 데 방해 없음) */
+@keyframes rise{from{opacity:0;transform:translateY(10px)}}
+@keyframes fillx{from{transform:scaleX(0)}}
+@media (prefers-reduced-motion:no-preference){
+  .intro .st,.intro .tile{animation:rise 340ms cubic-bezier(.23,1,.32,1) backwards}
+  .intro .st:nth-child(2){animation-delay:40ms}.intro .st:nth-child(3){animation-delay:80ms}
+  .intro .tile:nth-child(1){animation-delay:60ms}.intro .tile:nth-child(2){animation-delay:95ms}.intro .tile:nth-child(3){animation-delay:130ms}
+  .intro .tile:nth-child(4){animation-delay:165ms}.intro .tile:nth-child(5){animation-delay:200ms}.intro .tile:nth-child(6){animation-delay:235ms}
+  .intro .meter i{transform-origin:left center;animation:fillx 700ms cubic-bezier(.23,1,.32,1) 250ms backwards}
+}
 </style>
 </head><body>
 
@@ -273,7 +361,7 @@ const EXAMS=SETS.filter(s=>s.kind==='exam'), TOPICS=SETS.filter(s=>s.kind==='top
 const ALL=SETS.flatMap(s=>s.qs).filter(q=>q.a>=0);
 const byId=Object.fromEntries(ALL.map(q=>[q.id,q]));
 const WRONG=()=>{const r=CS.res();return Object.keys(r).filter(id=>byId[id]&&!r[id][0]).sort((a,b)=>r[b][1]-r[a][1])};
-const PILL=document.createElement('span');PILL.className='cspw';CS.mountPill(PILL);
+const PILL=document.createElement('span');PILL.className='cspw';PILL.style.cssText='display:inline-flex;gap:8px;align-items:center';window.Theme&&Theme.mount(PILL);CS.mountPill(PILL);
 /* ---------- 유형(위키 문서 단위) 분석 */
 const TYPES={"d1": ["컴퓨터의 기본 개념", 1, "하드웨어·소프트웨어"], "d2": ["CPU (중앙처리장치)", 1, "하드웨어·소프트웨어"], "d3": ["주기억장치", 1, "하드웨어·소프트웨어"], "d4": ["보조기억장치", 1, "하드웨어·소프트웨어"], "d5": ["기타 메모리", 1, "하드웨어·소프트웨어"], "d6": ["메인보드와 기타 장치", 1, "하드웨어·소프트웨어"], "d7": ["컴퓨터 단위와 문자 코드", 1, "하드웨어·소프트웨어"], "d8": ["운영체제와 소프트웨어", 1, "하드웨어·소프트웨어"], "d9": ["운영 방식과 세대별 특징", 1, "Windows"], "d10": ["Windows 특징과 단축키", 1, "Windows"], "d11": ["Windows 설정 1", 1, "Windows"], "d12": ["Windows 설정 2", 1, "Windows"], "d13": ["Windows 설정 3", 1, "Windows"], "d14": ["Windows 도구", 1, "Windows"], "d15": ["멀티미디어", 1, "멀티미디어"], "d16": ["멀티미디어 데이터", 1, "멀티미디어"], "d17": ["정보통신 기초", 1, "정보통신·보안"], "d18": ["통신장비와 프로토콜", 1, "정보통신·보안"], "d19": ["IP와 도메인", 1, "정보통신·보안"], "d20": ["정보통신 용어", 1, "정보통신·보안"], "d21": ["정보통신 보안", 1, "정보통신·보안"], "d22": ["프로그래밍 언어", 1, "프로그래밍"], "e1": ["데이터 입력", 2, "입력·편집"], "e2": ["셀 이동과 편집", 2, "입력·편집"], "e3": ["워크시트와 통합 문서", 2, "입력·편집"], "e4": ["셀 서식과 사용자 지정 표시 형식", 2, "서식·수식"], "e5": ["수식과 참조", 2, "서식·수식"], "e6": ["함수 1: 통계와 수학", 2, "함수"], "e7": ["함수 2: 텍스트, 날짜, 논리, 찾기", 2, "함수"], "e8": ["차트", 2, "차트"], "e9": ["정렬과 필터", 2, "데이터 관리"], "e10": ["부분합과 데이터 분석", 2, "데이터 관리"], "e11": ["인쇄와 화면", 2, "인쇄·매크로"], "e12": ["매크로", 2, "인쇄·매크로"]};
 const TT=w=>TYPES[w]?TYPES[w][0]:'';
@@ -554,7 +642,7 @@ CS.on(w=>{if(w==='data'&&!$('#home').hidden)home()});
   <div class="home gut" style="grid-template-columns:minmax(0,560px)"><div class="panel"><h2>기출문제 잠금</h2>
   <p class="note">CBT 문제는 시나공 기출 자료라 공개 저장소에 비밀번호로 잠가 두었다. 한 번 풀면 이 기기에서는 다시 묻지 않는다. 다른 기기 연결 주소로 열었다면 자동으로 풀린다.</p>
   <form class="form" id="ul" autocomplete="off" style="margin-top:12px"><label>비밀번호<input id="pw" type="password" autocomplete="off"></label><button class="btn pri" type="submit">풀기</button></form><p class="note" id="msg" role="status" style="margin-top:8px"></p></div></div>`;
-  CS.mountPill(document.getElementById('csp'));
+  const cp=document.getElementById('csp');cp.style.cssText='display:inline-flex;gap:8px;align-items:center';window.Theme&&Theme.mount(cp);CS.mountPill(cp);
   document.getElementById('ul').onsubmit=async e=>{e.preventDefault();const m=document.getElementById('msg');m.textContent='확인하는 중…';
     if(await CS.unlock(document.getElementById('pw').value)){box.innerHTML='';d=window.CBT_PLAIN;BOOT(d.SETS,d.FIGS)}else m.textContent='비밀번호가 맞지 않습니다.'};
 })();
