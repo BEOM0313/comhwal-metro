@@ -37,13 +37,14 @@ function snapshot(){return{v:1,updated:Date.now(),res:get('res',{}),hist:get('hi
 function merge(remote){
   if(!remote||typeof remote!=='object') return false;
   const res=get('res',{}), r=remote.res||{}; let ch=false;
-  for(const id in r){const a=res[id], b=r[id]; if(!a||b[1]>a[1]){res[id]=[b[0],b[1],Math.max(b[2]||1,a?a[2]||1:0)];ch=true}}
+  for(const id in r){const a=res[id], b=r[id]; if(!a||b[1]>a[1]){res[id]=[b[0],b[1],Math.max(b[2]||1,a?a[2]||1:0),b[3]==null?-1:b[3],Math.max(b[4]||0,a?a[4]||0:0)];ch=true}}
   const hist=get('hist',[]); (remote.hist||[]).forEach(x=>{if(!hist.some(y=>y.d===x.d)){hist.push(x);ch=true}});
   hist.sort((a,b)=>a.d-b.d);
   set('res',res); set('hist',hist.slice(-60));
   return ch;
 }
-function record(id,ok){const res=get('res',{}), a=res[id]; res[id]=[ok?1:0,Date.now(),(a?a[2]||1:0)+1]; set('res',res); soon(); emit('data')}
+/* 기록: [맞힘 1/0, 시각, 푼 횟수, 고른 보기(-1 = 안 품), 틀린 횟수] */
+function record(id,ok,pick){const res=get('res',{}), a=res[id]; res[id]=[ok?1:0,Date.now(),(a?a[2]||1:0)+1,pick==null?-1:pick,(a?a[4]||0:0)+(ok?0:1)]; set('res',res); soon(); emit('data')}
 function addHist(h){const hist=get('hist',[]); hist.push(Object.assign({d:Date.now()},h)); set('hist',hist.slice(-60)); soon(); emit('data')}
 function stats(prefix){
   const res=get('res',{}); let n=0,ok=0;

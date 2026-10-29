@@ -181,7 +181,8 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .qgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;max-width:1100px;margin:0 auto}
 .qgrid.two{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
 .qcard{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:18px clamp(14px,2vw,22px);font-size:var(--fs);min-width:0}
-.weak{grid-column:1/-1}
+.weak{grid-column:1/-1;position:relative}
+.weak .wtop{float:right;margin:-2px 0 6px 10px}.weak .wtop .btn{min-height:38px;font-size:14px}
 .weak .sum{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13.5px;color:var(--sub);margin:2px 0 10px}
 .weak .sum b{color:var(--ink);font-variant-numeric:tabular-nums}
 .wrow{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(90px,1fr) auto;gap:6px 14px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
@@ -521,8 +522,33 @@ function weakPanel(){
     ${wl.length?wl.map(row).join(''):'<p class="note">3문항 이상 푼 유형 중에 틀린 유형이 아직 없다.</p>'}`;
   const groups=[];[1,2].forEach(sj=>{const gs=[];Object.keys(TYPES).forEach(w=>{const t=TYPES[w];if(t[1]===sj&&!gs.includes(t[2]))gs.push(t[2])});gs.forEach(g=>groups.push([sj,g]))});
   const table=`<table class="wall"><tr><th>유형</th><th class="r">푼 문항</th><th class="r">틀림</th><th class="r">정답률</th><th>상태</th><th class="hm"></th></tr>${groups.map(([sj,g])=>`<tr class="g"><td colspan="6">${sj}과목 · ${esc(g)}</td></tr>`+Object.keys(TYPES).filter(w=>TYPES[w][1]===sj&&TYPES[w][2]===g).map(w=>{const s=st[w];const lv=lvOf(s);return `<tr><td>${esc(TT(w))}</td><td class="r">${s.n}/${s.tot}</td><td class="r">${s.bad}</td><td class="r">${s.pct==null?'–':s.pct+'%'}</td><td><span class="lv w${lv}">${s.n<3?'자료 부족':LV[lv]}</span></td><td class="hm"><button type="button" data-ty="${w}">연습</button></td></tr>`}).join('')).join('')}</table>`;
-  return `<div class="panel weak"><h2>내 약점 유형 <small>위키 문서 34개 단위로 기출 ${ALL.length}문항을 나눔 · 같은 문제는 한 번만 셈</small></h2>${body}
+  return `<div class="panel weak"><div class="wtop"><button class="btn" type="button" id="cpw">오답 목록 복사</button></div><h2>내 약점 유형 <small>위키 문서 34개 단위로 기출 ${ALL.length}문항을 나눔 · 같은 문제는 한 번만 셈</small></h2>${body}
     <details><summary>전체 유형별 정답률 보기</summary>${table}</details></div>`;
+}
+/* ---------- 오답 목록 복사: 틀린 기출을 글로 만들어 붙여 넣기 쉽게 */
+function wrongText(){
+  const r=CS.res(), seen=new Set(), out=[];
+  ALL.forEach(q=>{const x=r[q.id]; if(!x||x[0])return; const k=UK(q); if(seen.has(k))return; seen.add(k); out.push([q,x])});
+  out.sort((a,b)=>b[1][1]-a[1][1]);
+  const d=new Date(), pad=n=>String(n).padStart(2,'0');
+  const st=Object.values(typeStats()); const n=st.reduce((a,s)=>a+s.n,0), ok=st.reduce((a,s)=>a+s.n-s.bad,0);
+  const L=[`[컴활 2급 CBT 오답 목록] ${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`,
+    `푼 기출 ${n}문항 · 정답률 ${n?Math.round(ok/n*100):0}% · 지금 틀린 상태인 문제 ${out.length}개 (최근에 푼 순서)`,''];
+  out.forEach(([q,x],i)=>{
+    const pick=x[3]==null?null:x[3];
+    L.push(`${i+1}. ${q.src} ${q.n}번 · ${q.s?q.s+'과목':'유형 연습'} · 유형: ${TT(q.w)||'미분류'} · 푼 횟수 ${x[2]||1}${x[4]?' · 틀린 횟수 '+x[4]:''}`);
+    L.push('Q. '+q.q.replace(/\s+/g,' ').trim()+(q.f&&q.f.length?' (그림 있음)':''));
+    if(!q.oi) L.push(q.o.map((o,j)=>M[j]+' '+o.replace(/\s+/g,' ').trim()).join('  '));
+    L.push(`내 답: ${pick==null?'기록 없음':pick<0?'안 품':M[pick]} / 정답: ${M[q.a]}`);
+    L.push('');
+  });
+  if(!out.length) L.push('지금 틀린 상태인 기출이 없습니다.');
+  return L.join('\n');
+}
+function copyWrong(){
+  const t=wrongText(), cnt=(t.match(/^\d+\. /gm)||[]).length;
+  const done=ok=>{modal('오답 목록',ok?`틀린 문제 <b>${cnt}개</b>를 복사했습니다. Claude 대화창에 붙여 넣으면 됩니다.`:`아래 글을 길게 눌러 전체 선택한 뒤 복사하세요.<textarea id="cpt" readonly style="width:100%;height:220px;margin-top:8px;font:13px/1.5 monospace">${esc(t)}</textarea>`,[{t:'닫기',pri:1}]); if(!ok){const a=document.getElementById('cpt'); a&&(a.focus(),a.select())}};
+  try{navigator.clipboard.writeText(t).then(()=>done(true),()=>done(false))}catch(e){done(false)}
 }
 function startType(w){
   const r=CS.res(), seen=new Set();
@@ -573,7 +599,7 @@ function home(){
     </div>
   </div>`;
   $('#csp').appendChild(PILL);
-  $('#home').onclick=e=>{const t=e.target.closest('[data-ty]'); if(t){startType(t.dataset.ty);return} const b=e.target.closest('[data-sel]'); if(!b) return; S.sel=b.dataset.sel; store.set('sel',S.sel); home();};
+  $('#home').onclick=e=>{if(e.target.closest('#cpw')){copyWrong();return} const t=e.target.closest('[data-ty]'); if(t){startType(t.dataset.ty);return} const b=e.target.closest('[data-sel]'); if(!b) return; S.sel=b.dataset.sel; store.set('sel',S.sel); home();};
   $('#f').onsubmit=e=>{e.preventDefault(); S.name=$('#nm').value.trim(); S.reveal=$('#rv').checked; store.set('name',S.name); start();};
 }
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
@@ -704,7 +730,7 @@ function submit(auto){
   const pass=parts.length===2?(s1>=40&&s2>=40&&avg>=60):avg>=60;
   X.score={s1,s2,avg,pass,ok:X.qs.filter((q,k)=>X.ans[k]===q.a).length,used:Math.min(X.total,Math.round(X.total-(X.end-Date.now())/1000))};
   // 오답 저장 (맞힌 문제는 오답 목록에서 뺌)
-  X.qs.forEach((q,k)=>CS.record(q.id,X.ans[k]===q.a));
+  X.qs.forEach((q,k)=>CS.record(q.id,X.ans[k]===q.a,X.ans[k]));
   if(!X.rev) CS.addHist({k:X.k,t:X.title,avg,pass});
   if(auto) toast('시험 시간이 끝나 답안이 자동 제출되었습니다.');
   showResult();
